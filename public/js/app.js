@@ -296,9 +296,10 @@ class Timer {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "Positions": () => (/* reexport safe */ _defaults_positions_js__WEBPACK_IMPORTED_MODULE_2__["default"]),
 /* harmony export */   "Toaster": () => (/* reexport safe */ _Toaster_vue__WEBPACK_IMPORTED_MODULE_0__["default"]),
-/* harmony export */   "Positions": () => (/* reexport safe */ _defaults_positions_js__WEBPACK_IMPORTED_MODULE_2__["default"])
+/* harmony export */   "createToaster": () => (/* reexport safe */ _api_js__WEBPACK_IMPORTED_MODULE_1__["default"]),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Toaster_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Toaster.vue */ "./node_modules/@meforma/vue-toaster/src/Toaster.vue");
 /* harmony import */ var _api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api.js */ "./node_modules/@meforma/vue-toaster/src/api.js");
@@ -330,7 +331,6 @@ _Toaster_vue__WEBPACK_IMPORTED_MODULE_0__["default"].install = Plugin
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "generateCodeFrame": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_0__.generateCodeFrame),
 /* harmony export */   "BASE_TRANSITION": () => (/* binding */ BASE_TRANSITION),
 /* harmony export */   "CAMELIZE": () => (/* binding */ CAMELIZE),
 /* harmony export */   "CAPITALIZE": () => (/* binding */ CAPITALIZE),
@@ -375,6 +375,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "assert": () => (/* binding */ assert),
 /* harmony export */   "baseCompile": () => (/* binding */ baseCompile),
 /* harmony export */   "baseParse": () => (/* binding */ baseParse),
+/* harmony export */   "buildDirectiveArgs": () => (/* binding */ buildDirectiveArgs),
 /* harmony export */   "buildProps": () => (/* binding */ buildProps),
 /* harmony export */   "buildSlots": () => (/* binding */ buildSlots),
 /* harmony export */   "checkCompatEnabled": () => (/* binding */ checkCompatEnabled),
@@ -404,6 +405,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "findDir": () => (/* binding */ findDir),
 /* harmony export */   "findProp": () => (/* binding */ findProp),
 /* harmony export */   "generate": () => (/* binding */ generate),
+/* harmony export */   "generateCodeFrame": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_0__.generateCodeFrame),
 /* harmony export */   "getBaseTransformPreset": () => (/* binding */ getBaseTransformPreset),
 /* harmony export */   "getInnerRange": () => (/* binding */ getInnerRange),
 /* harmony export */   "getMemoedVNodeCall": () => (/* binding */ getMemoedVNodeCall),
@@ -413,7 +415,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "hasScopeRef": () => (/* binding */ hasScopeRef),
 /* harmony export */   "helperNameMap": () => (/* binding */ helperNameMap),
 /* harmony export */   "injectProp": () => (/* binding */ injectProp),
-/* harmony export */   "isBindKey": () => (/* binding */ isBindKey),
 /* harmony export */   "isBuiltInType": () => (/* binding */ isBuiltInType),
 /* harmony export */   "isCoreComponent": () => (/* binding */ isCoreComponent),
 /* harmony export */   "isFunctionType": () => (/* binding */ isFunctionType),
@@ -424,6 +425,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "isReferencedIdentifier": () => (/* binding */ isReferencedIdentifier),
 /* harmony export */   "isSimpleIdentifier": () => (/* binding */ isSimpleIdentifier),
 /* harmony export */   "isSlotOutlet": () => (/* binding */ isSlotOutlet),
+/* harmony export */   "isStaticArgOf": () => (/* binding */ isStaticArgOf),
 /* harmony export */   "isStaticExp": () => (/* binding */ isStaticExp),
 /* harmony export */   "isStaticProperty": () => (/* binding */ isStaticProperty),
 /* harmony export */   "isStaticPropertyKey": () => (/* binding */ isStaticPropertyKey),
@@ -969,12 +971,12 @@ function findProp(node, name, dynamicOnly = false, allowEmpty = false) {
         }
         else if (p.name === 'bind' &&
             (p.exp || allowEmpty) &&
-            isBindKey(p.arg, name)) {
+            isStaticArgOf(p.arg, name)) {
             return p;
         }
     }
 }
-function isBindKey(arg, name) {
+function isStaticArgOf(arg, name) {
     return !!(arg && isStaticExp(arg) && arg.content === name);
 }
 function hasDynamicKeyVBind(node) {
@@ -1017,7 +1019,6 @@ function getUnnormalizedProps(props, callPath = []) {
 }
 function injectProp(node, prop, context) {
     let propsWithInjection;
-    const originalProps = node.type === 13 /* VNODE_CALL */ ? node.props : node.arguments[2];
     /**
      * 1. mergeProps(...)
      * 2. toHandlers(...)
@@ -1026,7 +1027,7 @@ function injectProp(node, prop, context) {
      *
      * we need to get the real props before normalization
      */
-    let props = originalProps;
+    let props = node.type === 13 /* VNODE_CALL */ ? node.props : node.arguments[2];
     let callPath = [];
     let parentCall;
     if (props &&
@@ -1177,13 +1178,13 @@ const deprecationData = {
         message: `Platform-native elements with "is" prop will no longer be ` +
             `treated as components in Vue 3 unless the "is" value is explicitly ` +
             `prefixed with "vue:".`,
-        link: `https://v3.vuejs.org/guide/migration/custom-elements-interop.html`
+        link: `https://v3-migration.vuejs.org/breaking-changes/custom-elements-interop.html`
     },
     ["COMPILER_V_BIND_SYNC" /* COMPILER_V_BIND_SYNC */]: {
         message: key => `.sync modifier for v-bind has been removed. Use v-model with ` +
             `argument instead. \`v-bind:${key}.sync\` should be changed to ` +
             `\`v-model:${key}\`.`,
-        link: `https://v3.vuejs.org/guide/migration/v-model.html`
+        link: `https://v3-migration.vuejs.org/breaking-changes/v-model.html`
     },
     ["COMPILER_V_BIND_PROP" /* COMPILER_V_BIND_PROP */]: {
         message: `.prop modifier for v-bind has been removed and no longer necessary. ` +
@@ -1195,11 +1196,11 @@ const deprecationData = {
             `that appears before v-bind in the case of conflict. ` +
             `To retain 2.x behavior, move v-bind to make it the first attribute. ` +
             `You can also suppress this warning if the usage is intended.`,
-        link: `https://v3.vuejs.org/guide/migration/v-bind.html`
+        link: `https://v3-migration.vuejs.org/breaking-changes/v-bind.html`
     },
     ["COMPILER_V_ON_NATIVE" /* COMPILER_V_ON_NATIVE */]: {
         message: `.native modifier for v-on has been removed as is no longer necessary.`,
-        link: `https://v3.vuejs.org/guide/migration/v-on-native-modifier-removed.html`
+        link: `https://v3-migration.vuejs.org/breaking-changes/v-on-native-modifier-removed.html`
     },
     ["COMPILER_V_IF_V_FOR_PRECEDENCE" /* COMPILER_V_IF_V_FOR_PRECEDENCE */]: {
         message: `v-if / v-for precedence when used on the same element has changed ` +
@@ -1207,12 +1208,7 @@ const deprecationData = {
             `access to v-for scope variables. It is best to avoid the ambiguity ` +
             `with <template> tags or use a computed property that filters v-for ` +
             `data source.`,
-        link: `https://v3.vuejs.org/guide/migration/v-if-v-for.html`
-    },
-    ["COMPILER_V_FOR_REF" /* COMPILER_V_FOR_REF */]: {
-        message: `Ref usage on v-for no longer creates array ref values in Vue 3. ` +
-            `Consider using function refs or refactor to avoid ref usage altogether.`,
-        link: `https://v3.vuejs.org/guide/migration/array-refs.html`
+        link: `https://v3-migration.vuejs.org/breaking-changes/v-if-v-for.html`
     },
     ["COMPILER_NATIVE_TEMPLATE" /* COMPILER_NATIVE_TEMPLATE */]: {
         message: `<template> with no special directives will render as a native template ` +
@@ -1220,13 +1216,13 @@ const deprecationData = {
     },
     ["COMPILER_INLINE_TEMPLATE" /* COMPILER_INLINE_TEMPLATE */]: {
         message: `"inline-template" has been removed in Vue 3.`,
-        link: `https://v3.vuejs.org/guide/migration/inline-template-attribute.html`
+        link: `https://v3-migration.vuejs.org/breaking-changes/inline-template-attribute.html`
     },
     ["COMPILER_FILTER" /* COMPILER_FILTERS */]: {
         message: `filters have been removed in Vue 3. ` +
             `The "|" symbol will be treated as native JavaScript bitwise OR operator. ` +
             `Use method calls or computed properties instead.`,
-        link: `https://v3.vuejs.org/guide/migration/filters.html`
+        link: `https://v3-migration.vuejs.org/breaking-changes/filters.html`
     }
 };
 function getCompatValue(key, context) {
@@ -1733,7 +1729,7 @@ function isComponent(tag, props, context) {
             else if (
             // :is on plain element - only treat as component in compat mode
             p.name === 'bind' &&
-                isBindKey(p.arg, 'is') &&
+                isStaticArgOf(p.arg, 'is') &&
                 true &&
                 checkCompatEnabled("COMPILER_IS_ON_ELEMENT" /* COMPILER_IS_ON_ELEMENT */, context, p.loc)) {
                 return true;
@@ -1758,7 +1754,7 @@ function parseAttributes(context, type) {
         }
         const attr = parseAttribute(context, attributeNames);
         // Trim whitespace between class
-        // https://github.com/vuejs/vue-next/issues/4251
+        // https://github.com/vuejs/core/issues/4251
         if (attr.type === 6 /* ATTRIBUTE */ &&
             attr.value &&
             attr.name === 'class') {
@@ -1994,7 +1990,7 @@ function parseTextData(context, length, mode) {
     advanceBy(context, length);
     if (mode === 2 /* RAWTEXT */ ||
         mode === 3 /* CDATA */ ||
-        rawText.indexOf('&') === -1) {
+        !rawText.includes('&')) {
         return rawText;
     }
     else {
@@ -2093,15 +2089,6 @@ function isSingleElementRoot(root, child) {
         !isSlotOutlet(child));
 }
 function walk(node, context, doNotHoistNode = false) {
-    // Some transforms, e.g. transformAssetUrls from @vue/compiler-sfc, replaces
-    // static bindings with expressions. These expressions are guaranteed to be
-    // constant so they are still eligible for hoisting, but they are only
-    // available at runtime and therefore cannot be evaluated ahead of time.
-    // This is only a concern for pre-stringification (via transformHoist by
-    // @vue/compiler-dom), but doing it here allows us to perform only one full
-    // walk of the AST and allow `stringifyStatic` to stop walking as soon as its
-    // stringification threshold is met.
-    let canStringify = true;
     const { children } = node;
     const originalCount = children.length;
     let hoistedCount = 0;
@@ -2114,9 +2101,6 @@ function walk(node, context, doNotHoistNode = false) {
                 ? 0 /* NOT_CONSTANT */
                 : getConstantType(child, context);
             if (constantType > 0 /* NOT_CONSTANT */) {
-                if (constantType < 3 /* CAN_STRINGIFY */) {
-                    canStringify = false;
-                }
                 if (constantType >= 2 /* CAN_HOIST */) {
                     child.codegenNode.patchFlag =
                         -1 /* HOISTED */ + (( true) ? ` /* HOISTED */` : 0);
@@ -2147,17 +2131,10 @@ function walk(node, context, doNotHoistNode = false) {
                 }
             }
         }
-        else if (child.type === 12 /* TEXT_CALL */) {
-            const contentType = getConstantType(child.content, context);
-            if (contentType > 0) {
-                if (contentType < 3 /* CAN_STRINGIFY */) {
-                    canStringify = false;
-                }
-                if (contentType >= 2 /* CAN_HOIST */) {
-                    child.codegenNode = context.hoist(child.codegenNode);
-                    hoistedCount++;
-                }
-            }
+        else if (child.type === 12 /* TEXT_CALL */ &&
+            getConstantType(child.content, context) >= 2 /* CAN_HOIST */) {
+            child.codegenNode = context.hoist(child.codegenNode);
+            hoistedCount++;
         }
         // walk further
         if (child.type === 1 /* ELEMENT */) {
@@ -2181,7 +2158,7 @@ function walk(node, context, doNotHoistNode = false) {
             }
         }
     }
-    if (canStringify && hoistedCount && context.transformHoist) {
+    if (hoistedCount && context.transformHoist) {
         context.transformHoist(children, context, node);
     }
     // all children were hoisted - the entire children array is hoistable.
@@ -2208,6 +2185,11 @@ function getConstantType(node, context) {
             }
             const codegenNode = node.codegenNode;
             if (codegenNode.type !== 13 /* VNODE_CALL */) {
+                return 0 /* NOT_CONSTANT */;
+            }
+            if (codegenNode.isBlock &&
+                node.tag !== 'svg' &&
+                node.tag !== 'foreignObject') {
                 return 0 /* NOT_CONSTANT */;
             }
             const flag = getPatchFlag(codegenNode);
@@ -2347,7 +2329,7 @@ function getGeneratedPropsConstantType(node, context) {
             else if (value.type === 14 /* JS_CALL_EXPRESSION */) {
                 // some helper calls can be hoisted,
                 // such as the `normalizeProps` generated by the compiler for pre-normalize class,
-                // in this case we need to respect the ConstantType of the helper's argments
+                // in this case we need to respect the ConstantType of the helper's arguments
                 valueType = getConstantTypeOfHelperCall(value, context);
             }
             else {
@@ -3632,6 +3614,7 @@ const transformFor = createStructuralDirectiveTransform('for', (node, dir, conte
         const renderExp = createCallExpression(helper(RENDER_LIST), [
             forNode.source
         ]);
+        const isTemplate = isTemplateNode(node);
         const memo = findDir(node, 'memo');
         const keyProp = findProp(node, `key`);
         const keyExp = keyProp &&
@@ -3651,7 +3634,6 @@ const transformFor = createStructuralDirectiveTransform('for', (node, dir, conte
         return () => {
             // finish the codegen now that all children have been traversed
             let childBlock;
-            const isTemplate = isTemplateNode(node);
             const { children } = forNode;
             // check <template v-for> key placement
             if (( true) && isTemplate) {
@@ -4139,10 +4121,7 @@ const transformElement = (node, context) => {
                 // updates inside get proper isSVG flag at runtime. (#639, #643)
                 // This is technically web-specific, but splitting the logic out of core
                 // leads to too much unnecessary complexity.
-                (tag === 'svg' ||
-                    tag === 'foreignObject' ||
-                    // #938: elements with dynamic keys should be forced into blocks
-                    findProp(node, 'key', true)));
+                (tag === 'svg' || tag === 'foreignObject'));
         // props
         if (props.length > 0) {
             const propsBuildResult = buildProps(node, context);
@@ -4154,6 +4133,9 @@ const transformElement = (node, context) => {
                 directives && directives.length
                     ? createArrayExpression(directives.map(dir => buildDirectiveArgs(dir, context)))
                     : undefined;
+            if (propsBuildResult.shouldUseBlock) {
+                shouldUseBlock = true;
+            }
         }
         // children
         if (node.children.length > 0) {
@@ -4283,11 +4265,13 @@ function resolveComponentType(node, context, ssr = false) {
     return toValidAssetId(tag, `component`);
 }
 function buildProps(node, context, props = node.props, ssr = false) {
-    const { tag, loc: elementLoc } = node;
+    const { tag, loc: elementLoc, children } = node;
     const isComponent = node.tagType === 1 /* COMPONENT */;
     let properties = [];
     const mergeArgs = [];
     const runtimeDirectives = [];
+    const hasChildren = children.length > 0;
+    let shouldUseBlock = false;
     // patchFlag analysis
     let patchFlag = 0;
     let hasRef = false;
@@ -4350,9 +4334,12 @@ function buildProps(node, context, props = node.props, ssr = false) {
         const prop = props[i];
         if (prop.type === 6 /* ATTRIBUTE */) {
             const { loc, name, value } = prop;
-            let valueNode = createSimpleExpression(value ? value.content : '', true, value ? value.loc : loc);
+            let isStatic = true;
             if (name === 'ref') {
                 hasRef = true;
+                if (context.scopes.vFor > 0) {
+                    properties.push(createObjectProperty(createSimpleExpression('ref_for', true), createSimpleExpression('true')));
+                }
             }
             // skip is on <component>, or is="vue:xxx"
             if (name === 'is' &&
@@ -4361,7 +4348,7 @@ function buildProps(node, context, props = node.props, ssr = false) {
                     (isCompatEnabled("COMPILER_IS_ON_ELEMENT" /* COMPILER_IS_ON_ELEMENT */, context)))) {
                 continue;
             }
-            properties.push(createObjectProperty(createSimpleExpression(name, true, getInnerRange(loc, 0, name.length)), valueNode));
+            properties.push(createObjectProperty(createSimpleExpression(name, true, getInnerRange(loc, 0, name.length)), createSimpleExpression(value ? value.content : '', isStatic, value ? value.loc : loc)));
         }
         else {
             // directives
@@ -4382,7 +4369,7 @@ function buildProps(node, context, props = node.props, ssr = false) {
             // skip v-is and :is on <component>
             if (name === 'is' ||
                 (isVBind &&
-                    isBindKey(arg, 'is') &&
+                    isStaticArgOf(arg, 'is') &&
                     (isComponentTag(tag) ||
                         (isCompatEnabled("COMPILER_IS_ON_ELEMENT" /* COMPILER_IS_ON_ELEMENT */, context))))) {
                 continue;
@@ -4390,6 +4377,17 @@ function buildProps(node, context, props = node.props, ssr = false) {
             // skip v-on in SSR compilation
             if (isVOn && ssr) {
                 continue;
+            }
+            if (
+            // #938: elements with dynamic keys should be forced into blocks
+            (isVBind && isStaticArgOf(arg, 'key')) ||
+                // inline before-update hooks need to force block so that it is invoked
+                // before children
+                (isVOn && hasChildren && isStaticArgOf(arg, 'vue:before-update'))) {
+                shouldUseBlock = true;
+            }
+            if (isVBind && isStaticArgOf(arg, 'ref') && context.scopes.vFor > 0) {
+                properties.push(createObjectProperty(createSimpleExpression('ref_for', true), createSimpleExpression('true')));
             }
             // special case for v-bind and v-on with no argument
             if (!arg && (isVBind || isVOn)) {
@@ -4461,16 +4459,15 @@ function buildProps(node, context, props = node.props, ssr = false) {
                     }
                 }
             }
-            else {
+            else if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_0__.isBuiltInDirective)(name)) {
                 // no built-in transform, this is a user custom directive.
                 runtimeDirectives.push(prop);
+                // custom dirs may use beforeUpdate so they need to force blocks
+                // to ensure before-update gets called before children update
+                if (hasChildren) {
+                    shouldUseBlock = true;
+                }
             }
-        }
-        if (prop.type === 6 /* ATTRIBUTE */ &&
-            prop.name === 'ref' &&
-            context.scopes.vFor > 0 &&
-            checkCompatEnabled("COMPILER_V_FOR_REF" /* COMPILER_V_FOR_REF */, context, prop.loc)) {
-            properties.push(createObjectProperty(createSimpleExpression('refInFor', true), createSimpleExpression('true', false)));
         }
     }
     let propsExpression = undefined;
@@ -4508,7 +4505,8 @@ function buildProps(node, context, props = node.props, ssr = false) {
             patchFlag |= 32 /* HYDRATE_EVENTS */;
         }
     }
-    if ((patchFlag === 0 || patchFlag === 32 /* HYDRATE_EVENTS */) &&
+    if (!shouldUseBlock &&
+        (patchFlag === 0 || patchFlag === 32 /* HYDRATE_EVENTS */) &&
         (hasRef || hasVnodeHook || runtimeDirectives.length > 0)) {
         patchFlag |= 512 /* NEED_PATCH */;
     }
@@ -4575,7 +4573,8 @@ function buildProps(node, context, props = node.props, ssr = false) {
         props: propsExpression,
         directives: runtimeDirectives,
         patchFlag,
-        dynamicPropNames
+        dynamicPropNames,
+        shouldUseBlock
     };
 }
 // Dedupe props in an object literal.
@@ -4663,7 +4662,7 @@ function stringifyDynamicPropNames(props) {
     return propsNamesString + `]`;
 }
 function isComponentTag(tag) {
-    return tag[0].toLowerCase() + tag.slice(1) === 'component';
+    return tag === 'component' || tag === 'Component';
 }
 
 ( true)
@@ -4730,7 +4729,7 @@ function processSlotOutlet(node, context) {
             }
         }
         else {
-            if (p.name === 'bind' && isBindKey(p.arg, 'name')) {
+            if (p.name === 'bind' && isStaticArgOf(p.arg, 'name')) {
                 if (p.exp)
                     slotName = p.exp;
             }
@@ -4764,7 +4763,11 @@ const transformOn = (dir, node, context, augmentor) => {
     let eventName;
     if (arg.type === 4 /* SIMPLE_EXPRESSION */) {
         if (arg.isStatic) {
-            const rawName = arg.content;
+            let rawName = arg.content;
+            // TODO deprecate @vnodeXXX usage
+            if (rawName.startsWith('vue:')) {
+                rawName = `vnode-${rawName.slice(4)}`;
+            }
             // for all event listeners, auto convert it to camelCase. See issue #2249
             eventName = createSimpleExpression((0,_vue_shared__WEBPACK_IMPORTED_MODULE_0__.toHandlerKey)((0,_vue_shared__WEBPACK_IMPORTED_MODULE_0__.camelize)(rawName)), true, arg.loc);
         }
@@ -5334,6 +5337,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "CREATE_STATIC": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.CREATE_STATIC),
 /* harmony export */   "CREATE_TEXT": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.CREATE_TEXT),
 /* harmony export */   "CREATE_VNODE": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.CREATE_VNODE),
+/* harmony export */   "DOMDirectiveTransforms": () => (/* binding */ DOMDirectiveTransforms),
+/* harmony export */   "DOMNodeTransforms": () => (/* binding */ DOMNodeTransforms),
 /* harmony export */   "FRAGMENT": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.FRAGMENT),
 /* harmony export */   "GUARD_REACTIVE_PROPS": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.GUARD_REACTIVE_PROPS),
 /* harmony export */   "IS_MEMO_SAME": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.IS_MEMO_SAME),
@@ -5358,7 +5363,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "TO_DISPLAY_STRING": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.TO_DISPLAY_STRING),
 /* harmony export */   "TO_HANDLERS": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.TO_HANDLERS),
 /* harmony export */   "TO_HANDLER_KEY": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.TO_HANDLER_KEY),
+/* harmony export */   "TRANSITION": () => (/* binding */ TRANSITION),
+/* harmony export */   "TRANSITION_GROUP": () => (/* binding */ TRANSITION_GROUP),
 /* harmony export */   "UNREF": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.UNREF),
+/* harmony export */   "V_MODEL_CHECKBOX": () => (/* binding */ V_MODEL_CHECKBOX),
+/* harmony export */   "V_MODEL_DYNAMIC": () => (/* binding */ V_MODEL_DYNAMIC),
+/* harmony export */   "V_MODEL_RADIO": () => (/* binding */ V_MODEL_RADIO),
+/* harmony export */   "V_MODEL_SELECT": () => (/* binding */ V_MODEL_SELECT),
+/* harmony export */   "V_MODEL_TEXT": () => (/* binding */ V_MODEL_TEXT),
+/* harmony export */   "V_ON_WITH_KEYS": () => (/* binding */ V_ON_WITH_KEYS),
+/* harmony export */   "V_ON_WITH_MODIFIERS": () => (/* binding */ V_ON_WITH_MODIFIERS),
+/* harmony export */   "V_SHOW": () => (/* binding */ V_SHOW),
 /* harmony export */   "WITH_CTX": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.WITH_CTX),
 /* harmony export */   "WITH_DIRECTIVES": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.WITH_DIRECTIVES),
 /* harmony export */   "WITH_MEMO": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.WITH_MEMO),
@@ -5367,9 +5382,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "assert": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.assert),
 /* harmony export */   "baseCompile": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.baseCompile),
 /* harmony export */   "baseParse": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.baseParse),
+/* harmony export */   "buildDirectiveArgs": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.buildDirectiveArgs),
 /* harmony export */   "buildProps": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.buildProps),
 /* harmony export */   "buildSlots": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.buildSlots),
 /* harmony export */   "checkCompatEnabled": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.checkCompatEnabled),
+/* harmony export */   "compile": () => (/* binding */ compile),
 /* harmony export */   "createArrayExpression": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.createArrayExpression),
 /* harmony export */   "createAssignmentExpression": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.createAssignmentExpression),
 /* harmony export */   "createBlockStatement": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.createBlockStatement),
@@ -5378,6 +5395,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "createCompilerError": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.createCompilerError),
 /* harmony export */   "createCompoundExpression": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.createCompoundExpression),
 /* harmony export */   "createConditionalExpression": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.createConditionalExpression),
+/* harmony export */   "createDOMCompilerError": () => (/* binding */ createDOMCompilerError),
 /* harmony export */   "createForLoopParams": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.createForLoopParams),
 /* harmony export */   "createFunctionExpression": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.createFunctionExpression),
 /* harmony export */   "createIfStatement": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.createIfStatement),
@@ -5406,7 +5424,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "hasScopeRef": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.hasScopeRef),
 /* harmony export */   "helperNameMap": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.helperNameMap),
 /* harmony export */   "injectProp": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.injectProp),
-/* harmony export */   "isBindKey": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isBindKey),
 /* harmony export */   "isBuiltInType": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isBuiltInType),
 /* harmony export */   "isCoreComponent": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isCoreComponent),
 /* harmony export */   "isFunctionType": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isFunctionType),
@@ -5417,6 +5434,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "isReferencedIdentifier": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isReferencedIdentifier),
 /* harmony export */   "isSimpleIdentifier": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isSimpleIdentifier),
 /* harmony export */   "isSlotOutlet": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isSlotOutlet),
+/* harmony export */   "isStaticArgOf": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isStaticArgOf),
 /* harmony export */   "isStaticExp": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isStaticExp),
 /* harmony export */   "isStaticProperty": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isStaticProperty),
 /* harmony export */   "isStaticPropertyKey": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.isStaticPropertyKey),
@@ -5426,6 +5444,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "locStub": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.locStub),
 /* harmony export */   "makeBlock": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.makeBlock),
 /* harmony export */   "noopDirectiveTransform": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.noopDirectiveTransform),
+/* harmony export */   "parse": () => (/* binding */ parse),
+/* harmony export */   "parserOptions": () => (/* binding */ parserOptions),
 /* harmony export */   "processExpression": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.processExpression),
 /* harmony export */   "processFor": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.processFor),
 /* harmony export */   "processIf": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.processIf),
@@ -5441,28 +5461,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "transformExpression": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.transformExpression),
 /* harmony export */   "transformModel": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.transformModel),
 /* harmony export */   "transformOn": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.transformOn),
+/* harmony export */   "transformStyle": () => (/* binding */ transformStyle),
 /* harmony export */   "traverseNode": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.traverseNode),
 /* harmony export */   "walkBlockDeclarations": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.walkBlockDeclarations),
 /* harmony export */   "walkFunctionParams": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.walkFunctionParams),
 /* harmony export */   "walkIdentifiers": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.walkIdentifiers),
-/* harmony export */   "warnDeprecation": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.warnDeprecation),
-/* harmony export */   "DOMDirectiveTransforms": () => (/* binding */ DOMDirectiveTransforms),
-/* harmony export */   "DOMNodeTransforms": () => (/* binding */ DOMNodeTransforms),
-/* harmony export */   "TRANSITION": () => (/* binding */ TRANSITION),
-/* harmony export */   "TRANSITION_GROUP": () => (/* binding */ TRANSITION_GROUP),
-/* harmony export */   "V_MODEL_CHECKBOX": () => (/* binding */ V_MODEL_CHECKBOX),
-/* harmony export */   "V_MODEL_DYNAMIC": () => (/* binding */ V_MODEL_DYNAMIC),
-/* harmony export */   "V_MODEL_RADIO": () => (/* binding */ V_MODEL_RADIO),
-/* harmony export */   "V_MODEL_SELECT": () => (/* binding */ V_MODEL_SELECT),
-/* harmony export */   "V_MODEL_TEXT": () => (/* binding */ V_MODEL_TEXT),
-/* harmony export */   "V_ON_WITH_KEYS": () => (/* binding */ V_ON_WITH_KEYS),
-/* harmony export */   "V_ON_WITH_MODIFIERS": () => (/* binding */ V_ON_WITH_MODIFIERS),
-/* harmony export */   "V_SHOW": () => (/* binding */ V_SHOW),
-/* harmony export */   "compile": () => (/* binding */ compile),
-/* harmony export */   "createDOMCompilerError": () => (/* binding */ createDOMCompilerError),
-/* harmony export */   "parse": () => (/* binding */ parse),
-/* harmony export */   "parserOptions": () => (/* binding */ parserOptions),
-/* harmony export */   "transformStyle": () => (/* binding */ transformStyle)
+/* harmony export */   "warnDeprecation": () => (/* reexport safe */ _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__.warnDeprecation)
 /* harmony export */ });
 /* harmony import */ var _vue_compiler_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @vue/compiler-core */ "./node_modules/@vue/compiler-core/dist/compiler-core.esm-bundler.js");
 /* harmony import */ var _vue_shared__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @vue/shared */ "./node_modules/@vue/shared/dist/shared.esm-bundler.js");
@@ -5955,6 +5959,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "isReactive": () => (/* binding */ isReactive),
 /* harmony export */   "isReadonly": () => (/* binding */ isReadonly),
 /* harmony export */   "isRef": () => (/* binding */ isRef),
+/* harmony export */   "isShallow": () => (/* binding */ isShallow),
 /* harmony export */   "markRaw": () => (/* binding */ markRaw),
 /* harmony export */   "onScopeDispose": () => (/* binding */ onScopeDispose),
 /* harmony export */   "pauseTracking": () => (/* binding */ pauseTracking),
@@ -5983,7 +5988,6 @@ function warn(msg, ...args) {
 }
 
 let activeEffectScope;
-const effectScopeStack = [];
 class EffectScope {
     constructor(detached = false) {
         this.active = true;
@@ -5998,11 +6002,11 @@ class EffectScope {
     run(fn) {
         if (this.active) {
             try {
-                this.on();
+                activeEffectScope = this;
                 return fn();
             }
             finally {
-                this.off();
+                activeEffectScope = this.parent;
             }
         }
         else if ((true)) {
@@ -6010,23 +6014,24 @@ class EffectScope {
         }
     }
     on() {
-        if (this.active) {
-            effectScopeStack.push(this);
-            activeEffectScope = this;
-        }
+        activeEffectScope = this;
     }
     off() {
-        if (this.active) {
-            effectScopeStack.pop();
-            activeEffectScope = effectScopeStack[effectScopeStack.length - 1];
-        }
+        activeEffectScope = this.parent;
     }
     stop(fromParent) {
         if (this.active) {
-            this.effects.forEach(e => e.stop());
-            this.cleanups.forEach(cleanup => cleanup());
+            let i, l;
+            for (i = 0, l = this.effects.length; i < l; i++) {
+                this.effects[i].stop();
+            }
+            for (i = 0, l = this.cleanups.length; i < l; i++) {
+                this.cleanups[i]();
+            }
             if (this.scopes) {
-                this.scopes.forEach(e => e.stop(true));
+                for (i = 0, l = this.scopes.length; i < l; i++) {
+                    this.scopes[i].stop(true);
+                }
             }
             // nested scope, dereference from parent to avoid memory leaks
             if (this.parent && !fromParent) {
@@ -6044,8 +6049,7 @@ class EffectScope {
 function effectScope(detached) {
     return new EffectScope(detached);
 }
-function recordEffectScope(effect, scope) {
-    scope = scope || activeEffectScope;
+function recordEffectScope(effect, scope = activeEffectScope) {
     if (scope && scope.active) {
         scope.effects.push(effect);
     }
@@ -6103,12 +6107,11 @@ const targetMap = new WeakMap();
 let effectTrackDepth = 0;
 let trackOpBit = 1;
 /**
- * The bitwise track markers support at most 30 levels op recursion.
+ * The bitwise track markers support at most 30 levels of recursion.
  * This value is chosen to enable modern JS engines to use a SMI on all platforms.
  * When recursion depth is greater, fall back to using a full cleanup.
  */
 const maxMarkerBits = 30;
-const effectStack = [];
 let activeEffect;
 const ITERATE_KEY = Symbol(( true) ? 'iterate' : 0);
 const MAP_KEY_ITERATE_KEY = Symbol(( true) ? 'Map key iterate' : 0);
@@ -6118,35 +6121,42 @@ class ReactiveEffect {
         this.scheduler = scheduler;
         this.active = true;
         this.deps = [];
+        this.parent = undefined;
         recordEffectScope(this, scope);
     }
     run() {
         if (!this.active) {
             return this.fn();
         }
-        if (!effectStack.includes(this)) {
-            try {
-                effectStack.push((activeEffect = this));
-                enableTracking();
-                trackOpBit = 1 << ++effectTrackDepth;
-                if (effectTrackDepth <= maxMarkerBits) {
-                    initDepMarkers(this);
-                }
-                else {
-                    cleanupEffect(this);
-                }
-                return this.fn();
+        let parent = activeEffect;
+        let lastShouldTrack = shouldTrack;
+        while (parent) {
+            if (parent === this) {
+                return;
             }
-            finally {
-                if (effectTrackDepth <= maxMarkerBits) {
-                    finalizeDepMarkers(this);
-                }
-                trackOpBit = 1 << --effectTrackDepth;
-                resetTracking();
-                effectStack.pop();
-                const n = effectStack.length;
-                activeEffect = n > 0 ? effectStack[n - 1] : undefined;
+            parent = parent.parent;
+        }
+        try {
+            this.parent = activeEffect;
+            activeEffect = this;
+            shouldTrack = true;
+            trackOpBit = 1 << ++effectTrackDepth;
+            if (effectTrackDepth <= maxMarkerBits) {
+                initDepMarkers(this);
             }
+            else {
+                cleanupEffect(this);
+            }
+            return this.fn();
+        }
+        finally {
+            if (effectTrackDepth <= maxMarkerBits) {
+                finalizeDepMarkers(this);
+            }
+            trackOpBit = 1 << --effectTrackDepth;
+            activeEffect = this.parent;
+            shouldTrack = lastShouldTrack;
+            this.parent = undefined;
         }
     }
     stop() {
@@ -6203,24 +6213,20 @@ function resetTracking() {
     shouldTrack = last === undefined ? true : last;
 }
 function track(target, type, key) {
-    if (!isTracking()) {
-        return;
+    if (shouldTrack && activeEffect) {
+        let depsMap = targetMap.get(target);
+        if (!depsMap) {
+            targetMap.set(target, (depsMap = new Map()));
+        }
+        let dep = depsMap.get(key);
+        if (!dep) {
+            depsMap.set(key, (dep = createDep()));
+        }
+        const eventInfo = ( true)
+            ? { effect: activeEffect, target, type, key }
+            : 0;
+        trackEffects(dep, eventInfo);
     }
-    let depsMap = targetMap.get(target);
-    if (!depsMap) {
-        targetMap.set(target, (depsMap = new Map()));
-    }
-    let dep = depsMap.get(key);
-    if (!dep) {
-        depsMap.set(key, (dep = createDep()));
-    }
-    const eventInfo = ( true)
-        ? { effect: activeEffect, target, type, key }
-        : 0;
-    trackEffects(dep, eventInfo);
-}
-function isTracking() {
-    return shouldTrack && activeEffect !== undefined;
 }
 function trackEffects(dep, debuggerEventExtraInfo) {
     let shouldTrack = false;
@@ -6384,6 +6390,9 @@ function createGetter(isReadonly = false, shallow = false) {
         else if (key === "__v_isReadonly" /* IS_READONLY */) {
             return isReadonly;
         }
+        else if (key === "__v_isShallow" /* IS_SHALLOW */) {
+            return shallow;
+        }
         else if (key === "__v_raw" /* RAW */ &&
             receiver ===
                 (isReadonly
@@ -6428,9 +6437,14 @@ const shallowSet = /*#__PURE__*/ createSetter(true);
 function createSetter(shallow = false) {
     return function set(target, key, value, receiver) {
         let oldValue = target[key];
-        if (!shallow) {
-            value = toRaw(value);
-            oldValue = toRaw(oldValue);
+        if (isReadonly(oldValue) && isRef(oldValue) && !isRef(value)) {
+            return false;
+        }
+        if (!shallow && !isReadonly(value)) {
+            if (!isShallow(value)) {
+                value = toRaw(value);
+                oldValue = toRaw(oldValue);
+            }
             if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_0__.isArray)(target) && isRef(oldValue) && !isRef(value)) {
                 oldValue.value = value;
                 return true;
@@ -6818,7 +6832,7 @@ function getTargetType(value) {
 }
 function reactive(target) {
     // if trying to observe a readonly proxy, return the readonly version.
-    if (target && target["__v_isReadonly" /* IS_READONLY */]) {
+    if (isReadonly(target)) {
         return target;
     }
     return createReactiveObject(target, false, mutableHandlers, mutableCollectionHandlers, reactiveMap);
@@ -6883,6 +6897,9 @@ function isReactive(value) {
 function isReadonly(value) {
     return !!(value && value["__v_isReadonly" /* IS_READONLY */]);
 }
+function isShallow(value) {
+    return !!(value && value["__v_isShallow" /* IS_SHALLOW */]);
+}
 function isProxy(value) {
     return isReactive(value) || isReadonly(value);
 }
@@ -6898,13 +6915,10 @@ const toReactive = (value) => (0,_vue_shared__WEBPACK_IMPORTED_MODULE_0__.isObje
 const toReadonly = (value) => (0,_vue_shared__WEBPACK_IMPORTED_MODULE_0__.isObject)(value) ? readonly(value) : value;
 
 function trackRefValue(ref) {
-    if (isTracking()) {
+    if (shouldTrack && activeEffect) {
         ref = toRaw(ref);
-        if (!ref.dep) {
-            ref.dep = createDep();
-        }
         if ((true)) {
-            trackEffects(ref.dep, {
+            trackEffects(ref.dep || (ref.dep = createDep()), {
                 target: ref,
                 type: "get" /* GET */,
                 key: 'value'
@@ -6928,7 +6942,7 @@ function triggerRefValue(ref, newVal) {
     }
 }
 function isRef(r) {
-    return Boolean(r && r.__v_isRef === true);
+    return !!(r && r.__v_isRef === true);
 }
 function ref(value) {
     return createRef(value, false);
@@ -6943,22 +6957,22 @@ function createRef(rawValue, shallow) {
     return new RefImpl(rawValue, shallow);
 }
 class RefImpl {
-    constructor(value, _shallow) {
-        this._shallow = _shallow;
+    constructor(value, __v_isShallow) {
+        this.__v_isShallow = __v_isShallow;
         this.dep = undefined;
         this.__v_isRef = true;
-        this._rawValue = _shallow ? value : toRaw(value);
-        this._value = _shallow ? value : toReactive(value);
+        this._rawValue = __v_isShallow ? value : toRaw(value);
+        this._value = __v_isShallow ? value : toReactive(value);
     }
     get value() {
         trackRefValue(this);
         return this._value;
     }
     set value(newVal) {
-        newVal = this._shallow ? newVal : toRaw(newVal);
+        newVal = this.__v_isShallow ? newVal : toRaw(newVal);
         if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_0__.hasChanged)(newVal, this._rawValue)) {
             this._rawValue = newVal;
-            this._value = this._shallow ? newVal : toReactive(newVal);
+            this._value = this.__v_isShallow ? newVal : toReactive(newVal);
             triggerRefValue(this, newVal);
         }
     }
@@ -7016,42 +7030,48 @@ function toRefs(object) {
     return ret;
 }
 class ObjectRefImpl {
-    constructor(_object, _key) {
+    constructor(_object, _key, _defaultValue) {
         this._object = _object;
         this._key = _key;
+        this._defaultValue = _defaultValue;
         this.__v_isRef = true;
     }
     get value() {
-        return this._object[this._key];
+        const val = this._object[this._key];
+        return val === undefined ? this._defaultValue : val;
     }
     set value(newVal) {
         this._object[this._key] = newVal;
     }
 }
-function toRef(object, key) {
+function toRef(object, key, defaultValue) {
     const val = object[key];
-    return isRef(val) ? val : new ObjectRefImpl(object, key);
+    return isRef(val)
+        ? val
+        : new ObjectRefImpl(object, key, defaultValue);
 }
 
 class ComputedRefImpl {
-    constructor(getter, _setter, isReadonly) {
+    constructor(getter, _setter, isReadonly, isSSR) {
         this._setter = _setter;
         this.dep = undefined;
-        this._dirty = true;
         this.__v_isRef = true;
+        this._dirty = true;
         this.effect = new ReactiveEffect(getter, () => {
             if (!this._dirty) {
                 this._dirty = true;
                 triggerRefValue(this);
             }
         });
+        this.effect.computed = this;
+        this.effect.active = this._cacheable = !isSSR;
         this["__v_isReadonly" /* IS_READONLY */] = isReadonly;
     }
     get value() {
         // the computed ref may get wrapped by other proxies e.g. readonly() #3376
         const self = toRaw(this);
         trackRefValue(self);
-        if (self._dirty) {
+        if (self._dirty || !self._cacheable) {
             self._dirty = false;
             self._value = self.effect.run();
         }
@@ -7061,7 +7081,7 @@ class ComputedRefImpl {
         this._setter(newValue);
     }
 }
-function computed(getterOrOptions, debugOptions) {
+function computed(getterOrOptions, debugOptions, isSSR = false) {
     let getter;
     let setter;
     const onlyGetter = (0,_vue_shared__WEBPACK_IMPORTED_MODULE_0__.isFunction)(getterOrOptions);
@@ -7077,8 +7097,8 @@ function computed(getterOrOptions, debugOptions) {
         getter = getterOrOptions.get;
         setter = getterOrOptions.set;
     }
-    const cRef = new ComputedRefImpl(getter, setter, onlyGetter || !setter);
-    if (( true) && debugOptions) {
+    const cRef = new ComputedRefImpl(getter, setter, onlyGetter || !setter, isSSR);
+    if (( true) && debugOptions && !isSSR) {
         cRef.effect.onTrack = debugOptions.onTrack;
         cRef.effect.onTrigger = debugOptions.onTrigger;
     }
@@ -7133,14 +7153,14 @@ class DeferredComputedRefImpl {
                 // value invalidation in case of sync access; normal effects are
                 // deferred to be triggered in scheduler.
                 for (const e of this.dep) {
-                    if (e.computed) {
+                    if (e.computed instanceof DeferredComputedRefImpl) {
                         e.scheduler(true /* computedTrigger */);
                     }
                 }
             }
             this._dirty = true;
         });
-        this.effect.computed = true;
+        this.effect.computed = this;
     }
     _get() {
         if (this._dirty) {
@@ -7174,51 +7194,23 @@ function deferredComputed(getter) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "EffectScope": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.EffectScope),
-/* harmony export */   "ReactiveEffect": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.ReactiveEffect),
-/* harmony export */   "computed": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.computed),
-/* harmony export */   "customRef": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.customRef),
-/* harmony export */   "effect": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.effect),
-/* harmony export */   "effectScope": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.effectScope),
-/* harmony export */   "getCurrentScope": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.getCurrentScope),
-/* harmony export */   "isProxy": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isProxy),
-/* harmony export */   "isReactive": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReactive),
-/* harmony export */   "isReadonly": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReadonly),
-/* harmony export */   "isRef": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef),
-/* harmony export */   "markRaw": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.markRaw),
-/* harmony export */   "onScopeDispose": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.onScopeDispose),
-/* harmony export */   "proxyRefs": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.proxyRefs),
-/* harmony export */   "reactive": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.reactive),
-/* harmony export */   "readonly": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.readonly),
-/* harmony export */   "ref": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.ref),
-/* harmony export */   "shallowReactive": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.shallowReactive),
-/* harmony export */   "shallowReadonly": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.shallowReadonly),
-/* harmony export */   "shallowRef": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.shallowRef),
-/* harmony export */   "stop": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.stop),
-/* harmony export */   "toRaw": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRaw),
-/* harmony export */   "toRef": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRef),
-/* harmony export */   "toRefs": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRefs),
-/* harmony export */   "triggerRef": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.triggerRef),
-/* harmony export */   "unref": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.unref),
-/* harmony export */   "camelize": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.camelize),
-/* harmony export */   "capitalize": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.capitalize),
-/* harmony export */   "normalizeClass": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.normalizeClass),
-/* harmony export */   "normalizeProps": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.normalizeProps),
-/* harmony export */   "normalizeStyle": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.normalizeStyle),
-/* harmony export */   "toDisplayString": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.toDisplayString),
-/* harmony export */   "toHandlerKey": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.toHandlerKey),
 /* harmony export */   "BaseTransition": () => (/* binding */ BaseTransition),
 /* harmony export */   "Comment": () => (/* binding */ Comment),
+/* harmony export */   "EffectScope": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.EffectScope),
 /* harmony export */   "Fragment": () => (/* binding */ Fragment),
 /* harmony export */   "KeepAlive": () => (/* binding */ KeepAlive),
+/* harmony export */   "ReactiveEffect": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.ReactiveEffect),
 /* harmony export */   "Static": () => (/* binding */ Static),
 /* harmony export */   "Suspense": () => (/* binding */ Suspense),
 /* harmony export */   "Teleport": () => (/* binding */ Teleport),
 /* harmony export */   "Text": () => (/* binding */ Text),
 /* harmony export */   "callWithAsyncErrorHandling": () => (/* binding */ callWithAsyncErrorHandling),
 /* harmony export */   "callWithErrorHandling": () => (/* binding */ callWithErrorHandling),
+/* harmony export */   "camelize": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.camelize),
+/* harmony export */   "capitalize": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.capitalize),
 /* harmony export */   "cloneVNode": () => (/* binding */ cloneVNode),
 /* harmony export */   "compatUtils": () => (/* binding */ compatUtils),
+/* harmony export */   "computed": () => (/* binding */ computed),
 /* harmony export */   "createBlock": () => (/* binding */ createBlock),
 /* harmony export */   "createCommentVNode": () => (/* binding */ createCommentVNode),
 /* harmony export */   "createElementBlock": () => (/* binding */ createElementBlock),
@@ -7230,13 +7222,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "createStaticVNode": () => (/* binding */ createStaticVNode),
 /* harmony export */   "createTextVNode": () => (/* binding */ createTextVNode),
 /* harmony export */   "createVNode": () => (/* binding */ createVNode),
+/* harmony export */   "customRef": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.customRef),
 /* harmony export */   "defineAsyncComponent": () => (/* binding */ defineAsyncComponent),
 /* harmony export */   "defineComponent": () => (/* binding */ defineComponent),
 /* harmony export */   "defineEmits": () => (/* binding */ defineEmits),
 /* harmony export */   "defineExpose": () => (/* binding */ defineExpose),
 /* harmony export */   "defineProps": () => (/* binding */ defineProps),
 /* harmony export */   "devtools": () => (/* binding */ devtools),
+/* harmony export */   "effect": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.effect),
+/* harmony export */   "effectScope": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.effectScope),
 /* harmony export */   "getCurrentInstance": () => (/* binding */ getCurrentInstance),
+/* harmony export */   "getCurrentScope": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.getCurrentScope),
 /* harmony export */   "getTransitionRawChildren": () => (/* binding */ getTransitionRawChildren),
 /* harmony export */   "guardReactiveProps": () => (/* binding */ guardReactiveProps),
 /* harmony export */   "h": () => (/* binding */ h),
@@ -7244,11 +7240,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "initCustomFormatter": () => (/* binding */ initCustomFormatter),
 /* harmony export */   "inject": () => (/* binding */ inject),
 /* harmony export */   "isMemoSame": () => (/* binding */ isMemoSame),
+/* harmony export */   "isProxy": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isProxy),
+/* harmony export */   "isReactive": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReactive),
+/* harmony export */   "isReadonly": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReadonly),
+/* harmony export */   "isRef": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef),
 /* harmony export */   "isRuntimeOnly": () => (/* binding */ isRuntimeOnly),
+/* harmony export */   "isShallow": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isShallow),
 /* harmony export */   "isVNode": () => (/* binding */ isVNode),
+/* harmony export */   "markRaw": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.markRaw),
 /* harmony export */   "mergeDefaults": () => (/* binding */ mergeDefaults),
 /* harmony export */   "mergeProps": () => (/* binding */ mergeProps),
 /* harmony export */   "nextTick": () => (/* binding */ nextTick),
+/* harmony export */   "normalizeClass": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.normalizeClass),
+/* harmony export */   "normalizeProps": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.normalizeProps),
+/* harmony export */   "normalizeStyle": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.normalizeStyle),
 /* harmony export */   "onActivated": () => (/* binding */ onActivated),
 /* harmony export */   "onBeforeMount": () => (/* binding */ onBeforeMount),
 /* harmony export */   "onBeforeUnmount": () => (/* binding */ onBeforeUnmount),
@@ -7258,14 +7263,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "onMounted": () => (/* binding */ onMounted),
 /* harmony export */   "onRenderTracked": () => (/* binding */ onRenderTracked),
 /* harmony export */   "onRenderTriggered": () => (/* binding */ onRenderTriggered),
+/* harmony export */   "onScopeDispose": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.onScopeDispose),
 /* harmony export */   "onServerPrefetch": () => (/* binding */ onServerPrefetch),
 /* harmony export */   "onUnmounted": () => (/* binding */ onUnmounted),
 /* harmony export */   "onUpdated": () => (/* binding */ onUpdated),
 /* harmony export */   "openBlock": () => (/* binding */ openBlock),
 /* harmony export */   "popScopeId": () => (/* binding */ popScopeId),
 /* harmony export */   "provide": () => (/* binding */ provide),
+/* harmony export */   "proxyRefs": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.proxyRefs),
 /* harmony export */   "pushScopeId": () => (/* binding */ pushScopeId),
 /* harmony export */   "queuePostFlushCb": () => (/* binding */ queuePostFlushCb),
+/* harmony export */   "reactive": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.reactive),
+/* harmony export */   "readonly": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.readonly),
+/* harmony export */   "ref": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.ref),
 /* harmony export */   "registerRuntimeCompiler": () => (/* binding */ registerRuntimeCompiler),
 /* harmony export */   "renderList": () => (/* binding */ renderList),
 /* harmony export */   "renderSlot": () => (/* binding */ renderSlot),
@@ -7277,10 +7287,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "setBlockTracking": () => (/* binding */ setBlockTracking),
 /* harmony export */   "setDevtoolsHook": () => (/* binding */ setDevtoolsHook),
 /* harmony export */   "setTransitionHooks": () => (/* binding */ setTransitionHooks),
+/* harmony export */   "shallowReactive": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.shallowReactive),
+/* harmony export */   "shallowReadonly": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.shallowReadonly),
+/* harmony export */   "shallowRef": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.shallowRef),
 /* harmony export */   "ssrContextKey": () => (/* binding */ ssrContextKey),
 /* harmony export */   "ssrUtils": () => (/* binding */ ssrUtils),
+/* harmony export */   "stop": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.stop),
+/* harmony export */   "toDisplayString": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.toDisplayString),
+/* harmony export */   "toHandlerKey": () => (/* reexport safe */ _vue_shared__WEBPACK_IMPORTED_MODULE_1__.toHandlerKey),
 /* harmony export */   "toHandlers": () => (/* binding */ toHandlers),
+/* harmony export */   "toRaw": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRaw),
+/* harmony export */   "toRef": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRef),
+/* harmony export */   "toRefs": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRefs),
 /* harmony export */   "transformVNodeArgs": () => (/* binding */ transformVNodeArgs),
+/* harmony export */   "triggerRef": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.triggerRef),
+/* harmony export */   "unref": () => (/* reexport safe */ _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.unref),
 /* harmony export */   "useAttrs": () => (/* binding */ useAttrs),
 /* harmony export */   "useSSRContext": () => (/* binding */ useSSRContext),
 /* harmony export */   "useSlots": () => (/* binding */ useSlots),
@@ -7304,6 +7325,432 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+const stack = [];
+function pushWarningContext(vnode) {
+    stack.push(vnode);
+}
+function popWarningContext() {
+    stack.pop();
+}
+function warn(msg, ...args) {
+    // avoid props formatting or warn handler tracking deps that might be mutated
+    // during patch, leading to infinite recursion.
+    (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.pauseTracking)();
+    const instance = stack.length ? stack[stack.length - 1].component : null;
+    const appWarnHandler = instance && instance.appContext.config.warnHandler;
+    const trace = getComponentTrace();
+    if (appWarnHandler) {
+        callWithErrorHandling(appWarnHandler, instance, 11 /* APP_WARN_HANDLER */, [
+            msg + args.join(''),
+            instance && instance.proxy,
+            trace
+                .map(({ vnode }) => `at <${formatComponentName(instance, vnode.type)}>`)
+                .join('\n'),
+            trace
+        ]);
+    }
+    else {
+        const warnArgs = [`[Vue warn]: ${msg}`, ...args];
+        /* istanbul ignore if */
+        if (trace.length &&
+            // avoid spamming console during tests
+            !false) {
+            warnArgs.push(`\n`, ...formatTrace(trace));
+        }
+        console.warn(...warnArgs);
+    }
+    (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.resetTracking)();
+}
+function getComponentTrace() {
+    let currentVNode = stack[stack.length - 1];
+    if (!currentVNode) {
+        return [];
+    }
+    // we can't just use the stack because it will be incomplete during updates
+    // that did not start from the root. Re-construct the parent chain using
+    // instance parent pointers.
+    const normalizedStack = [];
+    while (currentVNode) {
+        const last = normalizedStack[0];
+        if (last && last.vnode === currentVNode) {
+            last.recurseCount++;
+        }
+        else {
+            normalizedStack.push({
+                vnode: currentVNode,
+                recurseCount: 0
+            });
+        }
+        const parentInstance = currentVNode.component && currentVNode.component.parent;
+        currentVNode = parentInstance && parentInstance.vnode;
+    }
+    return normalizedStack;
+}
+/* istanbul ignore next */
+function formatTrace(trace) {
+    const logs = [];
+    trace.forEach((entry, i) => {
+        logs.push(...(i === 0 ? [] : [`\n`]), ...formatTraceEntry(entry));
+    });
+    return logs;
+}
+function formatTraceEntry({ vnode, recurseCount }) {
+    const postfix = recurseCount > 0 ? `... (${recurseCount} recursive calls)` : ``;
+    const isRoot = vnode.component ? vnode.component.parent == null : false;
+    const open = ` at <${formatComponentName(vnode.component, vnode.type, isRoot)}`;
+    const close = `>` + postfix;
+    return vnode.props
+        ? [open, ...formatProps(vnode.props), close]
+        : [open + close];
+}
+/* istanbul ignore next */
+function formatProps(props) {
+    const res = [];
+    const keys = Object.keys(props);
+    keys.slice(0, 3).forEach(key => {
+        res.push(...formatProp(key, props[key]));
+    });
+    if (keys.length > 3) {
+        res.push(` ...`);
+    }
+    return res;
+}
+/* istanbul ignore next */
+function formatProp(key, value, raw) {
+    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(value)) {
+        value = JSON.stringify(value);
+        return raw ? value : [`${key}=${value}`];
+    }
+    else if (typeof value === 'number' ||
+        typeof value === 'boolean' ||
+        value == null) {
+        return raw ? value : [`${key}=${value}`];
+    }
+    else if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(value)) {
+        value = formatProp(key, (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRaw)(value.value), true);
+        return raw ? value : [`${key}=Ref<`, value, `>`];
+    }
+    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(value)) {
+        return [`${key}=fn${value.name ? `<${value.name}>` : ``}`];
+    }
+    else {
+        value = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRaw)(value);
+        return raw ? value : [`${key}=`, value];
+    }
+}
+
+const ErrorTypeStrings = {
+    ["sp" /* SERVER_PREFETCH */]: 'serverPrefetch hook',
+    ["bc" /* BEFORE_CREATE */]: 'beforeCreate hook',
+    ["c" /* CREATED */]: 'created hook',
+    ["bm" /* BEFORE_MOUNT */]: 'beforeMount hook',
+    ["m" /* MOUNTED */]: 'mounted hook',
+    ["bu" /* BEFORE_UPDATE */]: 'beforeUpdate hook',
+    ["u" /* UPDATED */]: 'updated',
+    ["bum" /* BEFORE_UNMOUNT */]: 'beforeUnmount hook',
+    ["um" /* UNMOUNTED */]: 'unmounted hook',
+    ["a" /* ACTIVATED */]: 'activated hook',
+    ["da" /* DEACTIVATED */]: 'deactivated hook',
+    ["ec" /* ERROR_CAPTURED */]: 'errorCaptured hook',
+    ["rtc" /* RENDER_TRACKED */]: 'renderTracked hook',
+    ["rtg" /* RENDER_TRIGGERED */]: 'renderTriggered hook',
+    [0 /* SETUP_FUNCTION */]: 'setup function',
+    [1 /* RENDER_FUNCTION */]: 'render function',
+    [2 /* WATCH_GETTER */]: 'watcher getter',
+    [3 /* WATCH_CALLBACK */]: 'watcher callback',
+    [4 /* WATCH_CLEANUP */]: 'watcher cleanup function',
+    [5 /* NATIVE_EVENT_HANDLER */]: 'native event handler',
+    [6 /* COMPONENT_EVENT_HANDLER */]: 'component event handler',
+    [7 /* VNODE_HOOK */]: 'vnode hook',
+    [8 /* DIRECTIVE_HOOK */]: 'directive hook',
+    [9 /* TRANSITION_HOOK */]: 'transition hook',
+    [10 /* APP_ERROR_HANDLER */]: 'app errorHandler',
+    [11 /* APP_WARN_HANDLER */]: 'app warnHandler',
+    [12 /* FUNCTION_REF */]: 'ref function',
+    [13 /* ASYNC_COMPONENT_LOADER */]: 'async component loader',
+    [14 /* SCHEDULER */]: 'scheduler flush. This is likely a Vue internals bug. ' +
+        'Please open an issue at https://new-issue.vuejs.org/?repo=vuejs/core'
+};
+function callWithErrorHandling(fn, instance, type, args) {
+    let res;
+    try {
+        res = args ? fn(...args) : fn();
+    }
+    catch (err) {
+        handleError(err, instance, type);
+    }
+    return res;
+}
+function callWithAsyncErrorHandling(fn, instance, type, args) {
+    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(fn)) {
+        const res = callWithErrorHandling(fn, instance, type, args);
+        if (res && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isPromise)(res)) {
+            res.catch(err => {
+                handleError(err, instance, type);
+            });
+        }
+        return res;
+    }
+    const values = [];
+    for (let i = 0; i < fn.length; i++) {
+        values.push(callWithAsyncErrorHandling(fn[i], instance, type, args));
+    }
+    return values;
+}
+function handleError(err, instance, type, throwInDev = true) {
+    const contextVNode = instance ? instance.vnode : null;
+    if (instance) {
+        let cur = instance.parent;
+        // the exposed instance is the render proxy to keep it consistent with 2.x
+        const exposedInstance = instance.proxy;
+        // in production the hook receives only the error code
+        const errorInfo = ( true) ? ErrorTypeStrings[type] : 0;
+        while (cur) {
+            const errorCapturedHooks = cur.ec;
+            if (errorCapturedHooks) {
+                for (let i = 0; i < errorCapturedHooks.length; i++) {
+                    if (errorCapturedHooks[i](err, exposedInstance, errorInfo) === false) {
+                        return;
+                    }
+                }
+            }
+            cur = cur.parent;
+        }
+        // app-level handling
+        const appErrorHandler = instance.appContext.config.errorHandler;
+        if (appErrorHandler) {
+            callWithErrorHandling(appErrorHandler, null, 10 /* APP_ERROR_HANDLER */, [err, exposedInstance, errorInfo]);
+            return;
+        }
+    }
+    logError(err, type, contextVNode, throwInDev);
+}
+function logError(err, type, contextVNode, throwInDev = true) {
+    if ((true)) {
+        const info = ErrorTypeStrings[type];
+        if (contextVNode) {
+            pushWarningContext(contextVNode);
+        }
+        warn(`Unhandled error${info ? ` during execution of ${info}` : ``}`);
+        if (contextVNode) {
+            popWarningContext();
+        }
+        // crash in dev by default so it's more noticeable
+        if (throwInDev) {
+            throw err;
+        }
+        else {
+            console.error(err);
+        }
+    }
+    else {}
+}
+
+let isFlushing = false;
+let isFlushPending = false;
+const queue = [];
+let flushIndex = 0;
+const pendingPreFlushCbs = [];
+let activePreFlushCbs = null;
+let preFlushIndex = 0;
+const pendingPostFlushCbs = [];
+let activePostFlushCbs = null;
+let postFlushIndex = 0;
+const resolvedPromise = Promise.resolve();
+let currentFlushPromise = null;
+let currentPreFlushParentJob = null;
+const RECURSION_LIMIT = 100;
+function nextTick(fn) {
+    const p = currentFlushPromise || resolvedPromise;
+    return fn ? p.then(this ? fn.bind(this) : fn) : p;
+}
+// #2768
+// Use binary-search to find a suitable position in the queue,
+// so that the queue maintains the increasing order of job's id,
+// which can prevent the job from being skipped and also can avoid repeated patching.
+function findInsertionIndex(id) {
+    // the start index should be `flushIndex + 1`
+    let start = flushIndex + 1;
+    let end = queue.length;
+    while (start < end) {
+        const middle = (start + end) >>> 1;
+        const middleJobId = getId(queue[middle]);
+        middleJobId < id ? (start = middle + 1) : (end = middle);
+    }
+    return start;
+}
+function queueJob(job) {
+    // the dedupe search uses the startIndex argument of Array.includes()
+    // by default the search index includes the current job that is being run
+    // so it cannot recursively trigger itself again.
+    // if the job is a watch() callback, the search will start with a +1 index to
+    // allow it recursively trigger itself - it is the user's responsibility to
+    // ensure it doesn't end up in an infinite loop.
+    if ((!queue.length ||
+        !queue.includes(job, isFlushing && job.allowRecurse ? flushIndex + 1 : flushIndex)) &&
+        job !== currentPreFlushParentJob) {
+        if (job.id == null) {
+            queue.push(job);
+        }
+        else {
+            queue.splice(findInsertionIndex(job.id), 0, job);
+        }
+        queueFlush();
+    }
+}
+function queueFlush() {
+    if (!isFlushing && !isFlushPending) {
+        isFlushPending = true;
+        currentFlushPromise = resolvedPromise.then(flushJobs);
+    }
+}
+function invalidateJob(job) {
+    const i = queue.indexOf(job);
+    if (i > flushIndex) {
+        queue.splice(i, 1);
+    }
+}
+function queueCb(cb, activeQueue, pendingQueue, index) {
+    if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(cb)) {
+        if (!activeQueue ||
+            !activeQueue.includes(cb, cb.allowRecurse ? index + 1 : index)) {
+            pendingQueue.push(cb);
+        }
+    }
+    else {
+        // if cb is an array, it is a component lifecycle hook which can only be
+        // triggered by a job, which is already deduped in the main queue, so
+        // we can skip duplicate check here to improve perf
+        pendingQueue.push(...cb);
+    }
+    queueFlush();
+}
+function queuePreFlushCb(cb) {
+    queueCb(cb, activePreFlushCbs, pendingPreFlushCbs, preFlushIndex);
+}
+function queuePostFlushCb(cb) {
+    queueCb(cb, activePostFlushCbs, pendingPostFlushCbs, postFlushIndex);
+}
+function flushPreFlushCbs(seen, parentJob = null) {
+    if (pendingPreFlushCbs.length) {
+        currentPreFlushParentJob = parentJob;
+        activePreFlushCbs = [...new Set(pendingPreFlushCbs)];
+        pendingPreFlushCbs.length = 0;
+        if ((true)) {
+            seen = seen || new Map();
+        }
+        for (preFlushIndex = 0; preFlushIndex < activePreFlushCbs.length; preFlushIndex++) {
+            if (( true) &&
+                checkRecursiveUpdates(seen, activePreFlushCbs[preFlushIndex])) {
+                continue;
+            }
+            activePreFlushCbs[preFlushIndex]();
+        }
+        activePreFlushCbs = null;
+        preFlushIndex = 0;
+        currentPreFlushParentJob = null;
+        // recursively flush until it drains
+        flushPreFlushCbs(seen, parentJob);
+    }
+}
+function flushPostFlushCbs(seen) {
+    if (pendingPostFlushCbs.length) {
+        const deduped = [...new Set(pendingPostFlushCbs)];
+        pendingPostFlushCbs.length = 0;
+        // #1947 already has active queue, nested flushPostFlushCbs call
+        if (activePostFlushCbs) {
+            activePostFlushCbs.push(...deduped);
+            return;
+        }
+        activePostFlushCbs = deduped;
+        if ((true)) {
+            seen = seen || new Map();
+        }
+        activePostFlushCbs.sort((a, b) => getId(a) - getId(b));
+        for (postFlushIndex = 0; postFlushIndex < activePostFlushCbs.length; postFlushIndex++) {
+            if (( true) &&
+                checkRecursiveUpdates(seen, activePostFlushCbs[postFlushIndex])) {
+                continue;
+            }
+            activePostFlushCbs[postFlushIndex]();
+        }
+        activePostFlushCbs = null;
+        postFlushIndex = 0;
+    }
+}
+const getId = (job) => job.id == null ? Infinity : job.id;
+function flushJobs(seen) {
+    isFlushPending = false;
+    isFlushing = true;
+    if ((true)) {
+        seen = seen || new Map();
+    }
+    flushPreFlushCbs(seen);
+    // Sort queue before flush.
+    // This ensures that:
+    // 1. Components are updated from parent to child. (because parent is always
+    //    created before the child so its render effect will have smaller
+    //    priority number)
+    // 2. If a component is unmounted during a parent component's update,
+    //    its update can be skipped.
+    queue.sort((a, b) => getId(a) - getId(b));
+    // conditional usage of checkRecursiveUpdate must be determined out of
+    // try ... catch block since Rollup by default de-optimizes treeshaking
+    // inside try-catch. This can leave all warning code unshaked. Although
+    // they would get eventually shaken by a minifier like terser, some minifiers
+    // would fail to do that (e.g. https://github.com/evanw/esbuild/issues/1610)
+    const check = ( true)
+        ? (job) => checkRecursiveUpdates(seen, job)
+        : 0;
+    try {
+        for (flushIndex = 0; flushIndex < queue.length; flushIndex++) {
+            const job = queue[flushIndex];
+            if (job && job.active !== false) {
+                if (( true) && check(job)) {
+                    continue;
+                }
+                // console.log(`running:`, job.id)
+                callWithErrorHandling(job, null, 14 /* SCHEDULER */);
+            }
+        }
+    }
+    finally {
+        flushIndex = 0;
+        queue.length = 0;
+        flushPostFlushCbs(seen);
+        isFlushing = false;
+        currentFlushPromise = null;
+        // some postFlushCb queued jobs!
+        // keep flushing until it drains.
+        if (queue.length ||
+            pendingPreFlushCbs.length ||
+            pendingPostFlushCbs.length) {
+            flushJobs(seen);
+        }
+    }
+}
+function checkRecursiveUpdates(seen, fn) {
+    if (!seen.has(fn)) {
+        seen.set(fn, 1);
+    }
+    else {
+        const count = seen.get(fn);
+        if (count > RECURSION_LIMIT) {
+            const instance = fn.ownerInstance;
+            const componentName = instance && getComponentName(instance.type);
+            warn(`Maximum recursive updates exceeded${componentName ? ` in component <${componentName}>` : ``}. ` +
+                `This means you have a reactive effect that is mutating its own ` +
+                `dependencies and thus recursively triggering itself. Possible sources ` +
+                `include component template, render function, updated hook or ` +
+                `watcher source function.`);
+            return true;
+        }
+        else {
+            seen.set(fn, count + 1);
+        }
+    }
+}
 
 /* eslint-disable no-restricted-globals */
 let isHmrUpdating = false;
@@ -7458,6 +7905,7 @@ function emit(event, ...args) {
     }
 }
 function setDevtoolsHook(hook, target) {
+    var _a, _b;
     devtools = hook;
     if (devtools) {
         devtools.enabled = true;
@@ -7470,7 +7918,10 @@ function setDevtoolsHook(hook, target) {
     // (#4815)
     // eslint-disable-next-line no-restricted-globals
     typeof window !== 'undefined' &&
-        !navigator.userAgent.includes('jsdom')) {
+        // some envs mock window but not fully
+        window.HTMLElement &&
+        // also exclude jsdom
+        !((_b = (_a = window.navigator) === null || _a === void 0 ? void 0 : _a.userAgent) === null || _b === void 0 ? void 0 : _b.includes('jsdom'))) {
         const replay = (target.__VUE_DEVTOOLS_HOOK_REPLAY__ =
             target.__VUE_DEVTOOLS_HOOK_REPLAY__ || []);
         replay.push((newHook) => {
@@ -8486,7 +8937,7 @@ function inject(key, defaultValue, treatDefaultAsFactory = false) {
     if (instance) {
         // #2400
         // to support `app.use` plugins,
-        // fallback to appContext's `provides` if the intance is at root
+        // fallback to appContext's `provides` if the instance is at root
         const provides = instance.parent == null
             ? instance.vnode.appContext && instance.vnode.appContext.provides
             : instance.parent.provides;
@@ -8506,6 +8957,274 @@ function inject(key, defaultValue, treatDefaultAsFactory = false) {
     else if ((true)) {
         warn(`inject() can only be used inside setup() or functional components.`);
     }
+}
+
+// Simple effect.
+function watchEffect(effect, options) {
+    return doWatch(effect, null, options);
+}
+function watchPostEffect(effect, options) {
+    return doWatch(effect, null, (( true)
+        ? Object.assign(options || {}, { flush: 'post' })
+        : 0));
+}
+function watchSyncEffect(effect, options) {
+    return doWatch(effect, null, (( true)
+        ? Object.assign(options || {}, { flush: 'sync' })
+        : 0));
+}
+// initial value for watchers to trigger on undefined initial values
+const INITIAL_WATCHER_VALUE = {};
+// implementation
+function watch(source, cb, options) {
+    if (( true) && !(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(cb)) {
+        warn(`\`watch(fn, options?)\` signature has been moved to a separate API. ` +
+            `Use \`watchEffect(fn, options?)\` instead. \`watch\` now only ` +
+            `supports \`watch(source, cb, options?) signature.`);
+    }
+    return doWatch(source, cb, options);
+}
+function doWatch(source, cb, { immediate, deep, flush, onTrack, onTrigger } = _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ) {
+    if (( true) && !cb) {
+        if (immediate !== undefined) {
+            warn(`watch() "immediate" option is only respected when using the ` +
+                `watch(source, callback, options?) signature.`);
+        }
+        if (deep !== undefined) {
+            warn(`watch() "deep" option is only respected when using the ` +
+                `watch(source, callback, options?) signature.`);
+        }
+    }
+    const warnInvalidSource = (s) => {
+        warn(`Invalid watch source: `, s, `A watch source can only be a getter/effect function, a ref, ` +
+            `a reactive object, or an array of these types.`);
+    };
+    const instance = currentInstance;
+    let getter;
+    let forceTrigger = false;
+    let isMultiSource = false;
+    if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(source)) {
+        getter = () => source.value;
+        forceTrigger = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isShallow)(source);
+    }
+    else if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReactive)(source)) {
+        getter = () => source;
+        deep = true;
+    }
+    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(source)) {
+        isMultiSource = true;
+        forceTrigger = source.some(_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReactive);
+        getter = () => source.map(s => {
+            if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(s)) {
+                return s.value;
+            }
+            else if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReactive)(s)) {
+                return traverse(s);
+            }
+            else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(s)) {
+                return callWithErrorHandling(s, instance, 2 /* WATCH_GETTER */);
+            }
+            else {
+                ( true) && warnInvalidSource(s);
+            }
+        });
+    }
+    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(source)) {
+        if (cb) {
+            // getter with cb
+            getter = () => callWithErrorHandling(source, instance, 2 /* WATCH_GETTER */);
+        }
+        else {
+            // no cb -> simple effect
+            getter = () => {
+                if (instance && instance.isUnmounted) {
+                    return;
+                }
+                if (cleanup) {
+                    cleanup();
+                }
+                return callWithAsyncErrorHandling(source, instance, 3 /* WATCH_CALLBACK */, [onCleanup]);
+            };
+        }
+    }
+    else {
+        getter = _vue_shared__WEBPACK_IMPORTED_MODULE_1__.NOOP;
+        ( true) && warnInvalidSource(source);
+    }
+    if (cb && deep) {
+        const baseGetter = getter;
+        getter = () => traverse(baseGetter());
+    }
+    let cleanup;
+    let onCleanup = (fn) => {
+        cleanup = effect.onStop = () => {
+            callWithErrorHandling(fn, instance, 4 /* WATCH_CLEANUP */);
+        };
+    };
+    // in SSR there is no need to setup an actual effect, and it should be noop
+    // unless it's eager
+    if (isInSSRComponentSetup) {
+        // we will also not call the invalidate callback (+ runner is not set up)
+        onCleanup = _vue_shared__WEBPACK_IMPORTED_MODULE_1__.NOOP;
+        if (!cb) {
+            getter();
+        }
+        else if (immediate) {
+            callWithAsyncErrorHandling(cb, instance, 3 /* WATCH_CALLBACK */, [
+                getter(),
+                isMultiSource ? [] : undefined,
+                onCleanup
+            ]);
+        }
+        return _vue_shared__WEBPACK_IMPORTED_MODULE_1__.NOOP;
+    }
+    let oldValue = isMultiSource ? [] : INITIAL_WATCHER_VALUE;
+    const job = () => {
+        if (!effect.active) {
+            return;
+        }
+        if (cb) {
+            // watch(source, cb)
+            const newValue = effect.run();
+            if (deep ||
+                forceTrigger ||
+                (isMultiSource
+                    ? newValue.some((v, i) => (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasChanged)(v, oldValue[i]))
+                    : (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasChanged)(newValue, oldValue)) ||
+                (false  )) {
+                // cleanup before running cb again
+                if (cleanup) {
+                    cleanup();
+                }
+                callWithAsyncErrorHandling(cb, instance, 3 /* WATCH_CALLBACK */, [
+                    newValue,
+                    // pass undefined as the old value when it's changed for the first time
+                    oldValue === INITIAL_WATCHER_VALUE ? undefined : oldValue,
+                    onCleanup
+                ]);
+                oldValue = newValue;
+            }
+        }
+        else {
+            // watchEffect
+            effect.run();
+        }
+    };
+    // important: mark the job as a watcher callback so that scheduler knows
+    // it is allowed to self-trigger (#1727)
+    job.allowRecurse = !!cb;
+    let scheduler;
+    if (flush === 'sync') {
+        scheduler = job; // the scheduler function gets called directly
+    }
+    else if (flush === 'post') {
+        scheduler = () => queuePostRenderEffect(job, instance && instance.suspense);
+    }
+    else {
+        // default: 'pre'
+        scheduler = () => {
+            if (!instance || instance.isMounted) {
+                queuePreFlushCb(job);
+            }
+            else {
+                // with 'pre' option, the first call must happen before
+                // the component is mounted so it is called synchronously.
+                job();
+            }
+        };
+    }
+    const effect = new _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.ReactiveEffect(getter, scheduler);
+    if ((true)) {
+        effect.onTrack = onTrack;
+        effect.onTrigger = onTrigger;
+    }
+    // initial run
+    if (cb) {
+        if (immediate) {
+            job();
+        }
+        else {
+            oldValue = effect.run();
+        }
+    }
+    else if (flush === 'post') {
+        queuePostRenderEffect(effect.run.bind(effect), instance && instance.suspense);
+    }
+    else {
+        effect.run();
+    }
+    return () => {
+        effect.stop();
+        if (instance && instance.scope) {
+            (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.remove)(instance.scope.effects, effect);
+        }
+    };
+}
+// this.$watch
+function instanceWatch(source, value, options) {
+    const publicThis = this.proxy;
+    const getter = (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(source)
+        ? source.includes('.')
+            ? createPathGetter(publicThis, source)
+            : () => publicThis[source]
+        : source.bind(publicThis, publicThis);
+    let cb;
+    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(value)) {
+        cb = value;
+    }
+    else {
+        cb = value.handler;
+        options = value;
+    }
+    const cur = currentInstance;
+    setCurrentInstance(this);
+    const res = doWatch(getter, cb.bind(publicThis), options);
+    if (cur) {
+        setCurrentInstance(cur);
+    }
+    else {
+        unsetCurrentInstance();
+    }
+    return res;
+}
+function createPathGetter(ctx, path) {
+    const segments = path.split('.');
+    return () => {
+        let cur = ctx;
+        for (let i = 0; i < segments.length && cur; i++) {
+            cur = cur[segments[i]];
+        }
+        return cur;
+    };
+}
+function traverse(value, seen) {
+    if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isObject)(value) || value["__v_skip" /* SKIP */]) {
+        return value;
+    }
+    seen = seen || new Set();
+    if (seen.has(value)) {
+        return value;
+    }
+    seen.add(value);
+    if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(value)) {
+        traverse(value.value, seen);
+    }
+    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(value)) {
+        for (let i = 0; i < value.length; i++) {
+            traverse(value[i], seen);
+        }
+    }
+    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isSet)(value) || (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isMap)(value)) {
+        value.forEach((v) => {
+            traverse(v, seen);
+        });
+    }
+    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(value)) {
+        for (const key in value) {
+            traverse(value[key], seen);
+        }
+    }
+    return value;
 }
 
 function useTransitionState() {
@@ -8565,7 +9284,9 @@ const BaseTransitionImpl = {
             const rawProps = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRaw)(props);
             const { mode } = rawProps;
             // check mode
-            if (( true) && mode && !['in-out', 'out-in', 'default'].includes(mode)) {
+            if (( true) &&
+                mode &&
+                mode !== 'in-out' && mode !== 'out-in' && mode !== 'default') {
                 warn(`invalid <transition> mode: ${mode}`);
             }
             // at this point children has a guaranteed length of 1.
@@ -9038,7 +9759,7 @@ const KeepAliveImpl = {
         function unmount(vnode) {
             // reset the shapeFlag so it can be properly unmounted
             resetShapeFlag(vnode);
-            _unmount(vnode, instance, parentSuspense);
+            _unmount(vnode, instance, parentSuspense, true);
         }
         function pruneCache(filter) {
             cache.forEach((vnode, key) => {
@@ -9177,7 +9898,7 @@ function matches(pattern, name) {
         return pattern.some((p) => matches(p, name));
     }
     else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(pattern)) {
-        return pattern.split(',').indexOf(name) > -1;
+        return pattern.split(',').includes(name);
     }
     else if (pattern.test) {
         return pattern.test(name);
@@ -9205,7 +9926,7 @@ function registerKeepAliveHook(hook, type, target = currentInstance) {
                 }
                 current = current.parent;
             }
-            hook();
+            return hook();
         });
     injectHook(type, wrappedHook, target);
     // In addition to registering it on the target instance, we walk up the parent
@@ -9432,7 +10153,7 @@ function applyOptions(instance) {
                         warn(`Write operation failed: computed property "${key}" is readonly.`);
                     }
                     : 0;
-            const c = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.computed)({
+            const c = computed({
                 get,
                 set
             });
@@ -9833,7 +10554,9 @@ function updateProps(instance, rawProps, rawPrevProps, optimized) {
         // attrs point to the same object so it should already have been updated.
         if (attrs !== rawCurrentProps) {
             for (const key in attrs) {
-                if (!rawProps || !(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(rawProps, key)) {
+                if (!rawProps ||
+                    (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(rawProps, key) &&
+                        (!false ))) {
                     delete attrs[key];
                     hasAttrsChanged = true;
                 }
@@ -9871,7 +10594,7 @@ function setFullProps(instance, rawProps, props, attrs) {
                 }
             }
             else if (!isEmitListener(instance.emitsOptions, key)) {
-                if (value !== attrs[key]) {
+                if (!(key in attrs) || value !== attrs[key]) {
                     attrs[key] = value;
                     hasAttrsChanged = true;
                 }
@@ -10284,9 +11007,8 @@ return withDirectives(h(comp), [
   [bar, this.y]
 ])
 */
-const isBuiltInDirective = /*#__PURE__*/ (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.makeMap)('bind,cloak,else-if,else,for,html,if,model,on,once,pre,show,slot,text,memo');
 function validateDirectiveName(name) {
-    if (isBuiltInDirective(name)) {
+    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isBuiltInDirective)(name)) {
         warn('Do not use built-in directive ids as custom directive id: ' + name);
     }
 }
@@ -10513,6 +11235,102 @@ function createAppAPI(render, hydrate) {
     };
 }
 
+/**
+ * Function for handling a template ref
+ */
+function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
+    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(rawRef)) {
+        rawRef.forEach((r, i) => setRef(r, oldRawRef && ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(oldRawRef) ? oldRawRef[i] : oldRawRef), parentSuspense, vnode, isUnmount));
+        return;
+    }
+    if (isAsyncWrapper(vnode) && !isUnmount) {
+        // when mounting async components, nothing needs to be done,
+        // because the template ref is forwarded to inner component
+        return;
+    }
+    const refValue = vnode.shapeFlag & 4 /* STATEFUL_COMPONENT */
+        ? getExposeProxy(vnode.component) || vnode.component.proxy
+        : vnode.el;
+    const value = isUnmount ? null : refValue;
+    const { i: owner, r: ref } = rawRef;
+    if (( true) && !owner) {
+        warn(`Missing ref owner context. ref cannot be used on hoisted vnodes. ` +
+            `A vnode with ref must be created inside the render function.`);
+        return;
+    }
+    const oldRef = oldRawRef && oldRawRef.r;
+    const refs = owner.refs === _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ ? (owner.refs = {}) : owner.refs;
+    const setupState = owner.setupState;
+    // dynamic ref changed. unset old ref
+    if (oldRef != null && oldRef !== ref) {
+        if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(oldRef)) {
+            refs[oldRef] = null;
+            if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(setupState, oldRef)) {
+                setupState[oldRef] = null;
+            }
+        }
+        else if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(oldRef)) {
+            oldRef.value = null;
+        }
+    }
+    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(ref)) {
+        callWithErrorHandling(ref, owner, 12 /* FUNCTION_REF */, [value, refs]);
+    }
+    else {
+        const _isString = (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(ref);
+        const _isRef = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(ref);
+        if (_isString || _isRef) {
+            const doSet = () => {
+                if (rawRef.f) {
+                    const existing = _isString ? refs[ref] : ref.value;
+                    if (isUnmount) {
+                        (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(existing) && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.remove)(existing, refValue);
+                    }
+                    else {
+                        if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(existing)) {
+                            if (_isString) {
+                                refs[ref] = [refValue];
+                            }
+                            else {
+                                ref.value = [refValue];
+                                if (rawRef.k)
+                                    refs[rawRef.k] = ref.value;
+                            }
+                        }
+                        else if (!existing.includes(refValue)) {
+                            existing.push(refValue);
+                        }
+                    }
+                }
+                else if (_isString) {
+                    refs[ref] = value;
+                    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(setupState, ref)) {
+                        setupState[ref] = value;
+                    }
+                }
+                else if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(ref)) {
+                    ref.value = value;
+                    if (rawRef.k)
+                        refs[rawRef.k] = value;
+                }
+                else if ((true)) {
+                    warn('Invalid template ref type:', ref, `(${typeof ref})`);
+                }
+            };
+            if (value) {
+                doSet.id = -1;
+                queuePostRenderEffect(doSet, parentSuspense);
+            }
+            else {
+                doSet();
+            }
+        }
+        else if ((true)) {
+            warn('Invalid template ref type:', ref, `(${typeof ref})`);
+        }
+    }
+}
+
 let hasMismatch = false;
 const isSVGContainer = (container) => /svg/.test(container.namespaceURI) && container.tagName !== 'foreignObject';
 const isComment = (node) => node.nodeType === 8 /* COMMENT */;
@@ -10672,7 +11490,8 @@ function createHydrationFunctions(rendererInternals) {
         // e.g. <option :value="obj">, <input type="checkbox" :true-value="1">
         const forcePatchValue = (type === 'input' && dirs) || type === 'option';
         // skip props & children if this is hoisted static nodes
-        if (forcePatchValue || patchFlag !== -1 /* HOISTED */) {
+        // #5405 in dev, always hydrate children for HMR
+        if (true /* HOISTED */) {
             if (dirs) {
                 invokeDirectiveHook(vnode, null, parentComponent, 'created');
             }
@@ -10839,6 +11658,7 @@ function createHydrationFunctions(rendererInternals) {
     return [hydrate, hydrateNode];
 }
 
+/* eslint-disable no-restricted-globals */
 let supported;
 let perf;
 function startMeasure(instance, type) {
@@ -10866,7 +11686,6 @@ function isSupported() {
     if (supported !== undefined) {
         return supported;
     }
-    /* eslint-disable no-restricted-globals */
     if (typeof window !== 'undefined' && window.performance) {
         supported = true;
         perf = window.performance;
@@ -10874,7 +11693,6 @@ function isSupported() {
     else {
         supported = false;
     }
-    /* eslint-enable no-restricted-globals */
     return supported;
 }
 
@@ -10895,7 +11713,7 @@ function initFeatureFlags() {
             `which expects these compile-time feature flags to be globally injected ` +
             `via the bundler config in order to get better tree-shaking in the ` +
             `production bundle.\n\n` +
-            `For more details, see http://link.vuejs.org/feature-flags.`);
+            `For more details, see https://link.vuejs.org/feature-flags.`);
     }
 }
 
@@ -11015,7 +11833,7 @@ function baseCreateRenderer(options, createHydrationFns) {
         }
     };
     const mountStaticNode = (n2, container, anchor, isSVG) => {
-        [n2.el, n2.anchor] = hostInsertStaticContent(n2.children, container, anchor, isSVG);
+        [n2.el, n2.anchor] = hostInsertStaticContent(n2.children, container, anchor, isSVG, n2.el, n2.anchor);
     };
     /**
      * Dev / HMR only
@@ -11176,12 +11994,15 @@ function baseCreateRenderer(options, createHydrationFns) {
         const oldProps = n1.props || _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ;
         const newProps = n2.props || _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ;
         let vnodeHook;
+        // disable recurse in beforeUpdate hooks
+        parentComponent && toggleRecurse(parentComponent, false);
         if ((vnodeHook = newProps.onVnodeBeforeUpdate)) {
             invokeVNodeHook(vnodeHook, parentComponent, n2, n1);
         }
         if (dirs) {
             invokeDirectiveHook(n2, n1, parentComponent, 'beforeUpdate');
         }
+        parentComponent && toggleRecurse(parentComponent, true);
         if (( true) && isHmrUpdating) {
             // HMR updated, force full diff
             patchFlag = 0;
@@ -11461,7 +12282,7 @@ function baseCreateRenderer(options, createHydrationFns) {
                 const { el, props } = initialVNode;
                 const { bm, m, parent } = instance;
                 const isAsyncWrapperVNode = isAsyncWrapper(initialVNode);
-                effect.allowRecurse = false;
+                toggleRecurse(instance, false);
                 // beforeMount hook
                 if (bm) {
                     (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.invokeArrayFns)(bm);
@@ -11471,7 +12292,7 @@ function baseCreateRenderer(options, createHydrationFns) {
                     (vnodeHook = props && props.onVnodeBeforeMount)) {
                     invokeVNodeHook(vnodeHook, parent, initialVNode);
                 }
-                effect.allowRecurse = true;
+                toggleRecurse(instance, true);
                 if (el && hydrateNode) {
                     // vnode has adopted host node - perform hydration instead of mount.
                     const hydrateSubTree = () => {
@@ -11553,7 +12374,7 @@ function baseCreateRenderer(options, createHydrationFns) {
                     pushWarningContext(next || instance.vnode);
                 }
                 // Disallow component effect recursion during pre-lifecycle hooks.
-                effect.allowRecurse = false;
+                toggleRecurse(instance, false);
                 if (next) {
                     next.el = vnode.el;
                     updateComponentPreRender(instance, next, optimized);
@@ -11569,7 +12390,7 @@ function baseCreateRenderer(options, createHydrationFns) {
                 if ((vnodeHook = next.props && next.props.onVnodeBeforeUpdate)) {
                     invokeVNodeHook(vnodeHook, parent, next, vnode);
                 }
-                effect.allowRecurse = true;
+                toggleRecurse(instance, true);
                 // render
                 if ((true)) {
                     startMeasure(instance, `render`);
@@ -11615,13 +12436,13 @@ function baseCreateRenderer(options, createHydrationFns) {
             }
         };
         // create reactive effect for rendering
-        const effect = new _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.ReactiveEffect(componentUpdateFn, () => queueJob(instance.update), instance.scope // track it in component's effect scope
-        );
+        const effect = (instance.effect = new _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.ReactiveEffect(componentUpdateFn, () => queueJob(instance.update), instance.scope // track it in component's effect scope
+        ));
         const update = (instance.update = effect.run.bind(effect));
         update.id = instance.uid;
         // allowRecurse
         // #1801, #2043 component render effects should allow recursive updates
-        effect.allowRecurse = update.allowRecurse = true;
+        toggleRecurse(instance, true);
         if ((true)) {
             effect.onTrack = instance.rtc
                 ? e => (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.invokeArrayFns)(instance.rtc, e)
@@ -12145,85 +12966,8 @@ function baseCreateRenderer(options, createHydrationFns) {
         createApp: createAppAPI(render, hydrate)
     };
 }
-function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
-    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(rawRef)) {
-        rawRef.forEach((r, i) => setRef(r, oldRawRef && ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(oldRawRef) ? oldRawRef[i] : oldRawRef), parentSuspense, vnode, isUnmount));
-        return;
-    }
-    if (isAsyncWrapper(vnode) && !isUnmount) {
-        // when mounting async components, nothing needs to be done,
-        // because the template ref is forwarded to inner component
-        return;
-    }
-    const refValue = vnode.shapeFlag & 4 /* STATEFUL_COMPONENT */
-        ? getExposeProxy(vnode.component) || vnode.component.proxy
-        : vnode.el;
-    const value = isUnmount ? null : refValue;
-    const { i: owner, r: ref } = rawRef;
-    if (( true) && !owner) {
-        warn(`Missing ref owner context. ref cannot be used on hoisted vnodes. ` +
-            `A vnode with ref must be created inside the render function.`);
-        return;
-    }
-    const oldRef = oldRawRef && oldRawRef.r;
-    const refs = owner.refs === _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ ? (owner.refs = {}) : owner.refs;
-    const setupState = owner.setupState;
-    // dynamic ref changed. unset old ref
-    if (oldRef != null && oldRef !== ref) {
-        if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(oldRef)) {
-            refs[oldRef] = null;
-            if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(setupState, oldRef)) {
-                setupState[oldRef] = null;
-            }
-        }
-        else if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(oldRef)) {
-            oldRef.value = null;
-        }
-    }
-    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(ref)) {
-        const doSet = () => {
-            {
-                refs[ref] = value;
-            }
-            if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(setupState, ref)) {
-                setupState[ref] = value;
-            }
-        };
-        // #1789: for non-null values, set them after render
-        // null values means this is unmount and it should not overwrite another
-        // ref with the same key
-        if (value) {
-            doSet.id = -1;
-            queuePostRenderEffect(doSet, parentSuspense);
-        }
-        else {
-            doSet();
-        }
-    }
-    else if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(ref)) {
-        const doSet = () => {
-            ref.value = value;
-        };
-        if (value) {
-            doSet.id = -1;
-            queuePostRenderEffect(doSet, parentSuspense);
-        }
-        else {
-            doSet();
-        }
-    }
-    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(ref)) {
-        callWithErrorHandling(ref, owner, 12 /* FUNCTION_REF */, [value, refs]);
-    }
-    else if ((true)) {
-        warn('Invalid template ref type:', value, `(${typeof value})`);
-    }
-}
-function invokeVNodeHook(hook, instance, vnode, prevVNode = null) {
-    callWithAsyncErrorHandling(hook, instance, 7 /* VNODE_HOOK */, [
-        vnode,
-        prevVNode
-    ]);
+function toggleRecurse({ effect, update }, allowed) {
+    effect.allowRecurse = update.allowRecurse = allowed;
 }
 /**
  * #1156
@@ -12233,8 +12977,8 @@ function invokeVNodeHook(hook, instance, vnode, prevVNode = null) {
  *
  * #2080
  * Inside keyed `template` fragment static children, if a fragment is moved,
- * the children will always moved so that need inherit el form previous nodes
- * to ensure correct moved position.
+ * the children will always be moved. Therefore, in order to ensure correct move
+ * position, el should be inherited from previous nodes.
  */
 function traverseStaticChildren(n1, n2, shallow = false) {
     const ch1 = n1.children;
@@ -12687,10 +13431,10 @@ const createVNodeWithArgsTransform = (...args) => {
 };
 const InternalObjectKey = `__vInternal`;
 const normalizeKey = ({ key }) => key != null ? key : null;
-const normalizeRef = ({ ref }) => {
+const normalizeRef = ({ ref, ref_key, ref_for }) => {
     return (ref != null
         ? (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(ref) || (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(ref) || (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(ref)
-            ? { i: currentRenderingInstance, r: ref }
+            ? { i: currentRenderingInstance, r: ref, k: ref_key, f: !!ref_for }
             : ref
         : null);
 };
@@ -12857,7 +13601,7 @@ function cloneVNode(vnode, extraProps, mergeRef = false) {
         shapeFlag: vnode.shapeFlag,
         // if the vnode is cloned with extra props, we can no longer assume its
         // existing patch flag to be reliable and need to add the FULL_PROPS flag.
-        // note: perserve flag for fragments since they use the flag for children
+        // note: preserve flag for fragments since they use the flag for children
         // fast paths only.
         patchFlag: extraProps && vnode.type !== Fragment
             ? patchFlag === -1 // hoisted node
@@ -13019,7 +13763,9 @@ function mergeProps(...args) {
             else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isOn)(key)) {
                 const existing = ret[key];
                 const incoming = toMerge[key];
-                if (existing !== incoming) {
+                if (incoming &&
+                    existing !== incoming &&
+                    !((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(existing) && existing.includes(incoming))) {
                     ret[key] = existing
                         ? [].concat(existing, incoming)
                         : incoming;
@@ -13031,6 +13777,12 @@ function mergeProps(...args) {
         }
     }
     return ret;
+}
+function invokeVNodeHook(hook, instance, vnode, prevVNode = null) {
+    callWithAsyncErrorHandling(hook, instance, 7 /* VNODE_HOOK */, [
+        vnode,
+        prevVNode
+    ]);
 }
 
 /**
@@ -13223,23 +13975,23 @@ const PublicInstanceProxyHandlers = {
             const n = accessCache[key];
             if (n !== undefined) {
                 switch (n) {
-                    case 0 /* SETUP */:
+                    case 1 /* SETUP */:
                         return setupState[key];
-                    case 1 /* DATA */:
+                    case 2 /* DATA */:
                         return data[key];
-                    case 3 /* CONTEXT */:
+                    case 4 /* CONTEXT */:
                         return ctx[key];
-                    case 2 /* PROPS */:
+                    case 3 /* PROPS */:
                         return props[key];
                     // default: just fallthrough
                 }
             }
             else if (setupState !== _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(setupState, key)) {
-                accessCache[key] = 0 /* SETUP */;
+                accessCache[key] = 1 /* SETUP */;
                 return setupState[key];
             }
             else if (data !== _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(data, key)) {
-                accessCache[key] = 1 /* DATA */;
+                accessCache[key] = 2 /* DATA */;
                 return data[key];
             }
             else if (
@@ -13247,15 +13999,15 @@ const PublicInstanceProxyHandlers = {
             // props
             (normalizedProps = instance.propsOptions[0]) &&
                 (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(normalizedProps, key)) {
-                accessCache[key] = 2 /* PROPS */;
+                accessCache[key] = 3 /* PROPS */;
                 return props[key];
             }
             else if (ctx !== _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(ctx, key)) {
-                accessCache[key] = 3 /* CONTEXT */;
+                accessCache[key] = 4 /* CONTEXT */;
                 return ctx[key];
             }
             else if ( false || shouldCacheAccess) {
-                accessCache[key] = 4 /* OTHER */;
+                accessCache[key] = 0 /* OTHER */;
             }
         }
         const publicGetter = publicPropertiesMap[key];
@@ -13276,7 +14028,7 @@ const PublicInstanceProxyHandlers = {
         }
         else if (ctx !== _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(ctx, key)) {
             // user may set custom properties to `this` that start with `$`
-            accessCache[key] = 3 /* CONTEXT */;
+            accessCache[key] = 4 /* CONTEXT */;
             return ctx[key];
         }
         else if (
@@ -13309,9 +14061,11 @@ const PublicInstanceProxyHandlers = {
         const { data, setupState, ctx } = instance;
         if (setupState !== _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(setupState, key)) {
             setupState[key] = value;
+            return true;
         }
         else if (data !== _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(data, key)) {
             data[key] = value;
+            return true;
         }
         else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(instance.props, key)) {
             ( true) &&
@@ -13340,13 +14094,22 @@ const PublicInstanceProxyHandlers = {
     },
     has({ _: { data, setupState, accessCache, ctx, appContext, propsOptions } }, key) {
         let normalizedProps;
-        return (accessCache[key] !== undefined ||
+        return (!!accessCache[key] ||
             (data !== _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(data, key)) ||
             (setupState !== _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(setupState, key)) ||
             ((normalizedProps = propsOptions[0]) && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(normalizedProps, key)) ||
             (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(ctx, key) ||
             (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(publicPropertiesMap, key) ||
             (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasOwn)(appContext.config.globalProperties, key));
+    },
+    defineProperty(target, key, descriptor) {
+        if (descriptor.get != null) {
+            this.set(target, key, descriptor.get(), null);
+        }
+        else if (descriptor.value != null) {
+            this.set(target, key, descriptor.value, null);
+        }
+        return Reflect.defineProperty(target, key, descriptor);
     }
 };
 if (true) {
@@ -13446,6 +14209,7 @@ function createComponentInstance(vnode, parent, suspense) {
         root: null,
         next: null,
         subTree: null,
+        effect: null,
         update: null,
         scope: new _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.EffectScope(true /* detached */),
         render: null,
@@ -13669,7 +14433,7 @@ function finishComponentSetup(instance, isSSR, skipOptions) {
     // template / render function normalization
     // could be already set when returned from setup()
     if (!instance.render) {
-        // only do on-the-fly compile if not in SSR - SSR on-the-fly compliation
+        // only do on-the-fly compile if not in SSR - SSR on-the-fly compilation
         // is done by server-renderer
         if (!isSSR && compile && !Component.render) {
             const template = Component.template;
@@ -13815,699 +14579,10 @@ function isClassComponent(value) {
     return (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(value) && '__vccOpts' in value;
 }
 
-const stack = [];
-function pushWarningContext(vnode) {
-    stack.push(vnode);
-}
-function popWarningContext() {
-    stack.pop();
-}
-function warn(msg, ...args) {
-    // avoid props formatting or warn handler tracking deps that might be mutated
-    // during patch, leading to infinite recursion.
-    (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.pauseTracking)();
-    const instance = stack.length ? stack[stack.length - 1].component : null;
-    const appWarnHandler = instance && instance.appContext.config.warnHandler;
-    const trace = getComponentTrace();
-    if (appWarnHandler) {
-        callWithErrorHandling(appWarnHandler, instance, 11 /* APP_WARN_HANDLER */, [
-            msg + args.join(''),
-            instance && instance.proxy,
-            trace
-                .map(({ vnode }) => `at <${formatComponentName(instance, vnode.type)}>`)
-                .join('\n'),
-            trace
-        ]);
-    }
-    else {
-        const warnArgs = [`[Vue warn]: ${msg}`, ...args];
-        /* istanbul ignore if */
-        if (trace.length &&
-            // avoid spamming console during tests
-            !false) {
-            warnArgs.push(`\n`, ...formatTrace(trace));
-        }
-        console.warn(...warnArgs);
-    }
-    (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.resetTracking)();
-}
-function getComponentTrace() {
-    let currentVNode = stack[stack.length - 1];
-    if (!currentVNode) {
-        return [];
-    }
-    // we can't just use the stack because it will be incomplete during updates
-    // that did not start from the root. Re-construct the parent chain using
-    // instance parent pointers.
-    const normalizedStack = [];
-    while (currentVNode) {
-        const last = normalizedStack[0];
-        if (last && last.vnode === currentVNode) {
-            last.recurseCount++;
-        }
-        else {
-            normalizedStack.push({
-                vnode: currentVNode,
-                recurseCount: 0
-            });
-        }
-        const parentInstance = currentVNode.component && currentVNode.component.parent;
-        currentVNode = parentInstance && parentInstance.vnode;
-    }
-    return normalizedStack;
-}
-/* istanbul ignore next */
-function formatTrace(trace) {
-    const logs = [];
-    trace.forEach((entry, i) => {
-        logs.push(...(i === 0 ? [] : [`\n`]), ...formatTraceEntry(entry));
-    });
-    return logs;
-}
-function formatTraceEntry({ vnode, recurseCount }) {
-    const postfix = recurseCount > 0 ? `... (${recurseCount} recursive calls)` : ``;
-    const isRoot = vnode.component ? vnode.component.parent == null : false;
-    const open = ` at <${formatComponentName(vnode.component, vnode.type, isRoot)}`;
-    const close = `>` + postfix;
-    return vnode.props
-        ? [open, ...formatProps(vnode.props), close]
-        : [open + close];
-}
-/* istanbul ignore next */
-function formatProps(props) {
-    const res = [];
-    const keys = Object.keys(props);
-    keys.slice(0, 3).forEach(key => {
-        res.push(...formatProp(key, props[key]));
-    });
-    if (keys.length > 3) {
-        res.push(` ...`);
-    }
-    return res;
-}
-/* istanbul ignore next */
-function formatProp(key, value, raw) {
-    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(value)) {
-        value = JSON.stringify(value);
-        return raw ? value : [`${key}=${value}`];
-    }
-    else if (typeof value === 'number' ||
-        typeof value === 'boolean' ||
-        value == null) {
-        return raw ? value : [`${key}=${value}`];
-    }
-    else if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(value)) {
-        value = formatProp(key, (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRaw)(value.value), true);
-        return raw ? value : [`${key}=Ref<`, value, `>`];
-    }
-    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(value)) {
-        return [`${key}=fn${value.name ? `<${value.name}>` : ``}`];
-    }
-    else {
-        value = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.toRaw)(value);
-        return raw ? value : [`${key}=`, value];
-    }
-}
-
-const ErrorTypeStrings = {
-    ["sp" /* SERVER_PREFETCH */]: 'serverPrefetch hook',
-    ["bc" /* BEFORE_CREATE */]: 'beforeCreate hook',
-    ["c" /* CREATED */]: 'created hook',
-    ["bm" /* BEFORE_MOUNT */]: 'beforeMount hook',
-    ["m" /* MOUNTED */]: 'mounted hook',
-    ["bu" /* BEFORE_UPDATE */]: 'beforeUpdate hook',
-    ["u" /* UPDATED */]: 'updated',
-    ["bum" /* BEFORE_UNMOUNT */]: 'beforeUnmount hook',
-    ["um" /* UNMOUNTED */]: 'unmounted hook',
-    ["a" /* ACTIVATED */]: 'activated hook',
-    ["da" /* DEACTIVATED */]: 'deactivated hook',
-    ["ec" /* ERROR_CAPTURED */]: 'errorCaptured hook',
-    ["rtc" /* RENDER_TRACKED */]: 'renderTracked hook',
-    ["rtg" /* RENDER_TRIGGERED */]: 'renderTriggered hook',
-    [0 /* SETUP_FUNCTION */]: 'setup function',
-    [1 /* RENDER_FUNCTION */]: 'render function',
-    [2 /* WATCH_GETTER */]: 'watcher getter',
-    [3 /* WATCH_CALLBACK */]: 'watcher callback',
-    [4 /* WATCH_CLEANUP */]: 'watcher cleanup function',
-    [5 /* NATIVE_EVENT_HANDLER */]: 'native event handler',
-    [6 /* COMPONENT_EVENT_HANDLER */]: 'component event handler',
-    [7 /* VNODE_HOOK */]: 'vnode hook',
-    [8 /* DIRECTIVE_HOOK */]: 'directive hook',
-    [9 /* TRANSITION_HOOK */]: 'transition hook',
-    [10 /* APP_ERROR_HANDLER */]: 'app errorHandler',
-    [11 /* APP_WARN_HANDLER */]: 'app warnHandler',
-    [12 /* FUNCTION_REF */]: 'ref function',
-    [13 /* ASYNC_COMPONENT_LOADER */]: 'async component loader',
-    [14 /* SCHEDULER */]: 'scheduler flush. This is likely a Vue internals bug. ' +
-        'Please open an issue at https://new-issue.vuejs.org/?repo=vuejs/vue-next'
-};
-function callWithErrorHandling(fn, instance, type, args) {
-    let res;
-    try {
-        res = args ? fn(...args) : fn();
-    }
-    catch (err) {
-        handleError(err, instance, type);
-    }
-    return res;
-}
-function callWithAsyncErrorHandling(fn, instance, type, args) {
-    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(fn)) {
-        const res = callWithErrorHandling(fn, instance, type, args);
-        if (res && (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isPromise)(res)) {
-            res.catch(err => {
-                handleError(err, instance, type);
-            });
-        }
-        return res;
-    }
-    const values = [];
-    for (let i = 0; i < fn.length; i++) {
-        values.push(callWithAsyncErrorHandling(fn[i], instance, type, args));
-    }
-    return values;
-}
-function handleError(err, instance, type, throwInDev = true) {
-    const contextVNode = instance ? instance.vnode : null;
-    if (instance) {
-        let cur = instance.parent;
-        // the exposed instance is the render proxy to keep it consistent with 2.x
-        const exposedInstance = instance.proxy;
-        // in production the hook receives only the error code
-        const errorInfo = ( true) ? ErrorTypeStrings[type] : 0;
-        while (cur) {
-            const errorCapturedHooks = cur.ec;
-            if (errorCapturedHooks) {
-                for (let i = 0; i < errorCapturedHooks.length; i++) {
-                    if (errorCapturedHooks[i](err, exposedInstance, errorInfo) === false) {
-                        return;
-                    }
-                }
-            }
-            cur = cur.parent;
-        }
-        // app-level handling
-        const appErrorHandler = instance.appContext.config.errorHandler;
-        if (appErrorHandler) {
-            callWithErrorHandling(appErrorHandler, null, 10 /* APP_ERROR_HANDLER */, [err, exposedInstance, errorInfo]);
-            return;
-        }
-    }
-    logError(err, type, contextVNode, throwInDev);
-}
-function logError(err, type, contextVNode, throwInDev = true) {
-    if ((true)) {
-        const info = ErrorTypeStrings[type];
-        if (contextVNode) {
-            pushWarningContext(contextVNode);
-        }
-        warn(`Unhandled error${info ? ` during execution of ${info}` : ``}`);
-        if (contextVNode) {
-            popWarningContext();
-        }
-        // crash in dev by default so it's more noticeable
-        if (throwInDev) {
-            throw err;
-        }
-        else {
-            console.error(err);
-        }
-    }
-    else {}
-}
-
-let isFlushing = false;
-let isFlushPending = false;
-const queue = [];
-let flushIndex = 0;
-const pendingPreFlushCbs = [];
-let activePreFlushCbs = null;
-let preFlushIndex = 0;
-const pendingPostFlushCbs = [];
-let activePostFlushCbs = null;
-let postFlushIndex = 0;
-const resolvedPromise = Promise.resolve();
-let currentFlushPromise = null;
-let currentPreFlushParentJob = null;
-const RECURSION_LIMIT = 100;
-function nextTick(fn) {
-    const p = currentFlushPromise || resolvedPromise;
-    return fn ? p.then(this ? fn.bind(this) : fn) : p;
-}
-// #2768
-// Use binary-search to find a suitable position in the queue,
-// so that the queue maintains the increasing order of job's id,
-// which can prevent the job from being skipped and also can avoid repeated patching.
-function findInsertionIndex(id) {
-    // the start index should be `flushIndex + 1`
-    let start = flushIndex + 1;
-    let end = queue.length;
-    while (start < end) {
-        const middle = (start + end) >>> 1;
-        const middleJobId = getId(queue[middle]);
-        middleJobId < id ? (start = middle + 1) : (end = middle);
-    }
-    return start;
-}
-function queueJob(job) {
-    // the dedupe search uses the startIndex argument of Array.includes()
-    // by default the search index includes the current job that is being run
-    // so it cannot recursively trigger itself again.
-    // if the job is a watch() callback, the search will start with a +1 index to
-    // allow it recursively trigger itself - it is the user's responsibility to
-    // ensure it doesn't end up in an infinite loop.
-    if ((!queue.length ||
-        !queue.includes(job, isFlushing && job.allowRecurse ? flushIndex + 1 : flushIndex)) &&
-        job !== currentPreFlushParentJob) {
-        if (job.id == null) {
-            queue.push(job);
-        }
-        else {
-            queue.splice(findInsertionIndex(job.id), 0, job);
-        }
-        queueFlush();
-    }
-}
-function queueFlush() {
-    if (!isFlushing && !isFlushPending) {
-        isFlushPending = true;
-        currentFlushPromise = resolvedPromise.then(flushJobs);
-    }
-}
-function invalidateJob(job) {
-    const i = queue.indexOf(job);
-    if (i > flushIndex) {
-        queue.splice(i, 1);
-    }
-}
-function queueCb(cb, activeQueue, pendingQueue, index) {
-    if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(cb)) {
-        if (!activeQueue ||
-            !activeQueue.includes(cb, cb.allowRecurse ? index + 1 : index)) {
-            pendingQueue.push(cb);
-        }
-    }
-    else {
-        // if cb is an array, it is a component lifecycle hook which can only be
-        // triggered by a job, which is already deduped in the main queue, so
-        // we can skip duplicate check here to improve perf
-        pendingQueue.push(...cb);
-    }
-    queueFlush();
-}
-function queuePreFlushCb(cb) {
-    queueCb(cb, activePreFlushCbs, pendingPreFlushCbs, preFlushIndex);
-}
-function queuePostFlushCb(cb) {
-    queueCb(cb, activePostFlushCbs, pendingPostFlushCbs, postFlushIndex);
-}
-function flushPreFlushCbs(seen, parentJob = null) {
-    if (pendingPreFlushCbs.length) {
-        currentPreFlushParentJob = parentJob;
-        activePreFlushCbs = [...new Set(pendingPreFlushCbs)];
-        pendingPreFlushCbs.length = 0;
-        if ((true)) {
-            seen = seen || new Map();
-        }
-        for (preFlushIndex = 0; preFlushIndex < activePreFlushCbs.length; preFlushIndex++) {
-            if (( true) &&
-                checkRecursiveUpdates(seen, activePreFlushCbs[preFlushIndex])) {
-                continue;
-            }
-            activePreFlushCbs[preFlushIndex]();
-        }
-        activePreFlushCbs = null;
-        preFlushIndex = 0;
-        currentPreFlushParentJob = null;
-        // recursively flush until it drains
-        flushPreFlushCbs(seen, parentJob);
-    }
-}
-function flushPostFlushCbs(seen) {
-    if (pendingPostFlushCbs.length) {
-        const deduped = [...new Set(pendingPostFlushCbs)];
-        pendingPostFlushCbs.length = 0;
-        // #1947 already has active queue, nested flushPostFlushCbs call
-        if (activePostFlushCbs) {
-            activePostFlushCbs.push(...deduped);
-            return;
-        }
-        activePostFlushCbs = deduped;
-        if ((true)) {
-            seen = seen || new Map();
-        }
-        activePostFlushCbs.sort((a, b) => getId(a) - getId(b));
-        for (postFlushIndex = 0; postFlushIndex < activePostFlushCbs.length; postFlushIndex++) {
-            if (( true) &&
-                checkRecursiveUpdates(seen, activePostFlushCbs[postFlushIndex])) {
-                continue;
-            }
-            activePostFlushCbs[postFlushIndex]();
-        }
-        activePostFlushCbs = null;
-        postFlushIndex = 0;
-    }
-}
-const getId = (job) => job.id == null ? Infinity : job.id;
-function flushJobs(seen) {
-    isFlushPending = false;
-    isFlushing = true;
-    if ((true)) {
-        seen = seen || new Map();
-    }
-    flushPreFlushCbs(seen);
-    // Sort queue before flush.
-    // This ensures that:
-    // 1. Components are updated from parent to child. (because parent is always
-    //    created before the child so its render effect will have smaller
-    //    priority number)
-    // 2. If a component is unmounted during a parent component's update,
-    //    its update can be skipped.
-    queue.sort((a, b) => getId(a) - getId(b));
-    // conditional usage of checkRecursiveUpdate must be determined out of
-    // try ... catch block since Rollup by default de-optimizes treeshaking
-    // inside try-catch. This can leave all warning code unshaked. Although
-    // they would get eventually shaken by a minifier like terser, some minifiers
-    // would fail to do that (e.g. https://github.com/evanw/esbuild/issues/1610)
-    const check = ( true)
-        ? (job) => checkRecursiveUpdates(seen, job)
-        : 0;
-    try {
-        for (flushIndex = 0; flushIndex < queue.length; flushIndex++) {
-            const job = queue[flushIndex];
-            if (job && job.active !== false) {
-                if (( true) && check(job)) {
-                    continue;
-                }
-                // console.log(`running:`, job.id)
-                callWithErrorHandling(job, null, 14 /* SCHEDULER */);
-            }
-        }
-    }
-    finally {
-        flushIndex = 0;
-        queue.length = 0;
-        flushPostFlushCbs(seen);
-        isFlushing = false;
-        currentFlushPromise = null;
-        // some postFlushCb queued jobs!
-        // keep flushing until it drains.
-        if (queue.length ||
-            pendingPreFlushCbs.length ||
-            pendingPostFlushCbs.length) {
-            flushJobs(seen);
-        }
-    }
-}
-function checkRecursiveUpdates(seen, fn) {
-    if (!seen.has(fn)) {
-        seen.set(fn, 1);
-    }
-    else {
-        const count = seen.get(fn);
-        if (count > RECURSION_LIMIT) {
-            const instance = fn.ownerInstance;
-            const componentName = instance && getComponentName(instance.type);
-            warn(`Maximum recursive updates exceeded${componentName ? ` in component <${componentName}>` : ``}. ` +
-                `This means you have a reactive effect that is mutating its own ` +
-                `dependencies and thus recursively triggering itself. Possible sources ` +
-                `include component template, render function, updated hook or ` +
-                `watcher source function.`);
-            return true;
-        }
-        else {
-            seen.set(fn, count + 1);
-        }
-    }
-}
-
-// Simple effect.
-function watchEffect(effect, options) {
-    return doWatch(effect, null, options);
-}
-function watchPostEffect(effect, options) {
-    return doWatch(effect, null, (( true)
-        ? Object.assign(options || {}, { flush: 'post' })
-        : 0));
-}
-function watchSyncEffect(effect, options) {
-    return doWatch(effect, null, (( true)
-        ? Object.assign(options || {}, { flush: 'sync' })
-        : 0));
-}
-// initial value for watchers to trigger on undefined initial values
-const INITIAL_WATCHER_VALUE = {};
-// implementation
-function watch(source, cb, options) {
-    if (( true) && !(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(cb)) {
-        warn(`\`watch(fn, options?)\` signature has been moved to a separate API. ` +
-            `Use \`watchEffect(fn, options?)\` instead. \`watch\` now only ` +
-            `supports \`watch(source, cb, options?) signature.`);
-    }
-    return doWatch(source, cb, options);
-}
-function doWatch(source, cb, { immediate, deep, flush, onTrack, onTrigger } = _vue_shared__WEBPACK_IMPORTED_MODULE_1__.EMPTY_OBJ) {
-    if (( true) && !cb) {
-        if (immediate !== undefined) {
-            warn(`watch() "immediate" option is only respected when using the ` +
-                `watch(source, callback, options?) signature.`);
-        }
-        if (deep !== undefined) {
-            warn(`watch() "deep" option is only respected when using the ` +
-                `watch(source, callback, options?) signature.`);
-        }
-    }
-    const warnInvalidSource = (s) => {
-        warn(`Invalid watch source: `, s, `A watch source can only be a getter/effect function, a ref, ` +
-            `a reactive object, or an array of these types.`);
-    };
-    const instance = currentInstance;
-    let getter;
-    let forceTrigger = false;
-    let isMultiSource = false;
-    if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(source)) {
-        getter = () => source.value;
-        forceTrigger = !!source._shallow;
-    }
-    else if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReactive)(source)) {
-        getter = () => source;
-        deep = true;
-    }
-    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(source)) {
-        isMultiSource = true;
-        forceTrigger = source.some(_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReactive);
-        getter = () => source.map(s => {
-            if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(s)) {
-                return s.value;
-            }
-            else if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReactive)(s)) {
-                return traverse(s);
-            }
-            else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(s)) {
-                return callWithErrorHandling(s, instance, 2 /* WATCH_GETTER */);
-            }
-            else {
-                ( true) && warnInvalidSource(s);
-            }
-        });
-    }
-    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(source)) {
-        if (cb) {
-            // getter with cb
-            getter = () => callWithErrorHandling(source, instance, 2 /* WATCH_GETTER */);
-        }
-        else {
-            // no cb -> simple effect
-            getter = () => {
-                if (instance && instance.isUnmounted) {
-                    return;
-                }
-                if (cleanup) {
-                    cleanup();
-                }
-                return callWithAsyncErrorHandling(source, instance, 3 /* WATCH_CALLBACK */, [onInvalidate]);
-            };
-        }
-    }
-    else {
-        getter = _vue_shared__WEBPACK_IMPORTED_MODULE_1__.NOOP;
-        ( true) && warnInvalidSource(source);
-    }
-    if (cb && deep) {
-        const baseGetter = getter;
-        getter = () => traverse(baseGetter());
-    }
-    let cleanup;
-    let onInvalidate = (fn) => {
-        cleanup = effect.onStop = () => {
-            callWithErrorHandling(fn, instance, 4 /* WATCH_CLEANUP */);
-        };
-    };
-    // in SSR there is no need to setup an actual effect, and it should be noop
-    // unless it's eager
-    if (isInSSRComponentSetup) {
-        // we will also not call the invalidate callback (+ runner is not set up)
-        onInvalidate = _vue_shared__WEBPACK_IMPORTED_MODULE_1__.NOOP;
-        if (!cb) {
-            getter();
-        }
-        else if (immediate) {
-            callWithAsyncErrorHandling(cb, instance, 3 /* WATCH_CALLBACK */, [
-                getter(),
-                isMultiSource ? [] : undefined,
-                onInvalidate
-            ]);
-        }
-        return _vue_shared__WEBPACK_IMPORTED_MODULE_1__.NOOP;
-    }
-    let oldValue = isMultiSource ? [] : INITIAL_WATCHER_VALUE;
-    const job = () => {
-        if (!effect.active) {
-            return;
-        }
-        if (cb) {
-            // watch(source, cb)
-            const newValue = effect.run();
-            if (deep ||
-                forceTrigger ||
-                (isMultiSource
-                    ? newValue.some((v, i) => (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasChanged)(v, oldValue[i]))
-                    : (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.hasChanged)(newValue, oldValue)) ||
-                (false  )) {
-                // cleanup before running cb again
-                if (cleanup) {
-                    cleanup();
-                }
-                callWithAsyncErrorHandling(cb, instance, 3 /* WATCH_CALLBACK */, [
-                    newValue,
-                    // pass undefined as the old value when it's changed for the first time
-                    oldValue === INITIAL_WATCHER_VALUE ? undefined : oldValue,
-                    onInvalidate
-                ]);
-                oldValue = newValue;
-            }
-        }
-        else {
-            // watchEffect
-            effect.run();
-        }
-    };
-    // important: mark the job as a watcher callback so that scheduler knows
-    // it is allowed to self-trigger (#1727)
-    job.allowRecurse = !!cb;
-    let scheduler;
-    if (flush === 'sync') {
-        scheduler = job; // the scheduler function gets called directly
-    }
-    else if (flush === 'post') {
-        scheduler = () => queuePostRenderEffect(job, instance && instance.suspense);
-    }
-    else {
-        // default: 'pre'
-        scheduler = () => {
-            if (!instance || instance.isMounted) {
-                queuePreFlushCb(job);
-            }
-            else {
-                // with 'pre' option, the first call must happen before
-                // the component is mounted so it is called synchronously.
-                job();
-            }
-        };
-    }
-    const effect = new _vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.ReactiveEffect(getter, scheduler);
-    if ((true)) {
-        effect.onTrack = onTrack;
-        effect.onTrigger = onTrigger;
-    }
-    // initial run
-    if (cb) {
-        if (immediate) {
-            job();
-        }
-        else {
-            oldValue = effect.run();
-        }
-    }
-    else if (flush === 'post') {
-        queuePostRenderEffect(effect.run.bind(effect), instance && instance.suspense);
-    }
-    else {
-        effect.run();
-    }
-    return () => {
-        effect.stop();
-        if (instance && instance.scope) {
-            (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.remove)(instance.scope.effects, effect);
-        }
-    };
-}
-// this.$watch
-function instanceWatch(source, value, options) {
-    const publicThis = this.proxy;
-    const getter = (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isString)(source)
-        ? source.includes('.')
-            ? createPathGetter(publicThis, source)
-            : () => publicThis[source]
-        : source.bind(publicThis, publicThis);
-    let cb;
-    if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isFunction)(value)) {
-        cb = value;
-    }
-    else {
-        cb = value.handler;
-        options = value;
-    }
-    const cur = currentInstance;
-    setCurrentInstance(this);
-    const res = doWatch(getter, cb.bind(publicThis), options);
-    if (cur) {
-        setCurrentInstance(cur);
-    }
-    else {
-        unsetCurrentInstance();
-    }
-    return res;
-}
-function createPathGetter(ctx, path) {
-    const segments = path.split('.');
-    return () => {
-        let cur = ctx;
-        for (let i = 0; i < segments.length && cur; i++) {
-            cur = cur[segments[i]];
-        }
-        return cur;
-    };
-}
-function traverse(value, seen) {
-    if (!(0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isObject)(value) || value["__v_skip" /* SKIP */]) {
-        return value;
-    }
-    seen = seen || new Set();
-    if (seen.has(value)) {
-        return value;
-    }
-    seen.add(value);
-    if ((0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isRef)(value)) {
-        traverse(value.value, seen);
-    }
-    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isArray)(value)) {
-        for (let i = 0; i < value.length; i++) {
-            traverse(value[i], seen);
-        }
-    }
-    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isSet)(value) || (0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isMap)(value)) {
-        value.forEach((v) => {
-            traverse(v, seen);
-        });
-    }
-    else if ((0,_vue_shared__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(value)) {
-        for (const key in value) {
-            traverse(value[key], seen);
-        }
-    }
-    return value;
-}
+const computed = ((getterOrOptions, debugOptions) => {
+    // @ts-ignore
+    return (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.computed)(getterOrOptions, debugOptions, isInSSRComponentSetup);
+});
 
 // dev only
 const warnRuntimeUsage = (method) => warn(`${method}() is a compiler-hint helper that is only usable inside ` +
@@ -14532,7 +14607,7 @@ function defineEmits() {
  * instance properties when it is accessed by a parent component via template
  * refs.
  *
- * `<script setup>` components are closed by default - i.e. varaibles inside
+ * `<script setup>` components are closed by default - i.e. variables inside
  * the `<script setup>` scope is not exposed to parent unless explicitly exposed
  * via `defineExpose`.
  *
@@ -14701,6 +14776,10 @@ const useSSRContext = () => {
     }
 };
 
+function isShallow(value) {
+    return !!(value && value["__v_isShallow" /* IS_SHALLOW */]);
+}
+
 function initCustomFormatter() {
     /* eslint-disable no-restricted-globals */
     if ( false || typeof window === 'undefined') {
@@ -14735,7 +14814,7 @@ function initCustomFormatter() {
                 return [
                     'div',
                     {},
-                    ['span', vueStyle, 'Reactive'],
+                    ['span', vueStyle, isShallow(obj) ? 'ShallowReactive' : 'Reactive'],
                     '<',
                     formatValue(obj),
                     `>${(0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_0__.isReadonly)(obj) ? ` (readonly)` : ``}`
@@ -14745,7 +14824,7 @@ function initCustomFormatter() {
                 return [
                     'div',
                     {},
-                    ['span', vueStyle, 'Readonly'],
+                    ['span', vueStyle, isShallow(obj) ? 'ShallowReadonly' : 'Readonly'],
                     '<',
                     formatValue(obj),
                     '>'
@@ -14874,7 +14953,7 @@ function initCustomFormatter() {
         }
     }
     function genRefFlag(v) {
-        if (v._shallow) {
+        if (isShallow(v)) {
             return `ShallowRef`;
         }
         if (v.effect) {
@@ -14918,7 +14997,7 @@ function isMemoSame(cached, memo) {
 }
 
 // Core API ------------------------------------------------------------------
-const version = "3.2.21";
+const version = "3.2.31";
 const _ssrUtils = {
     createComponentInstance,
     setupComponent,
@@ -14965,6 +15044,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Suspense": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.Suspense),
 /* harmony export */   "Teleport": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.Teleport),
 /* harmony export */   "Text": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.Text),
+/* harmony export */   "Transition": () => (/* binding */ Transition),
+/* harmony export */   "TransitionGroup": () => (/* binding */ TransitionGroup),
+/* harmony export */   "VueElement": () => (/* binding */ VueElement),
 /* harmony export */   "callWithAsyncErrorHandling": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.callWithAsyncErrorHandling),
 /* harmony export */   "callWithErrorHandling": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.callWithErrorHandling),
 /* harmony export */   "camelize": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.camelize),
@@ -14972,6 +15054,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "cloneVNode": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.cloneVNode),
 /* harmony export */   "compatUtils": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.compatUtils),
 /* harmony export */   "computed": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.computed),
+/* harmony export */   "createApp": () => (/* binding */ createApp),
 /* harmony export */   "createBlock": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.createBlock),
 /* harmony export */   "createCommentVNode": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode),
 /* harmony export */   "createElementBlock": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.createElementBlock),
@@ -14979,6 +15062,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "createHydrationRenderer": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.createHydrationRenderer),
 /* harmony export */   "createPropsRestProxy": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.createPropsRestProxy),
 /* harmony export */   "createRenderer": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.createRenderer),
+/* harmony export */   "createSSRApp": () => (/* binding */ createSSRApp),
 /* harmony export */   "createSlots": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.createSlots),
 /* harmony export */   "createStaticVNode": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode),
 /* harmony export */   "createTextVNode": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.createTextVNode),
@@ -14986,9 +15070,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "customRef": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.customRef),
 /* harmony export */   "defineAsyncComponent": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent),
 /* harmony export */   "defineComponent": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.defineComponent),
+/* harmony export */   "defineCustomElement": () => (/* binding */ defineCustomElement),
 /* harmony export */   "defineEmits": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.defineEmits),
 /* harmony export */   "defineExpose": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.defineExpose),
 /* harmony export */   "defineProps": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.defineProps),
+/* harmony export */   "defineSSRCustomElement": () => (/* binding */ defineSSRCustomElement),
 /* harmony export */   "devtools": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.devtools),
 /* harmony export */   "effect": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.effect),
 /* harmony export */   "effectScope": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.effectScope),
@@ -14998,7 +15084,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "guardReactiveProps": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.guardReactiveProps),
 /* harmony export */   "h": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.h),
 /* harmony export */   "handleError": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.handleError),
+/* harmony export */   "hydrate": () => (/* binding */ hydrate),
 /* harmony export */   "initCustomFormatter": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.initCustomFormatter),
+/* harmony export */   "initDirectivesForSSR": () => (/* binding */ initDirectivesForSSR),
 /* harmony export */   "inject": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.inject),
 /* harmony export */   "isMemoSame": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.isMemoSame),
 /* harmony export */   "isProxy": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.isProxy),
@@ -15006,6 +15094,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "isReadonly": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.isReadonly),
 /* harmony export */   "isRef": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.isRef),
 /* harmony export */   "isRuntimeOnly": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.isRuntimeOnly),
+/* harmony export */   "isShallow": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.isShallow),
 /* harmony export */   "isVNode": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.isVNode),
 /* harmony export */   "markRaw": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.markRaw),
 /* harmony export */   "mergeDefaults": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.mergeDefaults),
@@ -15037,6 +15126,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "readonly": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.readonly),
 /* harmony export */   "ref": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.ref),
 /* harmony export */   "registerRuntimeCompiler": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.registerRuntimeCompiler),
+/* harmony export */   "render": () => (/* binding */ render),
 /* harmony export */   "renderList": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.renderList),
 /* harmony export */   "renderSlot": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.renderSlot),
 /* harmony export */   "resolveComponent": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.resolveComponent),
@@ -15063,9 +15153,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "triggerRef": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.triggerRef),
 /* harmony export */   "unref": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.unref),
 /* harmony export */   "useAttrs": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.useAttrs),
+/* harmony export */   "useCssModule": () => (/* binding */ useCssModule),
+/* harmony export */   "useCssVars": () => (/* binding */ useCssVars),
 /* harmony export */   "useSSRContext": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.useSSRContext),
 /* harmony export */   "useSlots": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.useSlots),
 /* harmony export */   "useTransitionState": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.useTransitionState),
+/* harmony export */   "vModelCheckbox": () => (/* binding */ vModelCheckbox),
+/* harmony export */   "vModelDynamic": () => (/* binding */ vModelDynamic),
+/* harmony export */   "vModelRadio": () => (/* binding */ vModelRadio),
+/* harmony export */   "vModelSelect": () => (/* binding */ vModelSelect),
+/* harmony export */   "vModelText": () => (/* binding */ vModelText),
+/* harmony export */   "vShow": () => (/* binding */ vShow),
 /* harmony export */   "version": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.version),
 /* harmony export */   "warn": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.warn),
 /* harmony export */   "watch": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.watch),
@@ -15076,28 +15174,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "withCtx": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.withCtx),
 /* harmony export */   "withDefaults": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.withDefaults),
 /* harmony export */   "withDirectives": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.withDirectives),
-/* harmony export */   "withMemo": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.withMemo),
-/* harmony export */   "withScopeId": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.withScopeId),
-/* harmony export */   "Transition": () => (/* binding */ Transition),
-/* harmony export */   "TransitionGroup": () => (/* binding */ TransitionGroup),
-/* harmony export */   "VueElement": () => (/* binding */ VueElement),
-/* harmony export */   "createApp": () => (/* binding */ createApp),
-/* harmony export */   "createSSRApp": () => (/* binding */ createSSRApp),
-/* harmony export */   "defineCustomElement": () => (/* binding */ defineCustomElement),
-/* harmony export */   "defineSSRCustomElement": () => (/* binding */ defineSSRCustomElement),
-/* harmony export */   "hydrate": () => (/* binding */ hydrate),
-/* harmony export */   "initDirectivesForSSR": () => (/* binding */ initDirectivesForSSR),
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "useCssModule": () => (/* binding */ useCssModule),
-/* harmony export */   "useCssVars": () => (/* binding */ useCssVars),
-/* harmony export */   "vModelCheckbox": () => (/* binding */ vModelCheckbox),
-/* harmony export */   "vModelDynamic": () => (/* binding */ vModelDynamic),
-/* harmony export */   "vModelRadio": () => (/* binding */ vModelRadio),
-/* harmony export */   "vModelSelect": () => (/* binding */ vModelSelect),
-/* harmony export */   "vModelText": () => (/* binding */ vModelText),
-/* harmony export */   "vShow": () => (/* binding */ vShow),
 /* harmony export */   "withKeys": () => (/* binding */ withKeys),
-/* harmony export */   "withModifiers": () => (/* binding */ withModifiers)
+/* harmony export */   "withMemo": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.withMemo),
+/* harmony export */   "withModifiers": () => (/* binding */ withModifiers),
+/* harmony export */   "withScopeId": () => (/* reexport safe */ _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__.withScopeId)
 /* harmony export */ });
 /* harmony import */ var _vue_shared__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @vue/shared */ "./node_modules/@vue/shared/dist/shared.esm-bundler.js");
 /* harmony import */ var _vue_runtime_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @vue/runtime-core */ "./node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js");
@@ -15108,7 +15188,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const svgNS = 'http://www.w3.org/2000/svg';
 const doc = (typeof document !== 'undefined' ? document : null);
-const staticTemplateCache = new Map();
+const templateContainer = doc && doc.createElement('template');
 const nodeOps = {
     insert: (child, parent, anchor) => {
         parent.insertBefore(child, anchor || null);
@@ -15162,14 +15242,24 @@ const nodeOps = {
     // Reason: innerHTML.
     // Static content here can only come from compiled templates.
     // As long as the user only uses trusted templates, this is safe.
-    insertStaticContent(content, parent, anchor, isSVG) {
+    insertStaticContent(content, parent, anchor, isSVG, start, end) {
         // <parent> before | first ... last | anchor </parent>
         const before = anchor ? anchor.previousSibling : parent.lastChild;
-        let template = staticTemplateCache.get(content);
-        if (!template) {
-            const t = doc.createElement('template');
-            t.innerHTML = isSVG ? `<svg>${content}</svg>` : content;
-            template = t.content;
+        // #5308 can only take cached path if:
+        // - has a single root node
+        // - nextSibling info is still available
+        if (start && (start === end || start.nextSibling)) {
+            // cached
+            while (true) {
+                parent.insertBefore(start.cloneNode(true), anchor);
+                if (start === end || !(start = start.nextSibling))
+                    break;
+            }
+        }
+        else {
+            // fresh insert
+            templateContainer.innerHTML = isSVG ? `<svg>${content}</svg>` : content;
+            const template = templateContainer.content;
             if (isSVG) {
                 // remove outer svg wrapper
                 const wrapper = template.firstChild;
@@ -15178,9 +15268,8 @@ const nodeOps = {
                 }
                 template.removeChild(wrapper);
             }
-            staticTemplateCache.set(content, template);
+            parent.insertBefore(template, anchor);
         }
-        parent.insertBefore(template.cloneNode(true), anchor);
         return [
             // first
             before ? before.nextSibling : parent.firstChild,
@@ -15324,12 +15413,19 @@ prevChildren, parentComponent, parentSuspense, unmountChildren) {
         el[key] = value == null ? '' : value;
         return;
     }
-    if (key === 'value' && el.tagName !== 'PROGRESS') {
+    if (key === 'value' &&
+        el.tagName !== 'PROGRESS' &&
+        // custom elements may use _value internally
+        !el.tagName.includes('-')) {
         // store value as _value as well since
         // non-string values will be stringified.
         el._value = value;
         const newValue = value == null ? '' : value;
-        if (el.value !== newValue) {
+        if (el.value !== newValue ||
+            // #4956: always set for OPTION elements because its value falls back to
+            // textContent if no value attribute is present. And setting .value for
+            // OPTION has no side effect
+            el.tagName === 'OPTION') {
             el.value = newValue;
         }
         if (value == null) {
@@ -15465,7 +15561,7 @@ function patchStopImmediatePropagation(e, value) {
             originalStop.call(e);
             e._stopped = true;
         };
-        return value.map(fn => (e) => !e._stopped && fn(e));
+        return value.map(fn => (e) => !e._stopped && fn && fn(e));
     }
     else {
         return value;
@@ -15715,7 +15811,7 @@ class VueElement extends BaseClass {
                 // HMR
                 if ((true)) {
                     instance.ceReload = newStyles => {
-                        // alawys reset styles
+                        // always reset styles
                         if (this._styles) {
                             this._styles.forEach(s => this.shadowRoot.removeChild(s));
                             this._styles.length = 0;
@@ -16802,6 +16898,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "invokeArrayFns": () => (/* binding */ invokeArrayFns),
 /* harmony export */   "isArray": () => (/* binding */ isArray),
 /* harmony export */   "isBooleanAttr": () => (/* binding */ isBooleanAttr),
+/* harmony export */   "isBuiltInDirective": () => (/* binding */ isBuiltInDirective),
 /* harmony export */   "isDate": () => (/* binding */ isDate),
 /* harmony export */   "isFunction": () => (/* binding */ isFunction),
 /* harmony export */   "isGloballyWhitelisted": () => (/* binding */ isGloballyWhitelisted),
@@ -16958,7 +17055,7 @@ const isBooleanAttr = /*#__PURE__*/ makeMap(specialBooleanAttrs +
     `checked,muted,multiple,selected`);
 /**
  * Boolean attributes should be included if the value is truthy or ''.
- * e.g. <select multiple> compiles to { multiple: '' }
+ * e.g. `<select multiple>` compiles to `{ multiple: '' }`
  */
 function includeBooleanAttr(value) {
     return !!value || value === '';
@@ -17166,8 +17263,20 @@ const SVG_TAGS = 'svg,animate,animateMotion,animateTransform,circle,clipPath,col
     'polygon,polyline,radialGradient,rect,set,solidcolor,stop,switch,symbol,' +
     'text,textPath,title,tspan,unknown,use,view';
 const VOID_TAGS = 'area,base,br,col,embed,hr,img,input,link,meta,param,source,track,wbr';
+/**
+ * Compiler only.
+ * Do NOT use in runtime code paths unless behind `(process.env.NODE_ENV !== 'production')` flag.
+ */
 const isHTMLTag = /*#__PURE__*/ makeMap(HTML_TAGS);
+/**
+ * Compiler only.
+ * Do NOT use in runtime code paths unless behind `(process.env.NODE_ENV !== 'production')` flag.
+ */
 const isSVGTag = /*#__PURE__*/ makeMap(SVG_TAGS);
+/**
+ * Compiler only.
+ * Do NOT use in runtime code paths unless behind `(process.env.NODE_ENV !== 'production')` flag.
+ */
 const isVoidTag = /*#__PURE__*/ makeMap(VOID_TAGS);
 
 const escapeRE = /["'&<>]/;
@@ -17270,13 +17379,15 @@ function looseIndexOf(arr, val) {
  * @private
  */
 const toDisplayString = (val) => {
-    return val == null
-        ? ''
-        : isArray(val) ||
-            (isObject(val) &&
-                (val.toString === objectToString || !isFunction(val.toString)))
-            ? JSON.stringify(val, replacer, 2)
-            : String(val);
+    return isString(val)
+        ? val
+        : val == null
+            ? ''
+            : isArray(val) ||
+                (isObject(val) &&
+                    (val.toString === objectToString || !isFunction(val.toString)))
+                ? JSON.stringify(val, replacer, 2)
+                : String(val);
 };
 const replacer = (_key, val) => {
     // can't use isRef here since @vue/shared has no deps
@@ -17347,10 +17458,11 @@ const isIntegerKey = (key) => isString(key) &&
     '' + parseInt(key, 10) === key;
 const isReservedProp = /*#__PURE__*/ makeMap(
 // the leading comma is intentional so empty string "" is also included
-',key,ref,' +
+',key,ref,ref_for,ref_key,' +
     'onVnodeBeforeMount,onVnodeMounted,' +
     'onVnodeBeforeUpdate,onVnodeUpdated,' +
     'onVnodeBeforeUnmount,onVnodeUnmounted');
+const isBuiltInDirective = /*#__PURE__*/ makeMap('bind,cloak,else-if,else,for,html,if,model,on,once,pre,show,slot,text,memo');
 const cacheStringFunction = (fn) => {
     const cache = Object.create(null);
     return ((str) => {
@@ -20482,9 +20594,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Jetstream_Checkbox__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Jetstream/Checkbox */ "./resources/js/Jetstream/Checkbox.vue");
 /* harmony import */ var _Jetstream_Label__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Jetstream/Label */ "./resources/js/Jetstream/Label.vue");
 /* harmony import */ var _Jetstream_ValidationErrors__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/Jetstream/ValidationErrors */ "./resources/js/Jetstream/ValidationErrors.vue");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -22324,7 +22436,7 @@ var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 );
 
 function render(_ctx, _cache) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <inertia-link :href=\"'/'\" class=\"text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl\">\n        Charnoy\n    </inertia-link> ")], 2112
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <inertia-link :href=\"'/'\" class=\"text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl\">\r\n        Charnoy\r\n    </inertia-link> ")], 2112
   /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
   );
 }
@@ -27151,7 +27263,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       )];
     }),
     content: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div class=\"flex justify-center\t\">\n\t\t\t\t<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"44\" height=\"44\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#e74c3c\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n\t\t\t\t\t<path d=\"M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"></path>\n\t\t\t\t\t<line x1=\"12\" y1=\"9\" x2=\"12\" y2=\"13\"></line>\n\t\t\t\t\t<line x1=\"12\" y1=\"17\" x2=\"12.01\" y2=\"17\"></line>\n\t\t\t\t</svg>\n\n\t\t\t</div> "), _hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.message), 1
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div class=\"flex justify-center\t\">\r\n\t\t\t\t<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"44\" height=\"44\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#e74c3c\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\r\n\t\t\t\t\t<path d=\"M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"></path>\r\n\t\t\t\t\t<line x1=\"12\" y1=\"9\" x2=\"12\" y2=\"13\"></line>\r\n\t\t\t\t\t<line x1=\"12\" y1=\"17\" x2=\"12.01\" y2=\"17\"></line>\r\n\t\t\t\t</svg>\r\n\r\n\t\t\t</div> "), _hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.message), 1
       /* TEXT */
       )])];
     }),
@@ -27395,7 +27507,7 @@ var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 );
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_ctx.$page.props.flash.success && $data.show ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <svg class=\"ml-4 mr-2 flex-shrink-0 w-4 h-4 fill-white text-white\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\n                <polygon points=\"0 11 2 9 7 14 18 3 20 5 7 18\" />\n              </svg> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.$page.props.flash.success), 1
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_ctx.$page.props.flash.success && $data.show ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <svg class=\"ml-4 mr-2 flex-shrink-0 w-4 h-4 fill-white text-white\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\r\n                <polygon points=\"0 11 2 9 7 14 18 3 20 5 7 18\" />\r\n              </svg> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.$page.props.flash.success), 1
   /* TEXT */
   )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     type: "button",
@@ -28097,7 +28209,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.bg-gray-100[data-v-317d1a6e] {\n        background-color: #f7fafc;\n        background-color: rgba(247, 250, 252, var(--tw-bg-opacity));\n}\n.border-gray-200[data-v-317d1a6e] {\n        border-color: #edf2f7;\n        border-color: rgba(237, 242, 247, var(--tw-border-opacity));\n}\n.text-gray-400[data-v-317d1a6e] {\n        color: #cbd5e0;\n        color: rgba(203, 213, 224, var(--tw-text-opacity));\n}\n.text-gray-500[data-v-317d1a6e] {\n        color: #a0aec0;\n        color: rgba(160, 174, 192, var(--tw-text-opacity));\n}\n.text-gray-600[data-v-317d1a6e] {\n        color: #718096;\n        color: rgba(113, 128, 150, var(--tw-text-opacity));\n}\n.text-gray-700[data-v-317d1a6e] {\n        color: #4a5568;\n        color: rgba(74, 85, 104, var(--tw-text-opacity));\n}\n.text-gray-900[data-v-317d1a6e] {\n        color: #1a202c;\n        color: rgba(26, 32, 44, var(--tw-text-opacity));\n}\n@media (prefers-color-scheme: dark) {\n.dark\\:bg-gray-800[data-v-317d1a6e] {\n            background-color: #2d3748;\n            background-color: rgba(45, 55, 72, var(--tw-bg-opacity));\n}\n.dark\\:bg-gray-900[data-v-317d1a6e] {\n            background-color: #1a202c;\n            background-color: rgba(26, 32, 44, var(--tw-bg-opacity));\n}\n.dark\\:border-gray-700[data-v-317d1a6e] {\n            border-color: #4a5568;\n            border-color: rgba(74, 85, 104, var(--tw-border-opacity));\n}\n.dark\\:text-white[data-v-317d1a6e] {\n            color: #fff;\n            color: rgba(255, 255, 255, var(--tw-text-opacity));\n}\n.dark\\:text-gray-400[data-v-317d1a6e] {\n            color: #cbd5e0;\n            color: rgba(203, 213, 224, var(--tw-text-opacity));\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.bg-gray-100[data-v-317d1a6e] {\r\n        background-color: #f7fafc;\r\n        background-color: rgba(247, 250, 252, var(--tw-bg-opacity));\n}\n.border-gray-200[data-v-317d1a6e] {\r\n        border-color: #edf2f7;\r\n        border-color: rgba(237, 242, 247, var(--tw-border-opacity));\n}\n.text-gray-400[data-v-317d1a6e] {\r\n        color: #cbd5e0;\r\n        color: rgba(203, 213, 224, var(--tw-text-opacity));\n}\n.text-gray-500[data-v-317d1a6e] {\r\n        color: #a0aec0;\r\n        color: rgba(160, 174, 192, var(--tw-text-opacity));\n}\n.text-gray-600[data-v-317d1a6e] {\r\n        color: #718096;\r\n        color: rgba(113, 128, 150, var(--tw-text-opacity));\n}\n.text-gray-700[data-v-317d1a6e] {\r\n        color: #4a5568;\r\n        color: rgba(74, 85, 104, var(--tw-text-opacity));\n}\n.text-gray-900[data-v-317d1a6e] {\r\n        color: #1a202c;\r\n        color: rgba(26, 32, 44, var(--tw-text-opacity));\n}\n@media (prefers-color-scheme: dark) {\n.dark\\:bg-gray-800[data-v-317d1a6e] {\r\n            background-color: #2d3748;\r\n            background-color: rgba(45, 55, 72, var(--tw-bg-opacity));\n}\n.dark\\:bg-gray-900[data-v-317d1a6e] {\r\n            background-color: #1a202c;\r\n            background-color: rgba(26, 32, 44, var(--tw-bg-opacity));\n}\n.dark\\:border-gray-700[data-v-317d1a6e] {\r\n            border-color: #4a5568;\r\n            border-color: rgba(74, 85, 104, var(--tw-border-opacity));\n}\n.dark\\:text-white[data-v-317d1a6e] {\r\n            color: #fff;\r\n            color: rgba(255, 255, 255, var(--tw-text-opacity));\n}\n.dark\\:text-gray-400[data-v-317d1a6e] {\r\n            color: #cbd5e0;\r\n            color: rgba(203, 213, 224, var(--tw-text-opacity));\n}\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -28121,7 +28233,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown-menu[data-v-43aa1c6c] {\n        transition: 300ms;\n}\nsvg.rotate-90[data-v-43aa1c6c] {\n        transform: rotate(90deg);\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown-menu[data-v-43aa1c6c] {\r\n        transition: 300ms;\n}\nsvg.rotate-90[data-v-43aa1c6c] {\r\n        transform: rotate(90deg);\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -53408,11 +53520,24 @@ var weakRefDeref = hasWeakRef ? WeakRef.prototype.deref : null;
 var booleanValueOf = Boolean.prototype.valueOf;
 var objectToString = Object.prototype.toString;
 var functionToString = Function.prototype.toString;
-var match = String.prototype.match;
+var $match = String.prototype.match;
+var $slice = String.prototype.slice;
+var $replace = String.prototype.replace;
+var $toUpperCase = String.prototype.toUpperCase;
+var $toLowerCase = String.prototype.toLowerCase;
+var $test = RegExp.prototype.test;
+var $concat = Array.prototype.concat;
+var $join = Array.prototype.join;
+var $arrSlice = Array.prototype.slice;
+var $floor = Math.floor;
 var bigIntValueOf = typeof BigInt === 'function' ? BigInt.prototype.valueOf : null;
 var gOPS = Object.getOwnPropertySymbols;
 var symToString = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol' ? Symbol.prototype.toString : null;
 var hasShammedSymbols = typeof Symbol === 'function' && typeof Symbol.iterator === 'object';
+// ie, `has-tostringtag/shams
+var toStringTag = typeof Symbol === 'function' && Symbol.toStringTag && (typeof Symbol.toStringTag === hasShammedSymbols ? 'object' : 'symbol')
+    ? Symbol.toStringTag
+    : null;
 var isEnumerable = Object.prototype.propertyIsEnumerable;
 
 var gPO = (typeof Reflect === 'function' ? Reflect.getPrototypeOf : Object.getPrototypeOf) || (
@@ -53423,9 +53548,30 @@ var gPO = (typeof Reflect === 'function' ? Reflect.getPrototypeOf : Object.getPr
         : null
 );
 
+function addNumericSeparator(num, str) {
+    if (
+        num === Infinity
+        || num === -Infinity
+        || num !== num
+        || (num && num > -1000 && num < 1000)
+        || $test.call(/e/, str)
+    ) {
+        return str;
+    }
+    var sepRegex = /[0-9](?=(?:[0-9]{3})+(?![0-9]))/g;
+    if (typeof num === 'number') {
+        var int = num < 0 ? -$floor(-num) : $floor(num); // trunc(num)
+        if (int !== num) {
+            var intStr = String(int);
+            var dec = $slice.call(str, intStr.length + 1);
+            return $replace.call(intStr, sepRegex, '$&_') + '.' + $replace.call($replace.call(dec, /([0-9]{3})/g, '$&_'), /_$/, '');
+        }
+    }
+    return $replace.call(str, sepRegex, '$&_');
+}
+
 var inspectCustom = (__webpack_require__(/*! ./util.inspect */ "?2128").custom);
 var inspectSymbol = inspectCustom && isSymbol(inspectCustom) ? inspectCustom : null;
-var toStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag !== 'undefined' ? Symbol.toStringTag : null;
 
 module.exports = function inspect_(obj, options, depth, seen) {
     var opts = options || {};
@@ -53452,8 +53598,12 @@ module.exports = function inspect_(obj, options, depth, seen) {
         && opts.indent !== '\t'
         && !(parseInt(opts.indent, 10) === opts.indent && opts.indent > 0)
     ) {
-        throw new TypeError('options "indent" must be "\\t", an integer > 0, or `null`');
+        throw new TypeError('option "indent" must be "\\t", an integer > 0, or `null`');
     }
+    if (has(opts, 'numericSeparator') && typeof opts.numericSeparator !== 'boolean') {
+        throw new TypeError('option "numericSeparator", if provided, must be `true` or `false`');
+    }
+    var numericSeparator = opts.numericSeparator;
 
     if (typeof obj === 'undefined') {
         return 'undefined';
@@ -53472,10 +53622,12 @@ module.exports = function inspect_(obj, options, depth, seen) {
         if (obj === 0) {
             return Infinity / obj > 0 ? '0' : '-0';
         }
-        return String(obj);
+        var str = String(obj);
+        return numericSeparator ? addNumericSeparator(obj, str) : str;
     }
     if (typeof obj === 'bigint') {
-        return String(obj) + 'n';
+        var bigIntStr = String(obj) + 'n';
+        return numericSeparator ? addNumericSeparator(obj, bigIntStr) : bigIntStr;
     }
 
     var maxDepth = typeof opts.depth === 'undefined' ? 5 : opts.depth;
@@ -53494,7 +53646,7 @@ module.exports = function inspect_(obj, options, depth, seen) {
 
     function inspect(value, from, noIndent) {
         if (from) {
-            seen = seen.slice();
+            seen = $arrSlice.call(seen);
             seen.push(from);
         }
         if (noIndent) {
@@ -53512,21 +53664,21 @@ module.exports = function inspect_(obj, options, depth, seen) {
     if (typeof obj === 'function') {
         var name = nameOf(obj);
         var keys = arrObjKeys(obj, inspect);
-        return '[Function' + (name ? ': ' + name : ' (anonymous)') + ']' + (keys.length > 0 ? ' { ' + keys.join(', ') + ' }' : '');
+        return '[Function' + (name ? ': ' + name : ' (anonymous)') + ']' + (keys.length > 0 ? ' { ' + $join.call(keys, ', ') + ' }' : '');
     }
     if (isSymbol(obj)) {
-        var symString = hasShammedSymbols ? String(obj).replace(/^(Symbol\(.*\))_[^)]*$/, '$1') : symToString.call(obj);
+        var symString = hasShammedSymbols ? $replace.call(String(obj), /^(Symbol\(.*\))_[^)]*$/, '$1') : symToString.call(obj);
         return typeof obj === 'object' && !hasShammedSymbols ? markBoxed(symString) : symString;
     }
     if (isElement(obj)) {
-        var s = '<' + String(obj.nodeName).toLowerCase();
+        var s = '<' + $toLowerCase.call(String(obj.nodeName));
         var attrs = obj.attributes || [];
         for (var i = 0; i < attrs.length; i++) {
             s += ' ' + attrs[i].name + '=' + wrapQuotes(quote(attrs[i].value), 'double', opts);
         }
         s += '>';
         if (obj.childNodes && obj.childNodes.length) { s += '...'; }
-        s += '</' + String(obj.nodeName).toLowerCase() + '>';
+        s += '</' + $toLowerCase.call(String(obj.nodeName)) + '>';
         return s;
     }
     if (isArray(obj)) {
@@ -53535,12 +53687,15 @@ module.exports = function inspect_(obj, options, depth, seen) {
         if (indent && !singleLineValues(xs)) {
             return '[' + indentedJoin(xs, indent) + ']';
         }
-        return '[ ' + xs.join(', ') + ' ]';
+        return '[ ' + $join.call(xs, ', ') + ' ]';
     }
     if (isError(obj)) {
         var parts = arrObjKeys(obj, inspect);
+        if ('cause' in obj && !isEnumerable.call(obj, 'cause')) {
+            return '{ [' + String(obj) + '] ' + $join.call($concat.call('[cause]: ' + inspect(obj.cause), parts), ', ') + ' }';
+        }
         if (parts.length === 0) { return '[' + String(obj) + ']'; }
-        return '{ [' + String(obj) + '] ' + parts.join(', ') + ' }';
+        return '{ [' + String(obj) + '] ' + $join.call(parts, ', ') + ' }';
     }
     if (typeof obj === 'object' && customInspect) {
         if (inspectSymbol && typeof obj[inspectSymbol] === 'function') {
@@ -53588,14 +53743,14 @@ module.exports = function inspect_(obj, options, depth, seen) {
         var ys = arrObjKeys(obj, inspect);
         var isPlainObject = gPO ? gPO(obj) === Object.prototype : obj instanceof Object || obj.constructor === Object;
         var protoTag = obj instanceof Object ? '' : 'null prototype';
-        var stringTag = !isPlainObject && toStringTag && Object(obj) === obj && toStringTag in obj ? toStr(obj).slice(8, -1) : protoTag ? 'Object' : '';
+        var stringTag = !isPlainObject && toStringTag && Object(obj) === obj && toStringTag in obj ? $slice.call(toStr(obj), 8, -1) : protoTag ? 'Object' : '';
         var constructorTag = isPlainObject || typeof obj.constructor !== 'function' ? '' : obj.constructor.name ? obj.constructor.name + ' ' : '';
-        var tag = constructorTag + (stringTag || protoTag ? '[' + [].concat(stringTag || [], protoTag || []).join(': ') + '] ' : '');
+        var tag = constructorTag + (stringTag || protoTag ? '[' + $join.call($concat.call([], stringTag || [], protoTag || []), ': ') + '] ' : '');
         if (ys.length === 0) { return tag + '{}'; }
         if (indent) {
             return tag + '{' + indentedJoin(ys, indent) + '}';
         }
-        return tag + '{ ' + ys.join(', ') + ' }';
+        return tag + '{ ' + $join.call(ys, ', ') + ' }';
     }
     return String(obj);
 };
@@ -53606,7 +53761,7 @@ function wrapQuotes(s, defaultStyle, opts) {
 }
 
 function quote(s) {
-    return String(s).replace(/"/g, '&quot;');
+    return $replace.call(String(s), /"/g, '&quot;');
 }
 
 function isArray(obj) { return toStr(obj) === '[object Array]' && (!toStringTag || !(typeof obj === 'object' && toStringTag in obj)); }
@@ -53657,7 +53812,7 @@ function toStr(obj) {
 
 function nameOf(f) {
     if (f.name) { return f.name; }
-    var m = match.call(functionToString.call(f), /^function\s*([\w$]+)/);
+    var m = $match.call(functionToString.call(f), /^function\s*([\w$]+)/);
     if (m) { return m[1]; }
     return null;
 }
@@ -53757,10 +53912,10 @@ function inspectString(str, opts) {
     if (str.length > opts.maxStringLength) {
         var remaining = str.length - opts.maxStringLength;
         var trailer = '... ' + remaining + ' more character' + (remaining > 1 ? 's' : '');
-        return inspectString(str.slice(0, opts.maxStringLength), opts) + trailer;
+        return inspectString($slice.call(str, 0, opts.maxStringLength), opts) + trailer;
     }
     // eslint-disable-next-line no-control-regex
-    var s = str.replace(/(['\\])/g, '\\$1').replace(/[\x00-\x1f]/g, lowbyte);
+    var s = $replace.call($replace.call(str, /(['\\])/g, '\\$1'), /[\x00-\x1f]/g, lowbyte);
     return wrapQuotes(s, 'single', opts);
 }
 
@@ -53774,7 +53929,7 @@ function lowbyte(c) {
         13: 'r'
     }[n];
     if (x) { return '\\' + x; }
-    return '\\x' + (n < 0x10 ? '0' : '') + n.toString(16).toUpperCase();
+    return '\\x' + (n < 0x10 ? '0' : '') + $toUpperCase.call(n.toString(16));
 }
 
 function markBoxed(str) {
@@ -53786,7 +53941,7 @@ function weakCollectionOf(type) {
 }
 
 function collectionOf(type, size, entries, indent) {
-    var joinedEntries = indent ? indentedJoin(entries, indent) : entries.join(', ');
+    var joinedEntries = indent ? indentedJoin(entries, indent) : $join.call(entries, ', ');
     return type + ' (' + size + ') {' + joinedEntries + '}';
 }
 
@@ -53804,20 +53959,20 @@ function getIndent(opts, depth) {
     if (opts.indent === '\t') {
         baseIndent = '\t';
     } else if (typeof opts.indent === 'number' && opts.indent > 0) {
-        baseIndent = Array(opts.indent + 1).join(' ');
+        baseIndent = $join.call(Array(opts.indent + 1), ' ');
     } else {
         return null;
     }
     return {
         base: baseIndent,
-        prev: Array(depth + 1).join(baseIndent)
+        prev: $join.call(Array(depth + 1), baseIndent)
     };
 }
 
 function indentedJoin(xs, indent) {
     if (xs.length === 0) { return ''; }
     var lineJoiner = '\n' + indent.prev + indent.base;
-    return lineJoiner + xs.join(',' + lineJoiner) + '\n' + indent.prev;
+    return lineJoiner + $join.call(xs, ',' + lineJoiner) + '\n' + indent.prev;
 }
 
 function arrObjKeys(obj, inspect) {
@@ -53844,7 +53999,7 @@ function arrObjKeys(obj, inspect) {
         if (hasShammedSymbols && symMap['$' + key] instanceof Symbol) {
             // this is to prevent shammed Symbols, which are stored as strings, from being included in the string key section
             continue; // eslint-disable-line no-restricted-syntax, no-continue
-        } else if ((/[^\w$]/).test(key)) {
+        } else if ($test.call(/[^\w$]/, key)) {
             xs.push(inspect(key, obj) + ': ' + inspect(obj[key], obj));
         } else {
             xs.push(key + ': ' + inspect(obj[key], obj));
@@ -54258,7 +54413,7 @@ var parseObject = function (chain, val, options, valuesParsed) {
             ) {
                 obj = [];
                 obj[index] = leaf;
-            } else {
+            } else if (cleanRoot !== '__proto__') {
                 obj[cleanRoot] = leaf;
             }
         }
@@ -54415,6 +54570,7 @@ var arrayPrefixGenerators = {
 };
 
 var isArray = Array.isArray;
+var split = String.prototype.split;
 var push = Array.prototype.push;
 var pushToArray = function (arr, valueOrArray) {
     push.apply(arr, isArray(valueOrArray) ? valueOrArray : [valueOrArray]);
@@ -54451,6 +54607,8 @@ var isNonNullishPrimitive = function isNonNullishPrimitive(v) {
         || typeof v === 'bigint';
 };
 
+var sentinel = {};
+
 var stringify = function stringify(
     object,
     prefix,
@@ -54470,8 +54628,23 @@ var stringify = function stringify(
 ) {
     var obj = object;
 
-    if (sideChannel.has(object)) {
-        throw new RangeError('Cyclic object value');
+    var tmpSc = sideChannel;
+    var step = 0;
+    var findFlag = false;
+    while ((tmpSc = tmpSc.get(sentinel)) !== void undefined && !findFlag) {
+        // Where object last appeared in the ref tree
+        var pos = tmpSc.get(object);
+        step += 1;
+        if (typeof pos !== 'undefined') {
+            if (pos === step) {
+                throw new RangeError('Cyclic object value');
+            } else {
+                findFlag = true; // Break while
+            }
+        }
+        if (typeof tmpSc.get(sentinel) === 'undefined') {
+            step = 0;
+        }
     }
 
     if (typeof filter === 'function') {
@@ -54498,6 +54671,14 @@ var stringify = function stringify(
     if (isNonNullishPrimitive(obj) || utils.isBuffer(obj)) {
         if (encoder) {
             var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset, 'key', format);
+            if (generateArrayPrefix === 'comma' && encodeValuesOnly) {
+                var valuesArray = split.call(String(obj), ',');
+                var valuesJoined = '';
+                for (var i = 0; i < valuesArray.length; ++i) {
+                    valuesJoined += (i === 0 ? '' : ',') + formatter(encoder(valuesArray[i], defaults.encoder, charset, 'value', format));
+                }
+                return [formatter(keyValue) + '=' + valuesJoined];
+            }
             return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset, 'value', format))];
         }
         return [formatter(prefix) + '=' + formatter(String(obj))];
@@ -54512,7 +54693,7 @@ var stringify = function stringify(
     var objKeys;
     if (generateArrayPrefix === 'comma' && isArray(obj)) {
         // we need to join elements in
-        objKeys = [{ value: obj.length > 0 ? obj.join(',') || null : undefined }];
+        objKeys = [{ value: obj.length > 0 ? obj.join(',') || null : void undefined }];
     } else if (isArray(filter)) {
         objKeys = filter;
     } else {
@@ -54520,9 +54701,9 @@ var stringify = function stringify(
         objKeys = sort ? keys.sort(sort) : keys;
     }
 
-    for (var i = 0; i < objKeys.length; ++i) {
-        var key = objKeys[i];
-        var value = typeof key === 'object' && key.value !== undefined ? key.value : obj[key];
+    for (var j = 0; j < objKeys.length; ++j) {
+        var key = objKeys[j];
+        var value = typeof key === 'object' && typeof key.value !== 'undefined' ? key.value : obj[key];
 
         if (skipNulls && value === null) {
             continue;
@@ -54532,8 +54713,9 @@ var stringify = function stringify(
             ? typeof generateArrayPrefix === 'function' ? generateArrayPrefix(prefix, key) : prefix
             : prefix + (allowDots ? '.' + key : '[' + key + ']');
 
-        sideChannel.set(object, true);
+        sideChannel.set(object, step);
         var valueSideChannel = getSideChannel();
+        valueSideChannel.set(sentinel, sideChannel);
         pushToArray(values, stringify(
             value,
             keyPrefix,
@@ -54561,7 +54743,7 @@ var normalizeStringifyOptions = function normalizeStringifyOptions(opts) {
         return defaults;
     }
 
-    if (opts.encoder !== null && opts.encoder !== undefined && typeof opts.encoder !== 'function') {
+    if (opts.encoder !== null && typeof opts.encoder !== 'undefined' && typeof opts.encoder !== 'function') {
         throw new TypeError('Encoder has to be a function.');
     }
 
@@ -54874,6 +55056,7 @@ var encode = function encode(str, defaultEncoder, charset, kind, format) {
 
         i += 1;
         c = 0x10000 + (((c & 0x3FF) << 10) | (string.charCodeAt(i) & 0x3FF));
+        /* eslint operator-linebreak: [2, "before"] */
         out += hexTable[0xF0 | (c >> 18)]
             + hexTable[0x80 | ((c >> 12) & 0x3F)]
             + hexTable[0x80 | ((c >> 6) & 0x3F)]
@@ -55550,7 +55733,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Toaster_vue_vue_type_template_id_04d22544__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Toaster.vue?vue&type=template&id=04d22544 */ "./node_modules/@meforma/vue-toaster/src/Toaster.vue?vue&type=template&id=04d22544");
 /* harmony import */ var _Toaster_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Toaster.vue?vue&type=script&lang=js */ "./node_modules/@meforma/vue-toaster/src/Toaster.vue?vue&type=script&lang=js");
 /* harmony import */ var _Toaster_vue_vue_type_style_index_0_id_04d22544_lang_stylus__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Toaster.vue?vue&type=style&index=0&id=04d22544&lang=stylus */ "./node_modules/@meforma/vue-toaster/src/Toaster.vue?vue&type=style&index=0&id=04d22544&lang=stylus");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -55558,7 +55741,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Toaster_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Toaster_vue_vue_type_template_id_04d22544__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"node_modules/@meforma/vue-toaster/src/Toaster.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Toaster_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Toaster_vue_vue_type_template_id_04d22544__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"node_modules/@meforma/vue-toaster/src/Toaster.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -55778,13 +55961,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ActionMessage_vue_vue_type_template_id_bcb26626__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ActionMessage.vue?vue&type=template&id=bcb26626 */ "./resources/js/Jetstream/ActionMessage.vue?vue&type=template&id=bcb26626");
 /* harmony import */ var _ActionMessage_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ActionMessage.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ActionMessage_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ActionMessage_vue_vue_type_template_id_bcb26626__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ActionMessage.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ActionMessage_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ActionMessage_vue_vue_type_template_id_bcb26626__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ActionMessage.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -55806,13 +55989,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ActionSection_vue_vue_type_template_id_1016a66a__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ActionSection.vue?vue&type=template&id=1016a66a */ "./resources/js/Jetstream/ActionSection.vue?vue&type=template&id=1016a66a");
 /* harmony import */ var _ActionSection_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ActionSection.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/ActionSection.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ActionSection_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ActionSection_vue_vue_type_template_id_1016a66a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ActionSection.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ActionSection_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ActionSection_vue_vue_type_template_id_1016a66a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ActionSection.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -55833,12 +56016,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _ApplicationLogo_vue_vue_type_template_id_4e07f5d2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ApplicationLogo.vue?vue&type=template&id=4e07f5d2 */ "./resources/js/Jetstream/ApplicationLogo.vue?vue&type=template&id=4e07f5d2");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 const script = {}
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_ApplicationLogo_vue_vue_type_template_id_4e07f5d2__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ApplicationLogo.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_ApplicationLogo_vue_vue_type_template_id_4e07f5d2__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ApplicationLogo.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -55859,12 +56042,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _ApplicationMark_vue_vue_type_template_id_6ed2e539__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ApplicationMark.vue?vue&type=template&id=6ed2e539 */ "./resources/js/Jetstream/ApplicationMark.vue?vue&type=template&id=6ed2e539");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 const script = {}
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_ApplicationMark_vue_vue_type_template_id_6ed2e539__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ApplicationMark.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_ApplicationMark_vue_vue_type_template_id_6ed2e539__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ApplicationMark.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -55885,12 +56068,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _AuthenticationCard_vue_vue_type_template_id_0ffdd8dc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AuthenticationCard.vue?vue&type=template&id=0ffdd8dc */ "./resources/js/Jetstream/AuthenticationCard.vue?vue&type=template&id=0ffdd8dc");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 const script = {}
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_AuthenticationCard_vue_vue_type_template_id_0ffdd8dc__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/AuthenticationCard.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_AuthenticationCard_vue_vue_type_template_id_0ffdd8dc__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/AuthenticationCard.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -55911,12 +56094,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _AuthenticationCardLogo_vue_vue_type_template_id_5c457327__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AuthenticationCardLogo.vue?vue&type=template&id=5c457327 */ "./resources/js/Jetstream/AuthenticationCardLogo.vue?vue&type=template&id=5c457327");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 const script = {}
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_AuthenticationCardLogo_vue_vue_type_template_id_5c457327__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/AuthenticationCardLogo.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_AuthenticationCardLogo_vue_vue_type_template_id_5c457327__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/AuthenticationCardLogo.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -55938,13 +56121,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Banner_vue_vue_type_template_id_55462a60__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Banner.vue?vue&type=template&id=55462a60 */ "./resources/js/Jetstream/Banner.vue?vue&type=template&id=55462a60");
 /* harmony import */ var _Banner_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Banner.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/Banner.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Banner_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Banner_vue_vue_type_template_id_55462a60__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Banner.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Banner_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Banner_vue_vue_type_template_id_55462a60__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Banner.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -55966,13 +56149,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Button_vue_vue_type_template_id_afb94134__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Button.vue?vue&type=template&id=afb94134 */ "./resources/js/Jetstream/Button.vue?vue&type=template&id=afb94134");
 /* harmony import */ var _Button_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Button.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/Button.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Button_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Button_vue_vue_type_template_id_afb94134__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Button.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Button_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Button_vue_vue_type_template_id_afb94134__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Button.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -55994,13 +56177,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Checkbox_vue_vue_type_template_id_5ec72712__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Checkbox.vue?vue&type=template&id=5ec72712 */ "./resources/js/Jetstream/Checkbox.vue?vue&type=template&id=5ec72712");
 /* harmony import */ var _Checkbox_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Checkbox.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/Checkbox.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Checkbox_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Checkbox_vue_vue_type_template_id_5ec72712__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Checkbox.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Checkbox_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Checkbox_vue_vue_type_template_id_5ec72712__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Checkbox.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56022,13 +56205,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ConfirmationModal_vue_vue_type_template_id_3478b418__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ConfirmationModal.vue?vue&type=template&id=3478b418 */ "./resources/js/Jetstream/ConfirmationModal.vue?vue&type=template&id=3478b418");
 /* harmony import */ var _ConfirmationModal_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ConfirmationModal.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/ConfirmationModal.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ConfirmationModal_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ConfirmationModal_vue_vue_type_template_id_3478b418__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ConfirmationModal.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ConfirmationModal_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ConfirmationModal_vue_vue_type_template_id_3478b418__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ConfirmationModal.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56050,13 +56233,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ConfirmsPassword_vue_vue_type_template_id_2befd4a2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ConfirmsPassword.vue?vue&type=template&id=2befd4a2 */ "./resources/js/Jetstream/ConfirmsPassword.vue?vue&type=template&id=2befd4a2");
 /* harmony import */ var _ConfirmsPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ConfirmsPassword.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/ConfirmsPassword.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ConfirmsPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ConfirmsPassword_vue_vue_type_template_id_2befd4a2__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ConfirmsPassword.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ConfirmsPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ConfirmsPassword_vue_vue_type_template_id_2befd4a2__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ConfirmsPassword.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56078,13 +56261,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _DangerButton_vue_vue_type_template_id_cdf2462e__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DangerButton.vue?vue&type=template&id=cdf2462e */ "./resources/js/Jetstream/DangerButton.vue?vue&type=template&id=cdf2462e");
 /* harmony import */ var _DangerButton_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DangerButton.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/DangerButton.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_DangerButton_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_DangerButton_vue_vue_type_template_id_cdf2462e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/DangerButton.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_DangerButton_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_DangerButton_vue_vue_type_template_id_cdf2462e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/DangerButton.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56106,13 +56289,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _DialogModal_vue_vue_type_template_id_5179157e__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DialogModal.vue?vue&type=template&id=5179157e */ "./resources/js/Jetstream/DialogModal.vue?vue&type=template&id=5179157e");
 /* harmony import */ var _DialogModal_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DialogModal.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/DialogModal.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_DialogModal_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_DialogModal_vue_vue_type_template_id_5179157e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/DialogModal.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_DialogModal_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_DialogModal_vue_vue_type_template_id_5179157e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/DialogModal.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56134,13 +56317,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Dropdown_vue_vue_type_template_id_bd908476__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Dropdown.vue?vue&type=template&id=bd908476 */ "./resources/js/Jetstream/Dropdown.vue?vue&type=template&id=bd908476");
 /* harmony import */ var _Dropdown_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Dropdown.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/Dropdown.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Dropdown_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Dropdown_vue_vue_type_template_id_bd908476__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Dropdown.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Dropdown_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Dropdown_vue_vue_type_template_id_bd908476__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Dropdown.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56162,13 +56345,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _DropdownLink_vue_vue_type_template_id_1114e65f__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DropdownLink.vue?vue&type=template&id=1114e65f */ "./resources/js/Jetstream/DropdownLink.vue?vue&type=template&id=1114e65f");
 /* harmony import */ var _DropdownLink_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DropdownLink.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/DropdownLink.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_DropdownLink_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_DropdownLink_vue_vue_type_template_id_1114e65f__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/DropdownLink.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_DropdownLink_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_DropdownLink_vue_vue_type_template_id_1114e65f__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/DropdownLink.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56190,13 +56373,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _FormSection_vue_vue_type_template_id_68c2427d__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FormSection.vue?vue&type=template&id=68c2427d */ "./resources/js/Jetstream/FormSection.vue?vue&type=template&id=68c2427d");
 /* harmony import */ var _FormSection_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FormSection.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/FormSection.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_FormSection_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_FormSection_vue_vue_type_template_id_68c2427d__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/FormSection.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_FormSection_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_FormSection_vue_vue_type_template_id_68c2427d__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/FormSection.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56218,13 +56401,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Input_vue_vue_type_template_id_49616346__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Input.vue?vue&type=template&id=49616346 */ "./resources/js/Jetstream/Input.vue?vue&type=template&id=49616346");
 /* harmony import */ var _Input_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Input.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/Input.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Input_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Input_vue_vue_type_template_id_49616346__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Input.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Input_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Input_vue_vue_type_template_id_49616346__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Input.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56246,13 +56429,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _InputError_vue_vue_type_template_id_045826dc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./InputError.vue?vue&type=template&id=045826dc */ "./resources/js/Jetstream/InputError.vue?vue&type=template&id=045826dc");
 /* harmony import */ var _InputError_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./InputError.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/InputError.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_InputError_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_InputError_vue_vue_type_template_id_045826dc__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/InputError.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_InputError_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_InputError_vue_vue_type_template_id_045826dc__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/InputError.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56274,13 +56457,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Label_vue_vue_type_template_id_812c3520__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Label.vue?vue&type=template&id=812c3520 */ "./resources/js/Jetstream/Label.vue?vue&type=template&id=812c3520");
 /* harmony import */ var _Label_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Label.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/Label.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Label_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Label_vue_vue_type_template_id_812c3520__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Label.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Label_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Label_vue_vue_type_template_id_812c3520__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Label.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56302,13 +56485,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Modal_vue_vue_type_template_id_64f7dca9__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Modal.vue?vue&type=template&id=64f7dca9 */ "./resources/js/Jetstream/Modal.vue?vue&type=template&id=64f7dca9");
 /* harmony import */ var _Modal_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Modal.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/Modal.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Modal_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Modal_vue_vue_type_template_id_64f7dca9__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Modal.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Modal_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Modal_vue_vue_type_template_id_64f7dca9__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Modal.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56330,13 +56513,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _NavLink_vue_vue_type_template_id_1719168e__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NavLink.vue?vue&type=template&id=1719168e */ "./resources/js/Jetstream/NavLink.vue?vue&type=template&id=1719168e");
 /* harmony import */ var _NavLink_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NavLink.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/NavLink.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_NavLink_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_NavLink_vue_vue_type_template_id_1719168e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/NavLink.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_NavLink_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_NavLink_vue_vue_type_template_id_1719168e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/NavLink.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56358,13 +56541,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ResponsiveNavLink_vue_vue_type_template_id_c1e95d36__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ResponsiveNavLink.vue?vue&type=template&id=c1e95d36 */ "./resources/js/Jetstream/ResponsiveNavLink.vue?vue&type=template&id=c1e95d36");
 /* harmony import */ var _ResponsiveNavLink_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ResponsiveNavLink.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/ResponsiveNavLink.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ResponsiveNavLink_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ResponsiveNavLink_vue_vue_type_template_id_c1e95d36__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ResponsiveNavLink.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ResponsiveNavLink_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ResponsiveNavLink_vue_vue_type_template_id_c1e95d36__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ResponsiveNavLink.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56386,13 +56569,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _SecondaryButton_vue_vue_type_template_id_8dd9837c__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SecondaryButton.vue?vue&type=template&id=8dd9837c */ "./resources/js/Jetstream/SecondaryButton.vue?vue&type=template&id=8dd9837c");
 /* harmony import */ var _SecondaryButton_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SecondaryButton.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/SecondaryButton.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_SecondaryButton_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_SecondaryButton_vue_vue_type_template_id_8dd9837c__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/SecondaryButton.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_SecondaryButton_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_SecondaryButton_vue_vue_type_template_id_8dd9837c__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/SecondaryButton.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56413,12 +56596,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _SectionBorder_vue_vue_type_template_id_2661c926__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SectionBorder.vue?vue&type=template&id=2661c926 */ "./resources/js/Jetstream/SectionBorder.vue?vue&type=template&id=2661c926");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 const script = {}
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_SectionBorder_vue_vue_type_template_id_2661c926__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/SectionBorder.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_SectionBorder_vue_vue_type_template_id_2661c926__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/SectionBorder.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56439,12 +56622,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _SectionTitle_vue_vue_type_template_id_63bb8527__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SectionTitle.vue?vue&type=template&id=63bb8527 */ "./resources/js/Jetstream/SectionTitle.vue?vue&type=template&id=63bb8527");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 const script = {}
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_SectionTitle_vue_vue_type_template_id_63bb8527__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/SectionTitle.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_1__["default"])(script, [['render',_SectionTitle_vue_vue_type_template_id_63bb8527__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/SectionTitle.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56466,13 +56649,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ValidationErrors_vue_vue_type_template_id_0118f178__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ValidationErrors.vue?vue&type=template&id=0118f178 */ "./resources/js/Jetstream/ValidationErrors.vue?vue&type=template&id=0118f178");
 /* harmony import */ var _ValidationErrors_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ValidationErrors.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/ValidationErrors.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ValidationErrors_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ValidationErrors_vue_vue_type_template_id_0118f178__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ValidationErrors.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ValidationErrors_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ValidationErrors_vue_vue_type_template_id_0118f178__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/ValidationErrors.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56494,13 +56677,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Welcome_vue_vue_type_template_id_70e39c44__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Welcome.vue?vue&type=template&id=70e39c44 */ "./resources/js/Jetstream/Welcome.vue?vue&type=template&id=70e39c44");
 /* harmony import */ var _Welcome_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Welcome.vue?vue&type=script&lang=js */ "./resources/js/Jetstream/Welcome.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Welcome_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Welcome_vue_vue_type_template_id_70e39c44__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Welcome.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Welcome_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Welcome_vue_vue_type_template_id_70e39c44__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Jetstream/Welcome.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56522,13 +56705,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _AppLayout_vue_vue_type_template_id_5663af57__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AppLayout.vue?vue&type=template&id=5663af57 */ "./resources/js/Layouts/AppLayout.vue?vue&type=template&id=5663af57");
 /* harmony import */ var _AppLayout_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AppLayout.vue?vue&type=script&lang=js */ "./resources/js/Layouts/AppLayout.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_AppLayout_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_AppLayout_vue_vue_type_template_id_5663af57__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Layouts/AppLayout.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_AppLayout_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_AppLayout_vue_vue_type_template_id_5663af57__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Layouts/AppLayout.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56550,13 +56733,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ApiTokenManager_vue_vue_type_template_id_00438600__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ApiTokenManager.vue?vue&type=template&id=00438600 */ "./resources/js/Pages/API/ApiTokenManager.vue?vue&type=template&id=00438600");
 /* harmony import */ var _ApiTokenManager_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ApiTokenManager.vue?vue&type=script&lang=js */ "./resources/js/Pages/API/ApiTokenManager.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ApiTokenManager_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ApiTokenManager_vue_vue_type_template_id_00438600__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/API/ApiTokenManager.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ApiTokenManager_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ApiTokenManager_vue_vue_type_template_id_00438600__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/API/ApiTokenManager.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56578,13 +56761,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Index_vue_vue_type_template_id_df56dab8__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Index.vue?vue&type=template&id=df56dab8 */ "./resources/js/Pages/API/Index.vue?vue&type=template&id=df56dab8");
 /* harmony import */ var _Index_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Index.vue?vue&type=script&lang=js */ "./resources/js/Pages/API/Index.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Index_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Index_vue_vue_type_template_id_df56dab8__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/API/Index.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Index_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Index_vue_vue_type_template_id_df56dab8__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/API/Index.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56606,13 +56789,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ConfirmPassword_vue_vue_type_template_id_475ae21d__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ConfirmPassword.vue?vue&type=template&id=475ae21d */ "./resources/js/Pages/Auth/ConfirmPassword.vue?vue&type=template&id=475ae21d");
 /* harmony import */ var _ConfirmPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ConfirmPassword.vue?vue&type=script&lang=js */ "./resources/js/Pages/Auth/ConfirmPassword.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ConfirmPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ConfirmPassword_vue_vue_type_template_id_475ae21d__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/ConfirmPassword.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ConfirmPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ConfirmPassword_vue_vue_type_template_id_475ae21d__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/ConfirmPassword.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56634,13 +56817,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ForgotPassword_vue_vue_type_template_id_2d73eca8__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ForgotPassword.vue?vue&type=template&id=2d73eca8 */ "./resources/js/Pages/Auth/ForgotPassword.vue?vue&type=template&id=2d73eca8");
 /* harmony import */ var _ForgotPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ForgotPassword.vue?vue&type=script&lang=js */ "./resources/js/Pages/Auth/ForgotPassword.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ForgotPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ForgotPassword_vue_vue_type_template_id_2d73eca8__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/ForgotPassword.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ForgotPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ForgotPassword_vue_vue_type_template_id_2d73eca8__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/ForgotPassword.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56662,13 +56845,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Login_vue_vue_type_template_id_a2ac2cea__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Login.vue?vue&type=template&id=a2ac2cea */ "./resources/js/Pages/Auth/Login.vue?vue&type=template&id=a2ac2cea");
 /* harmony import */ var _Login_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Login.vue?vue&type=script&lang=js */ "./resources/js/Pages/Auth/Login.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Login_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Login_vue_vue_type_template_id_a2ac2cea__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/Login.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Login_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Login_vue_vue_type_template_id_a2ac2cea__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/Login.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56690,13 +56873,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Register_vue_vue_type_template_id_e59c811e__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Register.vue?vue&type=template&id=e59c811e */ "./resources/js/Pages/Auth/Register.vue?vue&type=template&id=e59c811e");
 /* harmony import */ var _Register_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Register.vue?vue&type=script&lang=js */ "./resources/js/Pages/Auth/Register.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Register_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Register_vue_vue_type_template_id_e59c811e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/Register.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Register_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Register_vue_vue_type_template_id_e59c811e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/Register.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56718,13 +56901,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ResetPassword_vue_vue_type_template_id_1da614ac__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ResetPassword.vue?vue&type=template&id=1da614ac */ "./resources/js/Pages/Auth/ResetPassword.vue?vue&type=template&id=1da614ac");
 /* harmony import */ var _ResetPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ResetPassword.vue?vue&type=script&lang=js */ "./resources/js/Pages/Auth/ResetPassword.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ResetPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ResetPassword_vue_vue_type_template_id_1da614ac__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/ResetPassword.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ResetPassword_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ResetPassword_vue_vue_type_template_id_1da614ac__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/ResetPassword.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56746,13 +56929,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _TwoFactorChallenge_vue_vue_type_template_id_96fe0a94__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TwoFactorChallenge.vue?vue&type=template&id=96fe0a94 */ "./resources/js/Pages/Auth/TwoFactorChallenge.vue?vue&type=template&id=96fe0a94");
 /* harmony import */ var _TwoFactorChallenge_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TwoFactorChallenge.vue?vue&type=script&lang=js */ "./resources/js/Pages/Auth/TwoFactorChallenge.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TwoFactorChallenge_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TwoFactorChallenge_vue_vue_type_template_id_96fe0a94__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/TwoFactorChallenge.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TwoFactorChallenge_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TwoFactorChallenge_vue_vue_type_template_id_96fe0a94__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/TwoFactorChallenge.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56774,13 +56957,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _VerifyEmail_vue_vue_type_template_id_9f895776__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VerifyEmail.vue?vue&type=template&id=9f895776 */ "./resources/js/Pages/Auth/VerifyEmail.vue?vue&type=template&id=9f895776");
 /* harmony import */ var _VerifyEmail_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./VerifyEmail.vue?vue&type=script&lang=js */ "./resources/js/Pages/Auth/VerifyEmail.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_VerifyEmail_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_VerifyEmail_vue_vue_type_template_id_9f895776__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/VerifyEmail.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_VerifyEmail_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_VerifyEmail_vue_vue_type_template_id_9f895776__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Auth/VerifyEmail.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56802,13 +56985,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Dashboard_vue_vue_type_template_id_097ba13b__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Dashboard.vue?vue&type=template&id=097ba13b */ "./resources/js/Pages/Dashboard.vue?vue&type=template&id=097ba13b");
 /* harmony import */ var _Dashboard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Dashboard.vue?vue&type=script&lang=js */ "./resources/js/Pages/Dashboard.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Dashboard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Dashboard_vue_vue_type_template_id_097ba13b__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Dashboard.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Dashboard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Dashboard_vue_vue_type_template_id_097ba13b__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Dashboard.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56830,13 +57013,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Create_vue_vue_type_template_id_5734407a__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Create.vue?vue&type=template&id=5734407a */ "./resources/js/Pages/People/Create.vue?vue&type=template&id=5734407a");
 /* harmony import */ var _Create_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Create.vue?vue&type=script&lang=js */ "./resources/js/Pages/People/Create.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Create_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Create_vue_vue_type_template_id_5734407a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/People/Create.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Create_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Create_vue_vue_type_template_id_5734407a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/People/Create.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56858,13 +57041,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Edit_vue_vue_type_template_id_4ce93591__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Edit.vue?vue&type=template&id=4ce93591 */ "./resources/js/Pages/People/Edit.vue?vue&type=template&id=4ce93591");
 /* harmony import */ var _Edit_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Edit.vue?vue&type=script&lang=js */ "./resources/js/Pages/People/Edit.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Edit_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Edit_vue_vue_type_template_id_4ce93591__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/People/Edit.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Edit_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Edit_vue_vue_type_template_id_4ce93591__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/People/Edit.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56887,7 +57070,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Index_vue_vue_type_template_id_dc15934a__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Index.vue?vue&type=template&id=dc15934a */ "./resources/js/Pages/People/Index.vue?vue&type=template&id=dc15934a");
 /* harmony import */ var _Index_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Index.vue?vue&type=script&lang=js */ "./resources/js/Pages/People/Index.vue?vue&type=script&lang=js");
 /* harmony import */ var vue_multiselect_dist_vue_multiselect_css_vue_type_style_index_0_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-multiselect/dist/vue-multiselect.css?vue&type=style&index=0&lang=css */ "./node_modules/vue-multiselect/dist/vue-multiselect.css?vue&type=style&index=0&lang=css");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -56895,7 +57078,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Index_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Index_vue_vue_type_template_id_dc15934a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/People/Index.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Index_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Index_vue_vue_type_template_id_dc15934a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/People/Index.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56917,13 +57100,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _PrivacyPolicy_vue_vue_type_template_id_41527301__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PrivacyPolicy.vue?vue&type=template&id=41527301 */ "./resources/js/Pages/PrivacyPolicy.vue?vue&type=template&id=41527301");
 /* harmony import */ var _PrivacyPolicy_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PrivacyPolicy.vue?vue&type=script&lang=js */ "./resources/js/Pages/PrivacyPolicy.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_PrivacyPolicy_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_PrivacyPolicy_vue_vue_type_template_id_41527301__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/PrivacyPolicy.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_PrivacyPolicy_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_PrivacyPolicy_vue_vue_type_template_id_41527301__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/PrivacyPolicy.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56945,13 +57128,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _DeleteUserForm_vue_vue_type_template_id_4ed1f029__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DeleteUserForm.vue?vue&type=template&id=4ed1f029 */ "./resources/js/Pages/Profile/DeleteUserForm.vue?vue&type=template&id=4ed1f029");
 /* harmony import */ var _DeleteUserForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DeleteUserForm.vue?vue&type=script&lang=js */ "./resources/js/Pages/Profile/DeleteUserForm.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_DeleteUserForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_DeleteUserForm_vue_vue_type_template_id_4ed1f029__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/DeleteUserForm.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_DeleteUserForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_DeleteUserForm_vue_vue_type_template_id_4ed1f029__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/DeleteUserForm.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -56973,13 +57156,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _LogoutOtherBrowserSessionsForm_vue_vue_type_template_id_70af8072__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LogoutOtherBrowserSessionsForm.vue?vue&type=template&id=70af8072 */ "./resources/js/Pages/Profile/LogoutOtherBrowserSessionsForm.vue?vue&type=template&id=70af8072");
 /* harmony import */ var _LogoutOtherBrowserSessionsForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LogoutOtherBrowserSessionsForm.vue?vue&type=script&lang=js */ "./resources/js/Pages/Profile/LogoutOtherBrowserSessionsForm.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_LogoutOtherBrowserSessionsForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_LogoutOtherBrowserSessionsForm_vue_vue_type_template_id_70af8072__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/LogoutOtherBrowserSessionsForm.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_LogoutOtherBrowserSessionsForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_LogoutOtherBrowserSessionsForm_vue_vue_type_template_id_70af8072__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/LogoutOtherBrowserSessionsForm.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57001,13 +57184,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Show_vue_vue_type_template_id_348d746c__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Show.vue?vue&type=template&id=348d746c */ "./resources/js/Pages/Profile/Show.vue?vue&type=template&id=348d746c");
 /* harmony import */ var _Show_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Show.vue?vue&type=script&lang=js */ "./resources/js/Pages/Profile/Show.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Show_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Show_vue_vue_type_template_id_348d746c__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/Show.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Show_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Show_vue_vue_type_template_id_348d746c__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/Show.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57029,13 +57212,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _TwoFactorAuthenticationForm_vue_vue_type_template_id_6b3f2958__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TwoFactorAuthenticationForm.vue?vue&type=template&id=6b3f2958 */ "./resources/js/Pages/Profile/TwoFactorAuthenticationForm.vue?vue&type=template&id=6b3f2958");
 /* harmony import */ var _TwoFactorAuthenticationForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TwoFactorAuthenticationForm.vue?vue&type=script&lang=js */ "./resources/js/Pages/Profile/TwoFactorAuthenticationForm.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TwoFactorAuthenticationForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TwoFactorAuthenticationForm_vue_vue_type_template_id_6b3f2958__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/TwoFactorAuthenticationForm.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TwoFactorAuthenticationForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TwoFactorAuthenticationForm_vue_vue_type_template_id_6b3f2958__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/TwoFactorAuthenticationForm.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57057,13 +57240,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _UpdatePasswordForm_vue_vue_type_template_id_56f235d2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UpdatePasswordForm.vue?vue&type=template&id=56f235d2 */ "./resources/js/Pages/Profile/UpdatePasswordForm.vue?vue&type=template&id=56f235d2");
 /* harmony import */ var _UpdatePasswordForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UpdatePasswordForm.vue?vue&type=script&lang=js */ "./resources/js/Pages/Profile/UpdatePasswordForm.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_UpdatePasswordForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_UpdatePasswordForm_vue_vue_type_template_id_56f235d2__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/UpdatePasswordForm.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_UpdatePasswordForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_UpdatePasswordForm_vue_vue_type_template_id_56f235d2__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/UpdatePasswordForm.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57085,13 +57268,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _UpdateProfileInformationForm_vue_vue_type_template_id_f38ebb82__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UpdateProfileInformationForm.vue?vue&type=template&id=f38ebb82 */ "./resources/js/Pages/Profile/UpdateProfileInformationForm.vue?vue&type=template&id=f38ebb82");
 /* harmony import */ var _UpdateProfileInformationForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UpdateProfileInformationForm.vue?vue&type=script&lang=js */ "./resources/js/Pages/Profile/UpdateProfileInformationForm.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_UpdateProfileInformationForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_UpdateProfileInformationForm_vue_vue_type_template_id_f38ebb82__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/UpdateProfileInformationForm.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_UpdateProfileInformationForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_UpdateProfileInformationForm_vue_vue_type_template_id_f38ebb82__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Profile/UpdateProfileInformationForm.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57113,13 +57296,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _TermsOfService_vue_vue_type_template_id_63d45180__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TermsOfService.vue?vue&type=template&id=63d45180 */ "./resources/js/Pages/TermsOfService.vue?vue&type=template&id=63d45180");
 /* harmony import */ var _TermsOfService_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TermsOfService.vue?vue&type=script&lang=js */ "./resources/js/Pages/TermsOfService.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TermsOfService_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TermsOfService_vue_vue_type_template_id_63d45180__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/TermsOfService.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TermsOfService_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TermsOfService_vue_vue_type_template_id_63d45180__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/TermsOfService.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57142,7 +57325,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Welcome_vue_vue_type_template_id_317d1a6e_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Welcome.vue?vue&type=template&id=317d1a6e&scoped=true */ "./resources/js/Pages/Welcome.vue?vue&type=template&id=317d1a6e&scoped=true");
 /* harmony import */ var _Welcome_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Welcome.vue?vue&type=script&lang=js */ "./resources/js/Pages/Welcome.vue?vue&type=script&lang=js");
 /* harmony import */ var _Welcome_vue_vue_type_style_index_0_id_317d1a6e_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Welcome.vue?vue&type=style&index=0&id=317d1a6e&scoped=true&lang=css */ "./resources/js/Pages/Welcome.vue?vue&type=style&index=0&id=317d1a6e&scoped=true&lang=css");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -57150,7 +57333,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Welcome_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Welcome_vue_vue_type_template_id_317d1a6e_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render],['__scopeId',"data-v-317d1a6e"],['__file',"resources/js/Pages/Welcome.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Welcome_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Welcome_vue_vue_type_template_id_317d1a6e_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render],['__scopeId',"data-v-317d1a6e"],['__file',"resources/js/Pages/Welcome.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57172,13 +57355,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ConfirmationDialog_vue_vue_type_template_id_4f28a7b9__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ConfirmationDialog.vue?vue&type=template&id=4f28a7b9 */ "./resources/js/Shared/ConfirmationDialog.vue?vue&type=template&id=4f28a7b9");
 /* harmony import */ var _ConfirmationDialog_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ConfirmationDialog.vue?vue&type=script&lang=js */ "./resources/js/Shared/ConfirmationDialog.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ConfirmationDialog_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ConfirmationDialog_vue_vue_type_template_id_4f28a7b9__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/ConfirmationDialog.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ConfirmationDialog_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ConfirmationDialog_vue_vue_type_template_id_4f28a7b9__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/ConfirmationDialog.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57201,7 +57384,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DropdownMenu_vue_vue_type_template_id_43aa1c6c_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DropdownMenu.vue?vue&type=template&id=43aa1c6c&scoped=true */ "./resources/js/Shared/DropdownMenu.vue?vue&type=template&id=43aa1c6c&scoped=true");
 /* harmony import */ var _DropdownMenu_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DropdownMenu.vue?vue&type=script&lang=js */ "./resources/js/Shared/DropdownMenu.vue?vue&type=script&lang=js");
 /* harmony import */ var _DropdownMenu_vue_vue_type_style_index_0_id_43aa1c6c_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DropdownMenu.vue?vue&type=style&index=0&id=43aa1c6c&scoped=true&lang=css */ "./resources/js/Shared/DropdownMenu.vue?vue&type=style&index=0&id=43aa1c6c&scoped=true&lang=css");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
@@ -57209,7 +57392,7 @@ __webpack_require__.r(__webpack_exports__);
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_DropdownMenu_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_DropdownMenu_vue_vue_type_template_id_43aa1c6c_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render],['__scopeId',"data-v-43aa1c6c"],['__file',"resources/js/Shared/DropdownMenu.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_DropdownMenu_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_DropdownMenu_vue_vue_type_template_id_43aa1c6c_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render],['__scopeId',"data-v-43aa1c6c"],['__file',"resources/js/Shared/DropdownMenu.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57231,13 +57414,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _FlashMessages_vue_vue_type_template_id_1fa08db0__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FlashMessages.vue?vue&type=template&id=1fa08db0 */ "./resources/js/Shared/FlashMessages.vue?vue&type=template&id=1fa08db0");
 /* harmony import */ var _FlashMessages_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FlashMessages.vue?vue&type=script&lang=js */ "./resources/js/Shared/FlashMessages.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_FlashMessages_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_FlashMessages_vue_vue_type_template_id_1fa08db0__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/FlashMessages.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_FlashMessages_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_FlashMessages_vue_vue_type_template_id_1fa08db0__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/FlashMessages.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57259,13 +57442,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _LoadingButton_vue_vue_type_template_id_5f30d6e2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LoadingButton.vue?vue&type=template&id=5f30d6e2 */ "./resources/js/Shared/LoadingButton.vue?vue&type=template&id=5f30d6e2");
 /* harmony import */ var _LoadingButton_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LoadingButton.vue?vue&type=script&lang=js */ "./resources/js/Shared/LoadingButton.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_LoadingButton_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_LoadingButton_vue_vue_type_template_id_5f30d6e2__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/LoadingButton.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_LoadingButton_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_LoadingButton_vue_vue_type_template_id_5f30d6e2__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/LoadingButton.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57287,13 +57470,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Pagination_vue_vue_type_template_id_7ed7fa14__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Pagination.vue?vue&type=template&id=7ed7fa14 */ "./resources/js/Shared/Pagination.vue?vue&type=template&id=7ed7fa14");
 /* harmony import */ var _Pagination_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Pagination.vue?vue&type=script&lang=js */ "./resources/js/Shared/Pagination.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Pagination_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Pagination_vue_vue_type_template_id_7ed7fa14__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/Pagination.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Pagination_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Pagination_vue_vue_type_template_id_7ed7fa14__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/Pagination.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57315,13 +57498,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _SelectInput_vue_vue_type_template_id_de51c2fc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SelectInput.vue?vue&type=template&id=de51c2fc */ "./resources/js/Shared/SelectInput.vue?vue&type=template&id=de51c2fc");
 /* harmony import */ var _SelectInput_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SelectInput.vue?vue&type=script&lang=js */ "./resources/js/Shared/SelectInput.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_SelectInput_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_SelectInput_vue_vue_type_template_id_de51c2fc__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/SelectInput.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_SelectInput_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_SelectInput_vue_vue_type_template_id_de51c2fc__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/SelectInput.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57343,13 +57526,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Sidebar_vue_vue_type_template_id_f6a89ea0__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Sidebar.vue?vue&type=template&id=f6a89ea0 */ "./resources/js/Shared/Sidebar.vue?vue&type=template&id=f6a89ea0");
 /* harmony import */ var _Sidebar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Sidebar.vue?vue&type=script&lang=js */ "./resources/js/Shared/Sidebar.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Sidebar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Sidebar_vue_vue_type_template_id_f6a89ea0__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/Sidebar.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Sidebar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Sidebar_vue_vue_type_template_id_f6a89ea0__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/Sidebar.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -57371,13 +57554,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _TextInput_vue_vue_type_template_id_b56b971e__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TextInput.vue?vue&type=template&id=b56b971e */ "./resources/js/Shared/TextInput.vue?vue&type=template&id=b56b971e");
 /* harmony import */ var _TextInput_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TextInput.vue?vue&type=script&lang=js */ "./resources/js/Shared/TextInput.vue?vue&type=script&lang=js");
-/* harmony import */ var _var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_var_www_html_perso_laravel_base_templaate_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TextInput_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TextInput_vue_vue_type_template_id_b56b971e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/TextInput.vue"]])
+const __exports__ = /*#__PURE__*/(0,C_Users_Sam_Desktop_Projet_test_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TextInput_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TextInput_vue_vue_type_template_id_b56b971e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Shared/TextInput.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -59269,6 +59452,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 /***/ }),
 
+/***/ "./node_modules/vue3-tel-input/dist/vue3-tel-input.umd.min.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/vue3-tel-input/dist/vue3-tel-input.umd.min.js ***!
+  \********************************************************************/
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+(function(t,e){ true?module.exports=e(__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js")):0})("undefined"!==typeof self?self:this,(function(t){return function(t){var e={};function n(r){if(e[r])return e[r].exports;var d=e[r]={i:r,l:!1,exports:{}};return t[r].call(d.exports,d,d.exports,n),d.l=!0,d.exports}return n.m=t,n.c=e,n.d=function(t,e,r){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:r})},n.r=function(t){"undefined"!==typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"===typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var d in t)n.d(r,d,function(e){return t[e]}.bind(null,d));return r},n.n=function(t){var e=t&&t.__esModule?function(){return t["default"]}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="",n(n.s="fb15")}({"00ee":function(t,e,n){var r=n("b622"),d=r("toStringTag"),i={};i[d]="z",t.exports="[object z]"===String(i)},"025e":function(t,e,n){"use strict";n.d(e,"c",(function(){return f})),n.d(e,"d",(function(){return l})),n.d(e,"b",(function(){return h}));n("99af"),n("caad"),n("13d5"),n("b0c0"),n("a9e3"),n("cca6"),n("d3b7"),n("e6cf"),n("4d63"),n("ac1f"),n("25f0"),n("2532"),n("1276");var r=n("5530"),d=n("ade3");function i(t){if(Array.isArray(t))return t}n("a4d3"),n("e01a"),n("d28b"),n("e260"),n("3ca3"),n("ddb0");function o(t,e){if("undefined"!==typeof Symbol&&Symbol.iterator in Object(t)){var n=[],r=!0,d=!1,i=void 0;try{for(var o,a=t[Symbol.iterator]();!(r=(o=a.next()).done);r=!0)if(n.push(o.value),e&&n.length===e)break}catch(u){d=!0,i=u}finally{try{r||null==a["return"]||a["return"]()}finally{if(d)throw i}}return n}}var a=n("06c5");function u(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}function c(t,e){return i(t)||o(t,e)||Object(a["a"])(t,e)||u()}n("d81d");var $=[["Afghanistan (‫افغانستان‬‎)","af","93"],["Albania (Shqipëri)","al","355"],["Algeria (‫الجزائر‬‎)","dz","213"],["American Samoa","as","1684"],["Andorra","ad","376"],["Angola","ao","244"],["Anguilla","ai","1264"],["Antigua and Barbuda","ag","1268"],["Argentina","ar","54"],["Armenia (Հայաստան)","am","374"],["Aruba","aw","297"],["Australia","au","61",0],["Austria (Österreich)","at","43"],["Azerbaijan (Azərbaycan)","az","994"],["Bahamas","bs","1242"],["Bahrain (‫البحرين‬‎)","bh","973"],["Bangladesh (বাংলাদেশ)","bd","880"],["Barbados","bb","1246"],["Belarus (Беларусь)","by","375"],["Belgium (België)","be","32"],["Belize","bz","501"],["Benin (Bénin)","bj","229"],["Bermuda","bm","1441"],["Bhutan (འབྲུག)","bt","975"],["Bolivia","bo","591"],["Bosnia and Herzegovina (Босна и Херцеговина)","ba","387"],["Botswana","bw","267"],["Brazil (Brasil)","br","55"],["British Indian Ocean Territory","io","246"],["British Virgin Islands","vg","1284"],["Brunei","bn","673"],["Bulgaria (България)","bg","359"],["Burkina Faso","bf","226"],["Burundi (Uburundi)","bi","257"],["Cambodia (កម្ពុជា)","kh","855"],["Cameroon (Cameroun)","cm","237"],["Canada","ca","1",1,["204","226","236","249","250","289","306","343","365","387","403","416","418","431","437","438","450","506","514","519","548","579","581","587","604","613","639","647","672","705","709","742","778","780","782","807","819","825","867","873","902","905"]],["Cape Verde (Kabu Verdi)","cv","238"],["Caribbean Netherlands","bq","599",1],["Cayman Islands","ky","1345"],["Central African Republic (République centrafricaine)","cf","236"],["Chad (Tchad)","td","235"],["Chile","cl","56"],["China (中国)","cn","86"],["Christmas Island","cx","61",2],["Cocos (Keeling) Islands","cc","61",1],["Colombia","co","57"],["Comoros (‫جزر القمر‬‎)","km","269"],["Congo (DRC) (Jamhuri ya Kidemokrasia ya Kongo)","cd","243"],["Congo (Republic) (Congo-Brazzaville)","cg","242"],["Cook Islands","ck","682"],["Costa Rica","cr","506"],["Côte d’Ivoire","ci","225"],["Croatia (Hrvatska)","hr","385"],["Cuba","cu","53"],["Curaçao","cw","599",0],["Cyprus (Κύπρος)","cy","357"],["Czech Republic (Česká republika)","cz","420"],["Denmark (Danmark)","dk","45"],["Djibouti","dj","253"],["Dominica","dm","1767"],["Dominican Republic (República Dominicana)","do","1",2,["809","829","849"]],["Ecuador","ec","593"],["Egypt (‫مصر‬‎)","eg","20"],["El Salvador","sv","503"],["Equatorial Guinea (Guinea Ecuatorial)","gq","240"],["Eritrea","er","291"],["Estonia (Eesti)","ee","372"],["Ethiopia","et","251"],["Falkland Islands (Islas Malvinas)","fk","500"],["Faroe Islands (Føroyar)","fo","298"],["Fiji","fj","679"],["Finland (Suomi)","fi","358",0],["France","fr","33"],["French Guiana (Guyane française)","gf","594"],["French Polynesia (Polynésie française)","pf","689"],["Gabon","ga","241"],["Gambia","gm","220"],["Georgia (საქართველო)","ge","995"],["Germany (Deutschland)","de","49"],["Ghana (Gaana)","gh","233"],["Gibraltar","gi","350"],["Greece (Ελλάδα)","gr","30"],["Greenland (Kalaallit Nunaat)","gl","299"],["Grenada","gd","1473"],["Guadeloupe","gp","590",0],["Guam","gu","1671"],["Guatemala","gt","502"],["Guernsey","gg","44",1],["Guinea (Guinée)","gn","224"],["Guinea-Bissau (Guiné Bissau)","gw","245"],["Guyana","gy","592"],["Haiti","ht","509"],["Honduras","hn","504"],["Hong Kong (香港)","hk","852"],["Hungary (Magyarország)","hu","36"],["Iceland (Ísland)","is","354"],["India (भारत)","in","91"],["Indonesia","id","62"],["Iran (‫ایران‬‎)","ir","98"],["Iraq (‫العراق‬‎)","iq","964"],["Ireland","ie","353"],["Isle of Man","im","44",2],["Israel (‫ישראל‬‎)","il","972"],["Italy (Italia)","it","39",0],["Jamaica","jm","1876"],["Japan (日本)","jp","81"],["Jersey","je","44",3],["Jordan (‫الأردن‬‎)","jo","962"],["Kazakhstan (Казахстан)","kz","7",1],["Kenya","ke","254"],["Kiribati","ki","686"],["Kosovo","xk","383"],["Kuwait (‫الكويت‬‎)","kw","965"],["Kyrgyzstan (Кыргызстан)","kg","996"],["Laos (ລາວ)","la","856"],["Latvia (Latvija)","lv","371"],["Lebanon (‫لبنان‬‎)","lb","961"],["Lesotho","ls","266"],["Liberia","lr","231"],["Libya (‫ليبيا‬‎)","ly","218"],["Liechtenstein","li","423"],["Lithuania (Lietuva)","lt","370"],["Luxembourg","lu","352"],["Macau (澳門)","mo","853"],["Macedonia (FYROM) (Македонија)","mk","389"],["Madagascar (Madagasikara)","mg","261"],["Malawi","mw","265"],["Malaysia","my","60"],["Maldives","mv","960"],["Mali","ml","223"],["Malta","mt","356"],["Marshall Islands","mh","692"],["Martinique","mq","596"],["Mauritania (‫موريتانيا‬‎)","mr","222"],["Mauritius (Moris)","mu","230"],["Mayotte","yt","262",1],["Mexico (México)","mx","52"],["Micronesia","fm","691"],["Moldova (Republica Moldova)","md","373"],["Monaco","mc","377"],["Mongolia (Монгол)","mn","976"],["Montenegro (Crna Gora)","me","382"],["Montserrat","ms","1664"],["Morocco (‫المغرب‬‎)","ma","212",0],["Mozambique (Moçambique)","mz","258"],["Myanmar (Burma) (မြန်မာ)","mm","95"],["Namibia (Namibië)","na","264"],["Nauru","nr","674"],["Nepal (नेपाल)","np","977"],["Netherlands (Nederland)","nl","31"],["New Caledonia (Nouvelle-Calédonie)","nc","687"],["New Zealand","nz","64"],["Nicaragua","ni","505"],["Niger (Nijar)","ne","227"],["Nigeria","ng","234"],["Niue","nu","683"],["Norfolk Island","nf","672"],["North Korea (조선 민주주의 인민 공화국)","kp","850"],["Northern Mariana Islands","mp","1670"],["Norway (Norge)","no","47",0],["Oman (‫عُمان‬‎)","om","968"],["Pakistan (‫پاکستان‬‎)","pk","92"],["Palau","pw","680"],["Palestine (‫فلسطين‬‎)","ps","970"],["Panama (Panamá)","pa","507"],["Papua New Guinea","pg","675"],["Paraguay","py","595"],["Peru (Perú)","pe","51"],["Philippines","ph","63"],["Poland (Polska)","pl","48"],["Portugal","pt","351"],["Puerto Rico","pr","1",3,["787","939"]],["Qatar (‫قطر‬‎)","qa","974"],["Réunion (La Réunion)","re","262",0],["Romania (România)","ro","40"],["Russia (Россия)","ru","7",0],["Rwanda","rw","250"],["Saint Barthélemy","bl","590",1],["Saint Helena","sh","290"],["Saint Kitts and Nevis","kn","1869"],["Saint Lucia","lc","1758"],["Saint Martin (Saint-Martin (partie française))","mf","590",2],["Saint Pierre and Miquelon (Saint-Pierre-et-Miquelon)","pm","508"],["Saint Vincent and the Grenadines","vc","1784"],["Samoa","ws","685"],["San Marino","sm","378"],["São Tomé and Príncipe (São Tomé e Príncipe)","st","239"],["Saudi Arabia (‫المملكة العربية السعودية‬‎)","sa","966"],["Senegal (Sénégal)","sn","221"],["Serbia (Србија)","rs","381"],["Seychelles","sc","248"],["Sierra Leone","sl","232"],["Singapore","sg","65"],["Sint Maarten","sx","1721"],["Slovakia (Slovensko)","sk","421"],["Slovenia (Slovenija)","si","386"],["Solomon Islands","sb","677"],["Somalia (Soomaaliya)","so","252"],["South Africa","za","27"],["South Korea (대한민국)","kr","82"],["South Sudan (‫جنوب السودان‬‎)","ss","211"],["Spain (España)","es","34"],["Sri Lanka (ශ්‍රී ලංකාව)","lk","94"],["Sudan (‫السودان‬‎)","sd","249"],["Suriname","sr","597"],["Svalbard and Jan Mayen","sj","47",1],["Swaziland","sz","268"],["Sweden (Sverige)","se","46"],["Switzerland (Schweiz)","ch","41"],["Syria (‫سوريا‬‎)","sy","963"],["Taiwan (台灣)","tw","886"],["Tajikistan","tj","992"],["Tanzania","tz","255"],["Thailand (ไทย)","th","66"],["Timor-Leste","tl","670"],["Togo","tg","228"],["Tokelau","tk","690"],["Tonga","to","676"],["Trinidad and Tobago","tt","1868"],["Tunisia (‫تونس‬‎)","tn","216"],["Turkey (Türkiye)","tr","90"],["Turkmenistan","tm","993"],["Turks and Caicos Islands","tc","1649"],["Tuvalu","tv","688"],["U.S. Virgin Islands","vi","1340"],["Uganda","ug","256"],["Ukraine (Україна)","ua","380"],["United Arab Emirates (‫الإمارات العربية المتحدة‬‎)","ae","971"],["United Kingdom","gb","44",0],["United States","us","1",0],["Uruguay","uy","598"],["Uzbekistan (Oʻzbekiston)","uz","998"],["Vanuatu","vu","678"],["Vatican City (Città del Vaticano)","va","39",1],["Venezuela","ve","58"],["Vietnam (Việt Nam)","vn","84"],["Wallis and Futuna (Wallis-et-Futuna)","wf","681"],["Western Sahara (‫الصحراء الغربية‬‎)","eh","212",1],["Yemen (‫اليمن‬‎)","ye","967"],["Zambia","zm","260"],["Zimbabwe","zw","263"],["Åland Islands","ax","358",1]],s=$.map((function(t){return{name:t[0],iso2:t[1].toUpperCase(),dialCode:t[2],priority:t[3]||0,areaCodes:t[4]||null}}));function f(){return fetch("https://ip2c.org/s").then((function(t){return t.text()})).then((function(t){var e=(t||"").toString();if(!e||"1"!==e[0])throw new Error("unable to fetch the country");return e.substr(2,2)}))}function l(t,e){if(t.setSelectionRange)t.focus(),t.setSelectionRange(e,e);else if(t.createTextRange){var n=t.createTextRange();n.collapse(!0),n.moveEnd("character",e),n.moveStart("character",e),n.select()}}var p=[{name:"allCountries",type:Array,default:s,description:"All countries that are used in <code>libphonenumber-js</code>, can be overridden by this prop",inDemo:!1},{name:"autoFormat",type:Boolean,default:!0,description:"Auto update the input to the formatted phone number when it's valid",inDemo:!0},{name:"customValidate",type:[Boolean,RegExp],default:!1,description:"Custom validation RegExp for input",inDemo:!1},{name:"defaultCountry",default:"",type:String,description:"Default country, will override the country fetched from IP address of user",inDemo:!1},{name:"disabled",default:!1,type:Boolean,description:"Disable <code>vue-tel-input</code>, including the input & flag dropdown",inDemo:!1},{name:"autoDefaultCountry",default:!0,type:Boolean,description:"To fetch default country based on IP address of user",inDemo:!1},{name:"dropdownOptions",type:Object,description:"Options for dropdown, see below",inDemo:!1},{name:"dropdownOptions.showDialCodeInList",default:!0,type:Boolean,description:"Show dial code in the dropdown list",inDemo:!0},{name:"dropdownOptions.showDialCodeInSelection",default:!1,type:Boolean,description:"Show dial code in the dropdown selection",inDemo:!0},{name:"dropdownOptions.showFlags",default:!0,type:Boolean,description:"Show flags in the dropdown selection and list",inDemo:!0},{name:"dropdownOptions.tabindex",default:0,type:Number,description:"Native dropdown <code>tabindex</code> attribute",inDemo:!1},{name:"ignoredCountries",default:[],type:Array,description:"List of countries will NOT be shown on the dropdown",inDemo:!1},{name:"inputOptions",type:Object,description:"Options for input, see below",inDemo:!1},{name:"inputOptions.autocomplete",type:String,default:"on",description:"Native input <code>autocomplete</code> attribute",inDemo:!1},{name:"inputOptions.autofocus",type:Boolean,default:!1,description:"Native input <code>autofocus</code> attribute",inDemo:!1},{name:"inputOptions.id",default:"",type:String,description:"Native input <code>id</code> attribute",inDemo:!1},{name:"inputOptions.maxlength",default:25,type:Number,description:"Native input <code>maxlength</code> attribute",inDemo:!1},{name:"inputOptions.name",default:"telephone",type:String,description:"Native input <code>name</code> attribute",inDemo:!1},{name:"inputOptions.placeholder",default:"Enter a phone number",type:String,description:"Placeholder for the input",inDemo:!1},{name:"inputOptions.readonly",default:!1,type:Boolean,description:"Native input <code>readonly</code> attribute",inDemo:!1},{name:"inputOptions.required",default:!1,type:Boolean,description:"Native input <code>required</code> attribute",inDemo:!1},{name:"inputOptions.tabindex",default:0,type:Number,description:"Native input <code>tabindex</code> attribute",inDemo:!1},{name:"inputOptions.type",default:"tel",type:String,description:"Native input <code>type</code> attribute",inDemo:!1},{name:"inputOptions.styleClasses",default:"",type:[String,Array,Object],description:"Custom classes for the <code>input</code>",inDemo:!1},{name:"invalidMsg",default:"",type:String,description:"",inDemo:!1},{name:"mode",default:"auto",type:String,description:"Allowed values: <code>'auto'</code> (Default set by phone),  <code>'international'</code> (Format number with the dial code i.e. + 61), <code>'national'</code> (Format number without dial code i.e. 0321232)",inDemo:!0,options:["auto","national","international"]},{name:"onlyCountries",default:[],type:Array,description:"List of countries will be shown on the dropdown",inDemo:!1},{name:"preferredCountries",default:[],type:Array,description:"Preferred countries list, will be on top of the dropdown",inDemo:!1},{name:"styleClasses",default:"",type:[String,Array,Object],description:"Custom classes for the wrapper",inDemo:!1},{name:"validCharactersOnly",default:!1,type:Boolean,description:"Only allow valid characters in a phone number (will also verify in <code>mounted</code>, so phone number with invalid characters will be shown as an empty string)",inDemo:!1}],h=[].concat(p).reduce((function(t,e){if(e.name.includes(".")){var n=e.name.split("."),r=c(n,2),i=r[0],o=r[1];t[i]?Object.assign(t[i],Object(d["a"])({},o,e.default)):Object.assign(t,Object(d["a"])({},i,Object(d["a"])({},o,e.default)))}else Object.assign(t,Object(d["a"])({},e.name,e.default));return t}),{});e["a"]={options:Object(r["a"])({},h)}},"0366":function(t,e,n){var r=n("1c0b");t.exports=function(t,e,n){if(r(t),void 0===e)return t;switch(n){case 0:return function(){return t.call(e)};case 1:return function(n){return t.call(e,n)};case 2:return function(n,r){return t.call(e,n,r)};case 3:return function(n,r,d){return t.call(e,n,r,d)}}return function(){return t.apply(e,arguments)}}},"057f":function(t,e,n){var r=n("fc6a"),d=n("241c").f,i={}.toString,o="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],a=function(t){try{return d(t)}catch(e){return o.slice()}};t.exports.f=function(t){return o&&"[object Window]"==i.call(t)?a(t):d(r(t))}},"06c5":function(t,e,n){"use strict";n.d(e,"a",(function(){return d}));n("a630"),n("fb6a"),n("b0c0"),n("d3b7"),n("25f0"),n("3ca3");var r=n("6b75");function d(t,e){if(t){if("string"===typeof t)return Object(r["a"])(t,e);var n=Object.prototype.toString.call(t).slice(8,-1);return"Object"===n&&t.constructor&&(n=t.constructor.name),"Map"===n||"Set"===n?Array.from(t):"Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)?Object(r["a"])(t,e):void 0}}},"06cf":function(t,e,n){var r=n("83ab"),d=n("d1e7"),i=n("5c6c"),o=n("fc6a"),a=n("c04e"),u=n("5135"),c=n("0cfb"),$=Object.getOwnPropertyDescriptor;e.f=r?$:function(t,e){if(t=o(t),e=a(e,!0),c)try{return $(t,e)}catch(n){}if(u(t,e))return i(!d.f.call(t,e),t[e])}},"0cfb":function(t,e,n){var r=n("83ab"),d=n("d039"),i=n("cc12");t.exports=!r&&!d((function(){return 7!=Object.defineProperty(i("div"),"a",{get:function(){return 7}}).a}))},1276:function(t,e,n){"use strict";var r=n("d784"),d=n("44e7"),i=n("825a"),o=n("1d80"),a=n("4840"),u=n("8aa5"),c=n("50c4"),$=n("14c3"),s=n("9263"),f=n("d039"),l=[].push,p=Math.min,h=4294967295,v=!f((function(){return!RegExp(h,"y")}));r("split",2,(function(t,e,n){var r;return r="c"=="abbc".split(/(b)*/)[1]||4!="test".split(/(?:)/,-1).length||2!="ab".split(/(?:ab)*/).length||4!=".".split(/(.?)(.?)/).length||".".split(/()()/).length>1||"".split(/.?/).length?function(t,n){var r=String(o(this)),i=void 0===n?h:n>>>0;if(0===i)return[];if(void 0===t)return[r];if(!d(t))return e.call(r,t,i);var a,u,c,$=[],f=(t.ignoreCase?"i":"")+(t.multiline?"m":"")+(t.unicode?"u":"")+(t.sticky?"y":""),p=0,v=new RegExp(t.source,f+"g");while(a=s.call(v,r)){if(u=v.lastIndex,u>p&&($.push(r.slice(p,a.index)),a.length>1&&a.index<r.length&&l.apply($,a.slice(1)),c=a[0].length,p=u,$.length>=i))break;v.lastIndex===a.index&&v.lastIndex++}return p===r.length?!c&&v.test("")||$.push(""):$.push(r.slice(p)),$.length>i?$.slice(0,i):$}:"0".split(void 0,0).length?function(t,n){return void 0===t&&0===n?[]:e.call(this,t,n)}:e,[function(e,n){var d=o(this),i=void 0==e?void 0:e[t];return void 0!==i?i.call(e,d,n):r.call(String(d),e,n)},function(t,d){var o=n(r,t,this,d,r!==e);if(o.done)return o.value;var s=i(t),f=String(this),l=a(s,RegExp),y=s.unicode,b=(s.ignoreCase?"i":"")+(s.multiline?"m":"")+(s.unicode?"u":"")+(v?"y":"g"),g=new l(v?s:"^(?:"+s.source+")",b),m=void 0===d?h:d>>>0;if(0===m)return[];if(0===f.length)return null===$(g,f)?[f]:[];var O=0,C=0,x=[];while(C<f.length){g.lastIndex=v?C:0;var w,S=$(g,v?f:f.slice(C));if(null===S||(w=p(c(g.lastIndex+(v?0:C)),f.length))===O)C=u(f,C,y);else{if(x.push(f.slice(O,C)),x.length===m)return x;for(var E=1;E<=S.length-1;E++)if(x.push(S[E]),x.length===m)return x;C=O=w}}return x.push(f.slice(O)),x}]}),!v)},"13d5":function(t,e,n){"use strict";var r=n("23e7"),d=n("d58f").left,i=n("a640"),o=n("ae40"),a=n("2d00"),u=n("605d"),c=i("reduce"),$=o("reduce",{1:0}),s=!u&&a>79&&a<83;r({target:"Array",proto:!0,forced:!c||!$||s},{reduce:function(t){return d(this,t,arguments.length,arguments.length>1?arguments[1]:void 0)}})},"14c3":function(t,e,n){var r=n("c6b6"),d=n("9263");t.exports=function(t,e){var n=t.exec;if("function"===typeof n){var i=n.call(t,e);if("object"!==typeof i)throw TypeError("RegExp exec method returned something other than an Object or null");return i}if("RegExp"!==r(t))throw TypeError("RegExp#exec called on incompatible receiver");return d.call(t,e)}},"159b":function(t,e,n){var r=n("da84"),d=n("fdbc"),i=n("17c2"),o=n("9112");for(var a in d){var u=r[a],c=u&&u.prototype;if(c&&c.forEach!==i)try{o(c,"forEach",i)}catch($){c.forEach=i}}},"15fd":function(t,e,n){"use strict";n.d(e,"a",(function(){return d}));n("a4d3"),n("c975"),n("b64b");function r(t,e){if(null==t)return{};var n,r,d={},i=Object.keys(t);for(r=0;r<i.length;r++)n=i[r],e.indexOf(n)>=0||(d[n]=t[n]);return d}function d(t,e){if(null==t)return{};var n,d,i=r(t,e);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(t);for(d=0;d<o.length;d++)n=o[d],e.indexOf(n)>=0||Object.prototype.propertyIsEnumerable.call(t,n)&&(i[n]=t[n])}return i}},"17c2":function(t,e,n){"use strict";var r=n("b727").forEach,d=n("a640"),i=n("ae40"),o=d("forEach"),a=i("forEach");t.exports=o&&a?[].forEach:function(t){return r(this,t,arguments.length>1?arguments[1]:void 0)}},"19aa":function(t,e){t.exports=function(t,e,n){if(!(t instanceof e))throw TypeError("Incorrect "+(n?n+" ":"")+"invocation");return t}},"1be4":function(t,e,n){var r=n("d066");t.exports=r("document","documentElement")},"1c0b":function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(String(t)+" is not a function");return t}},"1c7e":function(t,e,n){var r=n("b622"),d=r("iterator"),i=!1;try{var o=0,a={next:function(){return{done:!!o++}},return:function(){i=!0}};a[d]=function(){return this},Array.from(a,(function(){throw 2}))}catch(u){}t.exports=function(t,e){if(!e&&!i)return!1;var n=!1;try{var r={};r[d]=function(){return{next:function(){return{done:n=!0}}}},t(r)}catch(u){}return n}},"1cdc":function(t,e,n){var r=n("342f");t.exports=/(iphone|ipod|ipad).*applewebkit/i.test(r)},"1d80":function(t,e){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on "+t);return t}},"1dde":function(t,e,n){var r=n("d039"),d=n("b622"),i=n("2d00"),o=d("species");t.exports=function(t){return i>=51||!r((function(){var e=[],n=e.constructor={};return n[o]=function(){return{foo:1}},1!==e[t](Boolean).foo}))}},2266:function(t,e,n){var r=n("825a"),d=n("e95a"),i=n("50c4"),o=n("0366"),a=n("35a1"),u=n("2a62"),c=function(t,e){this.stopped=t,this.result=e};t.exports=function(t,e,n){var $,s,f,l,p,h,v,y=n&&n.that,b=!(!n||!n.AS_ENTRIES),g=!(!n||!n.IS_ITERATOR),m=!(!n||!n.INTERRUPTED),O=o(e,y,1+b+m),C=function(t){return $&&u($),new c(!0,t)},x=function(t){return b?(r(t),m?O(t[0],t[1],C):O(t[0],t[1])):m?O(t,C):O(t)};if(g)$=t;else{if(s=a(t),"function"!=typeof s)throw TypeError("Target is not iterable");if(d(s)){for(f=0,l=i(t.length);l>f;f++)if(p=x(t[f]),p&&p instanceof c)return p;return new c(!1)}$=s.call(t)}h=$.next;while(!(v=h.call($)).done){try{p=x(v.value)}catch(w){throw u($),w}if("object"==typeof p&&p&&p instanceof c)return p}return new c(!1)}},"23cb":function(t,e,n){var r=n("a691"),d=Math.max,i=Math.min;t.exports=function(t,e){var n=r(t);return n<0?d(n+e,0):i(n,e)}},"23e7":function(t,e,n){var r=n("da84"),d=n("06cf").f,i=n("9112"),o=n("6eeb"),a=n("ce4e"),u=n("e893"),c=n("94ca");t.exports=function(t,e){var n,$,s,f,l,p,h=t.target,v=t.global,y=t.stat;if($=v?r:y?r[h]||a(h,{}):(r[h]||{}).prototype,$)for(s in e){if(l=e[s],t.noTargetGet?(p=d($,s),f=p&&p.value):f=$[s],n=c(v?s:h+(y?".":"#")+s,t.forced),!n&&void 0!==f){if(typeof l===typeof f)continue;u(l,f)}(t.sham||f&&f.sham)&&i(l,"sham",!0),o($,s,l,t)}}},"241c":function(t,e,n){var r=n("ca84"),d=n("7839"),i=d.concat("length","prototype");e.f=Object.getOwnPropertyNames||function(t){return r(t,i)}},2532:function(t,e,n){"use strict";var r=n("23e7"),d=n("5a34"),i=n("1d80"),o=n("ab13");r({target:"String",proto:!0,forced:!o("includes")},{includes:function(t){return!!~String(i(this)).indexOf(d(t),arguments.length>1?arguments[1]:void 0)}})},"25f0":function(t,e,n){"use strict";var r=n("6eeb"),d=n("825a"),i=n("d039"),o=n("ad6d"),a="toString",u=RegExp.prototype,c=u[a],$=i((function(){return"/a/b"!=c.call({source:"a",flags:"b"})})),s=c.name!=a;($||s)&&r(RegExp.prototype,a,(function(){var t=d(this),e=String(t.source),n=t.flags,r=String(void 0===n&&t instanceof RegExp&&!("flags"in u)?o.call(t):n);return"/"+e+"/"+r}),{unsafe:!0})},2626:function(t,e,n){"use strict";var r=n("d066"),d=n("9bf2"),i=n("b622"),o=n("83ab"),a=i("species");t.exports=function(t){var e=r(t),n=d.f;o&&e&&!e[a]&&n(e,a,{configurable:!0,get:function(){return this}})}},"2a62":function(t,e,n){var r=n("825a");t.exports=function(t){var e=t["return"];if(void 0!==e)return r(e.call(t)).value}},"2ca0":function(t,e,n){"use strict";var r=n("23e7"),d=n("06cf").f,i=n("50c4"),o=n("5a34"),a=n("1d80"),u=n("ab13"),c=n("c430"),$="".startsWith,s=Math.min,f=u("startsWith"),l=!c&&!f&&!!function(){var t=d(String.prototype,"startsWith");return t&&!t.writable}();r({target:"String",proto:!0,forced:!l&&!f},{startsWith:function(t){var e=String(a(this));o(t);var n=i(s(arguments.length>1?arguments[1]:void 0,e.length)),r=String(t);return $?$.call(e,r,n):e.slice(n,n+r.length)===r}})},"2cf4":function(t,e,n){var r,d,i,o=n("da84"),a=n("d039"),u=n("0366"),c=n("1be4"),$=n("cc12"),s=n("1cdc"),f=n("605d"),l=o.location,p=o.setImmediate,h=o.clearImmediate,v=o.process,y=o.MessageChannel,b=o.Dispatch,g=0,m={},O="onreadystatechange",C=function(t){if(m.hasOwnProperty(t)){var e=m[t];delete m[t],e()}},x=function(t){return function(){C(t)}},w=function(t){C(t.data)},S=function(t){o.postMessage(t+"",l.protocol+"//"+l.host)};p&&h||(p=function(t){var e=[],n=1;while(arguments.length>n)e.push(arguments[n++]);return m[++g]=function(){("function"==typeof t?t:Function(t)).apply(void 0,e)},r(g),g},h=function(t){delete m[t]},f?r=function(t){v.nextTick(x(t))}:b&&b.now?r=function(t){b.now(x(t))}:y&&!s?(d=new y,i=d.port2,d.port1.onmessage=w,r=u(i.postMessage,i,1)):o.addEventListener&&"function"==typeof postMessage&&!o.importScripts&&l&&"file:"!==l.protocol&&!a(S)?(r=S,o.addEventListener("message",w,!1)):r=O in $("script")?function(t){c.appendChild($("script"))[O]=function(){c.removeChild(this),C(t)}}:function(t){setTimeout(x(t),0)}),t.exports={set:p,clear:h}},"2d00":function(t,e,n){var r,d,i=n("da84"),o=n("342f"),a=i.process,u=a&&a.versions,c=u&&u.v8;c?(r=c.split("."),d=r[0]+r[1]):o&&(r=o.match(/Edge\/(\d+)/),(!r||r[1]>=74)&&(r=o.match(/Chrome\/(\d+)/),r&&(d=r[1]))),t.exports=d&&+d},"342f":function(t,e,n){var r=n("d066");t.exports=r("navigator","userAgent")||""},"35a1":function(t,e,n){var r=n("f5df"),d=n("3f8c"),i=n("b622"),o=i("iterator");t.exports=function(t){if(void 0!=t)return t[o]||t["@@iterator"]||d[r(t)]}},"37e8":function(t,e,n){var r=n("83ab"),d=n("9bf2"),i=n("825a"),o=n("df75");t.exports=r?Object.defineProperties:function(t,e){i(t);var n,r=o(e),a=r.length,u=0;while(a>u)d.f(t,n=r[u++],e[n]);return t}},"3bbe":function(t,e,n){var r=n("861d");t.exports=function(t){if(!r(t)&&null!==t)throw TypeError("Can't set "+String(t)+" as a prototype");return t}},"3ca3":function(t,e,n){"use strict";var r=n("6547").charAt,d=n("69f3"),i=n("7dd0"),o="String Iterator",a=d.set,u=d.getterFor(o);i(String,"String",(function(t){a(this,{type:o,string:String(t),index:0})}),(function(){var t,e=u(this),n=e.string,d=e.index;return d>=n.length?{value:void 0,done:!0}:(t=r(n,d),e.index+=t.length,{value:t,done:!1})}))},"3f8c":function(t,e){t.exports={}},4160:function(t,e,n){"use strict";var r=n("23e7"),d=n("17c2");r({target:"Array",proto:!0,forced:[].forEach!=d},{forEach:d})},"428f":function(t,e,n){var r=n("da84");t.exports=r},"44ad":function(t,e,n){var r=n("d039"),d=n("c6b6"),i="".split;t.exports=r((function(){return!Object("z").propertyIsEnumerable(0)}))?function(t){return"String"==d(t)?i.call(t,""):Object(t)}:Object},"44d2":function(t,e,n){var r=n("b622"),d=n("7c73"),i=n("9bf2"),o=r("unscopables"),a=Array.prototype;void 0==a[o]&&i.f(a,o,{configurable:!0,value:d(null)}),t.exports=function(t){a[o][t]=!0}},"44de":function(t,e,n){var r=n("da84");t.exports=function(t,e){var n=r.console;n&&n.error&&(1===arguments.length?n.error(t):n.error(t,e))}},"44e7":function(t,e,n){var r=n("861d"),d=n("c6b6"),i=n("b622"),o=i("match");t.exports=function(t){var e;return r(t)&&(void 0!==(e=t[o])?!!e:"RegExp"==d(t))}},"45fc":function(t,e,n){"use strict";var r=n("23e7"),d=n("b727").some,i=n("a640"),o=n("ae40"),a=i("some"),u=o("some");r({target:"Array",proto:!0,forced:!a||!u},{some:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}})},"466d":function(t,e,n){"use strict";var r=n("d784"),d=n("825a"),i=n("50c4"),o=n("1d80"),a=n("8aa5"),u=n("14c3");r("match",1,(function(t,e,n){return[function(e){var n=o(this),r=void 0==e?void 0:e[t];return void 0!==r?r.call(e,n):new RegExp(e)[t](String(n))},function(t){var r=n(e,t,this);if(r.done)return r.value;var o=d(t),c=String(this);if(!o.global)return u(o,c);var $=o.unicode;o.lastIndex=0;var s,f=[],l=0;while(null!==(s=u(o,c))){var p=String(s[0]);f[l]=p,""===p&&(o.lastIndex=a(c,i(o.lastIndex),$)),l++}return 0===l?null:f}]}))},4840:function(t,e,n){var r=n("825a"),d=n("1c0b"),i=n("b622"),o=i("species");t.exports=function(t,e){var n,i=r(t).constructor;return void 0===i||void 0==(n=r(i)[o])?e:d(n)}},4930:function(t,e,n){var r=n("d039");t.exports=!!Object.getOwnPropertySymbols&&!r((function(){return!String(Symbol())}))},"498a":function(t,e,n){"use strict";var r=n("23e7"),d=n("58a8").trim,i=n("c8d2");r({target:"String",proto:!0,forced:i("trim")},{trim:function(){return d(this)}})},"4d63":function(t,e,n){var r=n("83ab"),d=n("da84"),i=n("94ca"),o=n("7156"),a=n("9bf2").f,u=n("241c").f,c=n("44e7"),$=n("ad6d"),s=n("9f7f"),f=n("6eeb"),l=n("d039"),p=n("69f3").set,h=n("2626"),v=n("b622"),y=v("match"),b=d.RegExp,g=b.prototype,m=/a/g,O=/a/g,C=new b(m)!==m,x=s.UNSUPPORTED_Y,w=r&&i("RegExp",!C||x||l((function(){return O[y]=!1,b(m)!=m||b(O)==O||"/a/i"!=b(m,"i")})));if(w){var S=function(t,e){var n,r=this instanceof S,d=c(t),i=void 0===e;if(!r&&d&&t.constructor===S&&i)return t;C?d&&!i&&(t=t.source):t instanceof S&&(i&&(e=$.call(t)),t=t.source),x&&(n=!!e&&e.indexOf("y")>-1,n&&(e=e.replace(/y/g,"")));var a=o(C?new b(t,e):b(t,e),r?this:g,S);return x&&n&&p(a,{sticky:n}),a},E=function(t){t in S||a(S,t,{configurable:!0,get:function(){return b[t]},set:function(e){b[t]=e}})},P=u(b),I=0;while(P.length>I)E(P[I++]);g.constructor=S,S.prototype=g,f(d,"RegExp",S)}h("RegExp")},"4d64":function(t,e,n){var r=n("fc6a"),d=n("50c4"),i=n("23cb"),o=function(t){return function(e,n,o){var a,u=r(e),c=d(u.length),$=i(o,c);if(t&&n!=n){while(c>$)if(a=u[$++],a!=a)return!0}else for(;c>$;$++)if((t||$ in u)&&u[$]===n)return t||$||0;return!t&&-1}};t.exports={includes:o(!0),indexOf:o(!1)}},"4de4":function(t,e,n){"use strict";var r=n("23e7"),d=n("b727").filter,i=n("1dde"),o=n("ae40"),a=i("filter"),u=o("filter");r({target:"Array",proto:!0,forced:!a||!u},{filter:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}})},"4df4":function(t,e,n){"use strict";var r=n("0366"),d=n("7b0b"),i=n("9bdd"),o=n("e95a"),a=n("50c4"),u=n("8418"),c=n("35a1");t.exports=function(t){var e,n,$,s,f,l,p=d(t),h="function"==typeof this?this:Array,v=arguments.length,y=v>1?arguments[1]:void 0,b=void 0!==y,g=c(p),m=0;if(b&&(y=r(y,v>2?arguments[2]:void 0,2)),void 0==g||h==Array&&o(g))for(e=a(p.length),n=new h(e);e>m;m++)l=b?y(p[m],m):p[m],u(n,m,l);else for(s=g.call(p),f=s.next,n=new h;!($=f.call(s)).done;m++)l=b?i(s,y,[$.value,m],!0):$.value,u(n,m,l);return n.length=m,n}},"50c4":function(t,e,n){var r=n("a691"),d=Math.min;t.exports=function(t){return t>0?d(r(t),9007199254740991):0}},5135:function(t,e){var n={}.hasOwnProperty;t.exports=function(t,e){return n.call(t,e)}},5530:function(t,e,n){"use strict";n.d(e,"a",(function(){return i}));n("a4d3"),n("4de4"),n("4160"),n("e439"),n("dbb4"),n("b64b"),n("159b");var r=n("ade3");function d(t,e){var n=Object.keys(t);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(t);e&&(r=r.filter((function(e){return Object.getOwnPropertyDescriptor(t,e).enumerable}))),n.push.apply(n,r)}return n}function i(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{};e%2?d(Object(n),!0).forEach((function(e){Object(r["a"])(t,e,n[e])})):Object.getOwnPropertyDescriptors?Object.defineProperties(t,Object.getOwnPropertyDescriptors(n)):d(Object(n)).forEach((function(e){Object.defineProperty(t,e,Object.getOwnPropertyDescriptor(n,e))}))}return t}},5692:function(t,e,n){var r=n("c430"),d=n("c6cd");(t.exports=function(t,e){return d[t]||(d[t]=void 0!==e?e:{})})("versions",[]).push({version:"3.8.1",mode:r?"pure":"global",copyright:"© 2020 Denis Pushkarev (zloirock.ru)"})},"56ef":function(t,e,n){var r=n("d066"),d=n("241c"),i=n("7418"),o=n("825a");t.exports=r("Reflect","ownKeys")||function(t){var e=d.f(o(t)),n=i.f;return n?e.concat(n(t)):e}},5899:function(t,e){t.exports="\t\n\v\f\r                　\u2028\u2029\ufeff"},"58a8":function(t,e,n){var r=n("1d80"),d=n("5899"),i="["+d+"]",o=RegExp("^"+i+i+"*"),a=RegExp(i+i+"*$"),u=function(t){return function(e){var n=String(r(e));return 1&t&&(n=n.replace(o,"")),2&t&&(n=n.replace(a,"")),n}};t.exports={start:u(1),end:u(2),trim:u(3)}},"5a34":function(t,e,n){var r=n("44e7");t.exports=function(t){if(r(t))throw TypeError("The method doesn't accept regular expressions");return t}},"5c6c":function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},"605d":function(t,e,n){var r=n("c6b6"),d=n("da84");t.exports="process"==r(d.process)},"60da":function(t,e,n){"use strict";var r=n("83ab"),d=n("d039"),i=n("df75"),o=n("7418"),a=n("d1e7"),u=n("7b0b"),c=n("44ad"),$=Object.assign,s=Object.defineProperty;t.exports=!$||d((function(){if(r&&1!==$({b:1},$(s({},"a",{enumerable:!0,get:function(){s(this,"b",{value:3,enumerable:!1})}}),{b:2})).b)return!0;var t={},e={},n=Symbol(),d="abcdefghijklmnopqrst";return t[n]=7,d.split("").forEach((function(t){e[t]=t})),7!=$({},t)[n]||i($({},e)).join("")!=d}))?function(t,e){var n=u(t),d=arguments.length,$=1,s=o.f,f=a.f;while(d>$){var l,p=c(arguments[$++]),h=s?i(p).concat(s(p)):i(p),v=h.length,y=0;while(v>y)l=h[y++],r&&!f.call(p,l)||(n[l]=p[l])}return n}:$},6547:function(t,e,n){var r=n("a691"),d=n("1d80"),i=function(t){return function(e,n){var i,o,a=String(d(e)),u=r(n),c=a.length;return u<0||u>=c?t?"":void 0:(i=a.charCodeAt(u),i<55296||i>56319||u+1===c||(o=a.charCodeAt(u+1))<56320||o>57343?t?a.charAt(u):i:t?a.slice(u,u+2):o-56320+(i-55296<<10)+65536)}};t.exports={codeAt:i(!1),charAt:i(!0)}},"65f0":function(t,e,n){var r=n("861d"),d=n("e8b5"),i=n("b622"),o=i("species");t.exports=function(t,e){var n;return d(t)&&(n=t.constructor,"function"!=typeof n||n!==Array&&!d(n.prototype)?r(n)&&(n=n[o],null===n&&(n=void 0)):n=void 0),new(void 0===n?Array:n)(0===e?0:e)}},"69f3":function(t,e,n){var r,d,i,o=n("7f9a"),a=n("da84"),u=n("861d"),c=n("9112"),$=n("5135"),s=n("c6cd"),f=n("f772"),l=n("d012"),p=a.WeakMap,h=function(t){return i(t)?d(t):r(t,{})},v=function(t){return function(e){var n;if(!u(e)||(n=d(e)).type!==t)throw TypeError("Incompatible receiver, "+t+" required");return n}};if(o){var y=s.state||(s.state=new p),b=y.get,g=y.has,m=y.set;r=function(t,e){return e.facade=t,m.call(y,t,e),e},d=function(t){return b.call(y,t)||{}},i=function(t){return g.call(y,t)}}else{var O=f("state");l[O]=!0,r=function(t,e){return e.facade=t,c(t,O,e),e},d=function(t){return $(t,O)?t[O]:{}},i=function(t){return $(t,O)}}t.exports={set:r,get:d,has:i,enforce:h,getterFor:v}},"6b75":function(t,e,n){"use strict";function r(t,e){(null==e||e>t.length)&&(e=t.length);for(var n=0,r=new Array(e);n<e;n++)r[n]=t[n];return r}n.d(e,"a",(function(){return r}))},"6eeb":function(t,e,n){var r=n("da84"),d=n("9112"),i=n("5135"),o=n("ce4e"),a=n("8925"),u=n("69f3"),c=u.get,$=u.enforce,s=String(String).split("String");(t.exports=function(t,e,n,a){var u,c=!!a&&!!a.unsafe,f=!!a&&!!a.enumerable,l=!!a&&!!a.noTargetGet;"function"==typeof n&&("string"!=typeof e||i(n,"name")||d(n,"name",e),u=$(n),u.source||(u.source=s.join("string"==typeof e?e:""))),t!==r?(c?!l&&t[e]&&(f=!0):delete t[e],f?t[e]=n:d(t,e,n)):f?t[e]=n:o(e,n)})(Function.prototype,"toString",(function(){return"function"==typeof this&&c(this).source||a(this)}))},7156:function(t,e,n){var r=n("861d"),d=n("d2bb");t.exports=function(t,e,n){var i,o;return d&&"function"==typeof(i=e.constructor)&&i!==n&&r(o=i.prototype)&&o!==n.prototype&&d(t,o),t}},7418:function(t,e){e.f=Object.getOwnPropertySymbols},"746f":function(t,e,n){var r=n("428f"),d=n("5135"),i=n("e538"),o=n("9bf2").f;t.exports=function(t){var e=r.Symbol||(r.Symbol={});d(e,t)||o(e,t,{value:i.f(t)})}},7839:function(t,e){t.exports=["constructor","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","toLocaleString","toString","valueOf"]},"7b0b":function(t,e,n){var r=n("1d80");t.exports=function(t){return Object(r(t))}},"7c73":function(t,e,n){var r,d=n("825a"),i=n("37e8"),o=n("7839"),a=n("d012"),u=n("1be4"),c=n("cc12"),$=n("f772"),s=">",f="<",l="prototype",p="script",h=$("IE_PROTO"),v=function(){},y=function(t){return f+p+s+t+f+"/"+p+s},b=function(t){t.write(y("")),t.close();var e=t.parentWindow.Object;return t=null,e},g=function(){var t,e=c("iframe"),n="java"+p+":";return e.style.display="none",u.appendChild(e),e.src=String(n),t=e.contentWindow.document,t.open(),t.write(y("document.F=Object")),t.close(),t.F},m=function(){try{r=document.domain&&new ActiveXObject("htmlfile")}catch(e){}m=r?b(r):g();var t=o.length;while(t--)delete m[l][o[t]];return m()};a[h]=!0,t.exports=Object.create||function(t,e){var n;return null!==t?(v[l]=d(t),n=new v,v[l]=null,n[h]=t):n=m(),void 0===e?n:i(n,e)}},"7db0":function(t,e,n){"use strict";var r=n("23e7"),d=n("b727").find,i=n("44d2"),o=n("ae40"),a="find",u=!0,c=o(a);a in[]&&Array(1)[a]((function(){u=!1})),r({target:"Array",proto:!0,forced:u||!c},{find:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}}),i(a)},"7dd0":function(t,e,n){"use strict";var r=n("23e7"),d=n("9ed3"),i=n("e163"),o=n("d2bb"),a=n("d44e"),u=n("9112"),c=n("6eeb"),$=n("b622"),s=n("c430"),f=n("3f8c"),l=n("ae93"),p=l.IteratorPrototype,h=l.BUGGY_SAFARI_ITERATORS,v=$("iterator"),y="keys",b="values",g="entries",m=function(){return this};t.exports=function(t,e,n,$,l,O,C){d(n,e,$);var x,w,S,E=function(t){if(t===l&&T)return T;if(!h&&t in N)return N[t];switch(t){case y:return function(){return new n(this,t)};case b:return function(){return new n(this,t)};case g:return function(){return new n(this,t)}}return function(){return new n(this)}},P=e+" Iterator",I=!1,N=t.prototype,j=N[v]||N["@@iterator"]||l&&N[l],T=!h&&j||E(l),A="Array"==e&&N.entries||j;if(A&&(x=i(A.call(new t)),p!==Object.prototype&&x.next&&(s||i(x)===p||(o?o(x,p):"function"!=typeof x[v]&&u(x,v,m)),a(x,P,!0,!0),s&&(f[P]=m))),l==b&&j&&j.name!==b&&(I=!0,T=function(){return j.call(this)}),s&&!C||N[v]===T||u(N,v,T),f[e]=T,l)if(w={values:E(b),keys:O?T:E(y),entries:E(g)},C)for(S in w)(h||I||!(S in N))&&c(N,S,w[S]);else r({target:e,proto:!0,forced:h||I},w);return w}},"7f9a":function(t,e,n){var r=n("da84"),d=n("8925"),i=r.WeakMap;t.exports="function"===typeof i&&/native code/.test(d(i))},"821a":function(t,e,n){},"825a":function(t,e,n){var r=n("861d");t.exports=function(t){if(!r(t))throw TypeError(String(t)+" is not an object");return t}},"83ab":function(t,e,n){var r=n("d039");t.exports=!r((function(){return 7!=Object.defineProperty({},1,{get:function(){return 7}})[1]}))},8418:function(t,e,n){"use strict";var r=n("c04e"),d=n("9bf2"),i=n("5c6c");t.exports=function(t,e,n){var o=r(e);o in t?d.f(t,o,i(0,n)):t[o]=n}},"861d":function(t,e){t.exports=function(t){return"object"===typeof t?null!==t:"function"===typeof t}},8875:function(t,e,n){var r,d,i;(function(n,o){d=[],r=o,i="function"===typeof r?r.apply(e,d):r,void 0===i||(t.exports=i)})("undefined"!==typeof self&&self,(function(){function t(){var e=Object.getOwnPropertyDescriptor(document,"currentScript");if(!e&&"currentScript"in document&&document.currentScript)return document.currentScript;if(e&&e.get!==t&&document.currentScript)return document.currentScript;try{throw new Error}catch(l){var n,r,d,i=/.*at [^(]*\((.*):(.+):(.+)\)$/gi,o=/@([^@]*):(\d+):(\d+)\s*$/gi,a=i.exec(l.stack)||o.exec(l.stack),u=a&&a[1]||!1,c=a&&a[2]||!1,$=document.location.href.replace(document.location.hash,""),s=document.getElementsByTagName("script");u===$&&(n=document.documentElement.outerHTML,r=new RegExp("(?:[^\\n]+?\\n){0,"+(c-2)+"}[^<]*<script>([\\d\\D]*?)<\\/script>[\\d\\D]*","i"),d=n.replace(r,"$1").trim());for(var f=0;f<s.length;f++){if("interactive"===s[f].readyState)return s[f];if(s[f].src===u)return s[f];if(u===$&&s[f].innerHTML&&s[f].innerHTML.trim()===d)return s[f]}return null}}return t}))},8925:function(t,e,n){var r=n("c6cd"),d=Function.toString;"function"!=typeof r.inspectSource&&(r.inspectSource=function(t){return d.call(t)}),t.exports=r.inspectSource},"8aa5":function(t,e,n){"use strict";var r=n("6547").charAt;t.exports=function(t,e,n){return e+(n?r(t,e).length:1)}},"8bbf":function(e,n){e.exports=t},"90e3":function(t,e){var n=0,r=Math.random();t.exports=function(t){return"Symbol("+String(void 0===t?"":t)+")_"+(++n+r).toString(36)}},9112:function(t,e,n){var r=n("83ab"),d=n("9bf2"),i=n("5c6c");t.exports=r?function(t,e,n){return d.f(t,e,i(1,n))}:function(t,e,n){return t[e]=n,t}},9263:function(t,e,n){"use strict";var r=n("ad6d"),d=n("9f7f"),i=RegExp.prototype.exec,o=String.prototype.replace,a=i,u=function(){var t=/a/,e=/b*/g;return i.call(t,"a"),i.call(e,"a"),0!==t.lastIndex||0!==e.lastIndex}(),c=d.UNSUPPORTED_Y||d.BROKEN_CARET,$=void 0!==/()??/.exec("")[1],s=u||$||c;s&&(a=function(t){var e,n,d,a,s=this,f=c&&s.sticky,l=r.call(s),p=s.source,h=0,v=t;return f&&(l=l.replace("y",""),-1===l.indexOf("g")&&(l+="g"),v=String(t).slice(s.lastIndex),s.lastIndex>0&&(!s.multiline||s.multiline&&"\n"!==t[s.lastIndex-1])&&(p="(?: "+p+")",v=" "+v,h++),n=new RegExp("^(?:"+p+")",l)),$&&(n=new RegExp("^"+p+"$(?!\\s)",l)),u&&(e=s.lastIndex),d=i.call(f?n:s,v),f?d?(d.input=d.input.slice(h),d[0]=d[0].slice(h),d.index=s.lastIndex,s.lastIndex+=d[0].length):s.lastIndex=0:u&&d&&(s.lastIndex=s.global?d.index+d[0].length:e),$&&d&&d.length>1&&o.call(d[0],n,(function(){for(a=1;a<arguments.length-2;a++)void 0===arguments[a]&&(d[a]=void 0)})),d}),t.exports=a},"94ca":function(t,e,n){var r=n("d039"),d=/#|\.prototype\./,i=function(t,e){var n=a[o(t)];return n==c||n!=u&&("function"==typeof e?r(e):!!e)},o=i.normalize=function(t){return String(t).replace(d,".").toLowerCase()},a=i.data={},u=i.NATIVE="N",c=i.POLYFILL="P";t.exports=i},"99af":function(t,e,n){"use strict";var r=n("23e7"),d=n("d039"),i=n("e8b5"),o=n("861d"),a=n("7b0b"),u=n("50c4"),c=n("8418"),$=n("65f0"),s=n("1dde"),f=n("b622"),l=n("2d00"),p=f("isConcatSpreadable"),h=9007199254740991,v="Maximum allowed index exceeded",y=l>=51||!d((function(){var t=[];return t[p]=!1,t.concat()[0]!==t})),b=s("concat"),g=function(t){if(!o(t))return!1;var e=t[p];return void 0!==e?!!e:i(t)},m=!y||!b;r({target:"Array",proto:!0,forced:m},{concat:function(t){var e,n,r,d,i,o=a(this),s=$(o,0),f=0;for(e=-1,r=arguments.length;e<r;e++)if(i=-1===e?o:arguments[e],g(i)){if(d=u(i.length),f+d>h)throw TypeError(v);for(n=0;n<d;n++,f++)n in i&&c(s,f,i[n])}else{if(f>=h)throw TypeError(v);c(s,f++,i)}return s.length=f,s}})},"9bdd":function(t,e,n){var r=n("825a"),d=n("2a62");t.exports=function(t,e,n,i){try{return i?e(r(n)[0],n[1]):e(n)}catch(o){throw d(t),o}}},"9bf2":function(t,e,n){var r=n("83ab"),d=n("0cfb"),i=n("825a"),o=n("c04e"),a=Object.defineProperty;e.f=r?a:function(t,e,n){if(i(t),e=o(e,!0),i(n),d)try{return a(t,e,n)}catch(r){}if("get"in n||"set"in n)throw TypeError("Accessors not supported");return"value"in n&&(t[e]=n.value),t}},"9ed3":function(t,e,n){"use strict";var r=n("ae93").IteratorPrototype,d=n("7c73"),i=n("5c6c"),o=n("d44e"),a=n("3f8c"),u=function(){return this};t.exports=function(t,e,n){var c=e+" Iterator";return t.prototype=d(r,{next:i(1,n)}),o(t,c,!1,!0),a[c]=u,t}},"9f7f":function(t,e,n){"use strict";var r=n("d039");function d(t,e){return RegExp(t,e)}e.UNSUPPORTED_Y=r((function(){var t=d("a","y");return t.lastIndex=2,null!=t.exec("abcd")})),e.BROKEN_CARET=r((function(){var t=d("^r","gy");return t.lastIndex=2,null!=t.exec("str")}))},a15b:function(t,e,n){"use strict";var r=n("23e7"),d=n("44ad"),i=n("fc6a"),o=n("a640"),a=[].join,u=d!=Object,c=o("join",",");r({target:"Array",proto:!0,forced:u||!c},{join:function(t){return a.call(i(this),void 0===t?",":t)}})},a4d3:function(t,e,n){"use strict";var r=n("23e7"),d=n("da84"),i=n("d066"),o=n("c430"),a=n("83ab"),u=n("4930"),c=n("fdbf"),$=n("d039"),s=n("5135"),f=n("e8b5"),l=n("861d"),p=n("825a"),h=n("7b0b"),v=n("fc6a"),y=n("c04e"),b=n("5c6c"),g=n("7c73"),m=n("df75"),O=n("241c"),C=n("057f"),x=n("7418"),w=n("06cf"),S=n("9bf2"),E=n("d1e7"),P=n("9112"),I=n("6eeb"),N=n("5692"),j=n("f772"),T=n("d012"),A=n("90e3"),k=n("b622"),M=n("e538"),R=n("746f"),D=n("d44e"),L=n("69f3"),F=n("b727").forEach,B=j("hidden"),_="Symbol",G="prototype",V=k("toPrimitive"),U=L.set,K=L.getterFor(_),H=Object[G],W=d.Symbol,z=i("JSON","stringify"),Y=w.f,Z=S.f,q=C.f,J=E.f,X=N("symbols"),Q=N("op-symbols"),tt=N("string-to-symbol-registry"),et=N("symbol-to-string-registry"),nt=N("wks"),rt=d.QObject,dt=!rt||!rt[G]||!rt[G].findChild,it=a&&$((function(){return 7!=g(Z({},"a",{get:function(){return Z(this,"a",{value:7}).a}})).a}))?function(t,e,n){var r=Y(H,e);r&&delete H[e],Z(t,e,n),r&&t!==H&&Z(H,e,r)}:Z,ot=function(t,e){var n=X[t]=g(W[G]);return U(n,{type:_,tag:t,description:e}),a||(n.description=e),n},at=c?function(t){return"symbol"==typeof t}:function(t){return Object(t)instanceof W},ut=function(t,e,n){t===H&&ut(Q,e,n),p(t);var r=y(e,!0);return p(n),s(X,r)?(n.enumerable?(s(t,B)&&t[B][r]&&(t[B][r]=!1),n=g(n,{enumerable:b(0,!1)})):(s(t,B)||Z(t,B,b(1,{})),t[B][r]=!0),it(t,r,n)):Z(t,r,n)},ct=function(t,e){p(t);var n=v(e),r=m(n).concat(pt(n));return F(r,(function(e){a&&!st.call(n,e)||ut(t,e,n[e])})),t},$t=function(t,e){return void 0===e?g(t):ct(g(t),e)},st=function(t){var e=y(t,!0),n=J.call(this,e);return!(this===H&&s(X,e)&&!s(Q,e))&&(!(n||!s(this,e)||!s(X,e)||s(this,B)&&this[B][e])||n)},ft=function(t,e){var n=v(t),r=y(e,!0);if(n!==H||!s(X,r)||s(Q,r)){var d=Y(n,r);return!d||!s(X,r)||s(n,B)&&n[B][r]||(d.enumerable=!0),d}},lt=function(t){var e=q(v(t)),n=[];return F(e,(function(t){s(X,t)||s(T,t)||n.push(t)})),n},pt=function(t){var e=t===H,n=q(e?Q:v(t)),r=[];return F(n,(function(t){!s(X,t)||e&&!s(H,t)||r.push(X[t])})),r};if(u||(W=function(){if(this instanceof W)throw TypeError("Symbol is not a constructor");var t=arguments.length&&void 0!==arguments[0]?String(arguments[0]):void 0,e=A(t),n=function(t){this===H&&n.call(Q,t),s(this,B)&&s(this[B],e)&&(this[B][e]=!1),it(this,e,b(1,t))};return a&&dt&&it(H,e,{configurable:!0,set:n}),ot(e,t)},I(W[G],"toString",(function(){return K(this).tag})),I(W,"withoutSetter",(function(t){return ot(A(t),t)})),E.f=st,S.f=ut,w.f=ft,O.f=C.f=lt,x.f=pt,M.f=function(t){return ot(k(t),t)},a&&(Z(W[G],"description",{configurable:!0,get:function(){return K(this).description}}),o||I(H,"propertyIsEnumerable",st,{unsafe:!0}))),r({global:!0,wrap:!0,forced:!u,sham:!u},{Symbol:W}),F(m(nt),(function(t){R(t)})),r({target:_,stat:!0,forced:!u},{for:function(t){var e=String(t);if(s(tt,e))return tt[e];var n=W(e);return tt[e]=n,et[n]=e,n},keyFor:function(t){if(!at(t))throw TypeError(t+" is not a symbol");if(s(et,t))return et[t]},useSetter:function(){dt=!0},useSimple:function(){dt=!1}}),r({target:"Object",stat:!0,forced:!u,sham:!a},{create:$t,defineProperty:ut,defineProperties:ct,getOwnPropertyDescriptor:ft}),r({target:"Object",stat:!0,forced:!u},{getOwnPropertyNames:lt,getOwnPropertySymbols:pt}),r({target:"Object",stat:!0,forced:$((function(){x.f(1)}))},{getOwnPropertySymbols:function(t){return x.f(h(t))}}),z){var ht=!u||$((function(){var t=W();return"[null]"!=z([t])||"{}"!=z({a:t})||"{}"!=z(Object(t))}));r({target:"JSON",stat:!0,forced:ht},{stringify:function(t,e,n){var r,d=[t],i=1;while(arguments.length>i)d.push(arguments[i++]);if(r=e,(l(e)||void 0!==t)&&!at(t))return f(e)||(e=function(t,e){if("function"==typeof r&&(e=r.call(this,t,e)),!at(e))return e}),d[1]=e,z.apply(null,d)}})}W[G][V]||P(W[G],V,W[G].valueOf),D(W,_),T[B]=!0},a630:function(t,e,n){var r=n("23e7"),d=n("4df4"),i=n("1c7e"),o=!i((function(t){Array.from(t)}));r({target:"Array",stat:!0,forced:o},{from:d})},a640:function(t,e,n){"use strict";var r=n("d039");t.exports=function(t,e){var n=[][t];return!!n&&r((function(){n.call(null,e||function(){throw 1},1)}))}},a691:function(t,e){var n=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:n)(t)}},a9e3:function(t,e,n){"use strict";var r=n("83ab"),d=n("da84"),i=n("94ca"),o=n("6eeb"),a=n("5135"),u=n("c6b6"),c=n("7156"),$=n("c04e"),s=n("d039"),f=n("7c73"),l=n("241c").f,p=n("06cf").f,h=n("9bf2").f,v=n("58a8").trim,y="Number",b=d[y],g=b.prototype,m=u(f(g))==y,O=function(t){var e,n,r,d,i,o,a,u,c=$(t,!1);if("string"==typeof c&&c.length>2)if(c=v(c),e=c.charCodeAt(0),43===e||45===e){if(n=c.charCodeAt(2),88===n||120===n)return NaN}else if(48===e){switch(c.charCodeAt(1)){case 66:case 98:r=2,d=49;break;case 79:case 111:r=8,d=55;break;default:return+c}for(i=c.slice(2),o=i.length,a=0;a<o;a++)if(u=i.charCodeAt(a),u<48||u>d)return NaN;return parseInt(i,r)}return+c};if(i(y,!b(" 0o1")||!b("0b1")||b("+0x1"))){for(var C,x=function(t){var e=arguments.length<1?0:t,n=this;return n instanceof x&&(m?s((function(){g.valueOf.call(n)})):u(n)!=y)?c(new b(O(e)),n,x):O(e)},w=r?l(b):"MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger,fromString,range".split(","),S=0;w.length>S;S++)a(b,C=w[S])&&!a(x,C)&&h(x,C,p(b,C));x.prototype=g,g.constructor=x,o(d,y,x)}},ab13:function(t,e,n){var r=n("b622"),d=r("match");t.exports=function(t){var e=/./;try{"/./"[t](e)}catch(n){try{return e[d]=!1,"/./"[t](e)}catch(r){}}return!1}},ac1f:function(t,e,n){"use strict";var r=n("23e7"),d=n("9263");r({target:"RegExp",proto:!0,forced:/./.exec!==d},{exec:d})},ad6d:function(t,e,n){"use strict";var r=n("825a");t.exports=function(){var t=r(this),e="";return t.global&&(e+="g"),t.ignoreCase&&(e+="i"),t.multiline&&(e+="m"),t.dotAll&&(e+="s"),t.unicode&&(e+="u"),t.sticky&&(e+="y"),e}},ade3:function(t,e,n){"use strict";function r(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}n.d(e,"a",(function(){return r}))},ae40:function(t,e,n){var r=n("83ab"),d=n("d039"),i=n("5135"),o=Object.defineProperty,a={},u=function(t){throw t};t.exports=function(t,e){if(i(a,t))return a[t];e||(e={});var n=[][t],c=!!i(e,"ACCESSORS")&&e.ACCESSORS,$=i(e,0)?e[0]:u,s=i(e,1)?e[1]:void 0;return a[t]=!!n&&!d((function(){if(c&&!r)return!0;var t={length:-1};c?o(t,1,{enumerable:!0,get:u}):t[1]=1,n.call(t,$,s)}))}},ae93:function(t,e,n){"use strict";var r,d,i,o=n("e163"),a=n("9112"),u=n("5135"),c=n("b622"),$=n("c430"),s=c("iterator"),f=!1,l=function(){return this};[].keys&&(i=[].keys(),"next"in i?(d=o(o(i)),d!==Object.prototype&&(r=d)):f=!0),void 0==r&&(r={}),$||u(r,s)||a(r,s,l),t.exports={IteratorPrototype:r,BUGGY_SAFARI_ITERATORS:f}},b041:function(t,e,n){"use strict";var r=n("00ee"),d=n("f5df");t.exports=r?{}.toString:function(){return"[object "+d(this)+"]"}},b0c0:function(t,e,n){var r=n("83ab"),d=n("9bf2").f,i=Function.prototype,o=i.toString,a=/^\s*function ([^ (]*)/,u="name";r&&!(u in i)&&d(i,u,{configurable:!0,get:function(){try{return o.call(this).match(a)[1]}catch(t){return""}}})},b575:function(t,e,n){var r,d,i,o,a,u,c,$,s=n("da84"),f=n("06cf").f,l=n("2cf4").set,p=n("1cdc"),h=n("605d"),v=s.MutationObserver||s.WebKitMutationObserver,y=s.document,b=s.process,g=s.Promise,m=f(s,"queueMicrotask"),O=m&&m.value;O||(r=function(){var t,e;h&&(t=b.domain)&&t.exit();while(d){e=d.fn,d=d.next;try{e()}catch(n){throw d?o():i=void 0,n}}i=void 0,t&&t.enter()},!p&&!h&&v&&y?(a=!0,u=y.createTextNode(""),new v(r).observe(u,{characterData:!0}),o=function(){u.data=a=!a}):g&&g.resolve?(c=g.resolve(void 0),$=c.then,o=function(){$.call(c,r)}):o=h?function(){b.nextTick(r)}:function(){l.call(s,r)}),t.exports=O||function(t){var e={fn:t,next:void 0};i&&(i.next=e),d||(d=e,o()),i=e}},b622:function(t,e,n){var r=n("da84"),d=n("5692"),i=n("5135"),o=n("90e3"),a=n("4930"),u=n("fdbf"),c=d("wks"),$=r.Symbol,s=u?$:$&&$.withoutSetter||o;t.exports=function(t){return i(c,t)||(a&&i($,t)?c[t]=$[t]:c[t]=s("Symbol."+t)),c[t]}},b635:function(t,e,n){"use strict";(function(t){n.d(e,"c",(function(){return a}));var r=n("5530"),d=n("15fd"),i=n("025e"),o=n("e348");function a(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};if(!a.installed){a.installed=!0;var n=e.dropdownOptions,u=e.inputOptions,c=Object(d["a"])(e,["dropdownOptions","inputOptions"]),$=i["b"].dropdownOptions,s=i["b"].inputOptions,f=Object(d["a"])(i["b"],["dropdownOptions","inputOptions"]);i["a"].options=Object(r["a"])(Object(r["a"])({inputOptions:Object(r["a"])(Object(r["a"])({},s),u),dropdownOptions:Object(r["a"])(Object(r["a"])({},$),n)},f),c),t.component("vue-tel-input",o["a"])}}n.d(e,"a",(function(){return o["a"]}));var u={install:a},c=null;"undefined"!==typeof window?c=window.Vue:"undefined"!==typeof t&&(c=t.Vue),c&&c.use(u),e["b"]=u}).call(this,n("c8ba"))},b64b:function(t,e,n){var r=n("23e7"),d=n("7b0b"),i=n("df75"),o=n("d039"),a=o((function(){i(1)}));r({target:"Object",stat:!0,forced:a},{keys:function(t){return i(d(t))}})},b727:function(t,e,n){var r=n("0366"),d=n("44ad"),i=n("7b0b"),o=n("50c4"),a=n("65f0"),u=[].push,c=function(t){var e=1==t,n=2==t,c=3==t,$=4==t,s=6==t,f=7==t,l=5==t||s;return function(p,h,v,y){for(var b,g,m=i(p),O=d(m),C=r(h,v,3),x=o(O.length),w=0,S=y||a,E=e?S(p,x):n||f?S(p,0):void 0;x>w;w++)if((l||w in O)&&(b=O[w],g=C(b,w,m),t))if(e)E[w]=g;else if(g)switch(t){case 3:return!0;case 5:return b;case 6:return w;case 2:u.call(E,b)}else switch(t){case 4:return!1;case 7:u.call(E,b)}return s?-1:c||$?$:E}};t.exports={forEach:c(0),map:c(1),filter:c(2),some:c(3),every:c(4),find:c(5),findIndex:c(6),filterOut:c(7)}},bfe1:function(t,e,n){"use strict";n("821a")},c04e:function(t,e,n){var r=n("861d");t.exports=function(t,e){if(!r(t))return t;var n,d;if(e&&"function"==typeof(n=t.toString)&&!r(d=n.call(t)))return d;if("function"==typeof(n=t.valueOf)&&!r(d=n.call(t)))return d;if(!e&&"function"==typeof(n=t.toString)&&!r(d=n.call(t)))return d;throw TypeError("Can't convert object to primitive value")}},c430:function(t,e){t.exports=!1},c6b6:function(t,e){var n={}.toString;t.exports=function(t){return n.call(t).slice(8,-1)}},c6cd:function(t,e,n){var r=n("da84"),d=n("ce4e"),i="__core-js_shared__",o=r[i]||d(i,{});t.exports=o},c740:function(t,e,n){"use strict";var r=n("23e7"),d=n("b727").findIndex,i=n("44d2"),o=n("ae40"),a="findIndex",u=!0,c=o(a);a in[]&&Array(1)[a]((function(){u=!1})),r({target:"Array",proto:!0,forced:u||!c},{findIndex:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}}),i(a)},c8ba:function(t,e){var n;n=function(){return this}();try{n=n||new Function("return this")()}catch(r){"object"===typeof window&&(n=window)}t.exports=n},c8d2:function(t,e,n){var r=n("d039"),d=n("5899"),i="​᠎";t.exports=function(t){return r((function(){return!!d[t]()||i[t]()!=i||d[t].name!==t}))}},c975:function(t,e,n){"use strict";var r=n("23e7"),d=n("4d64").indexOf,i=n("a640"),o=n("ae40"),a=[].indexOf,u=!!a&&1/[1].indexOf(1,-0)<0,c=i("indexOf"),$=o("indexOf",{ACCESSORS:!0,1:0});r({target:"Array",proto:!0,forced:u||!c||!$},{indexOf:function(t){return u?a.apply(this,arguments)||0:d(this,t,arguments.length>1?arguments[1]:void 0)}})},ca84:function(t,e,n){var r=n("5135"),d=n("fc6a"),i=n("4d64").indexOf,o=n("d012");t.exports=function(t,e){var n,a=d(t),u=0,c=[];for(n in a)!r(o,n)&&r(a,n)&&c.push(n);while(e.length>u)r(a,n=e[u++])&&(~i(c,n)||c.push(n));return c}},caad:function(t,e,n){"use strict";var r=n("23e7"),d=n("4d64").includes,i=n("44d2"),o=n("ae40"),a=o("indexOf",{ACCESSORS:!0,1:0});r({target:"Array",proto:!0,forced:!a},{includes:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}}),i("includes")},cc12:function(t,e,n){var r=n("da84"),d=n("861d"),i=r.document,o=d(i)&&d(i.createElement);t.exports=function(t){return o?i.createElement(t):{}}},cca6:function(t,e,n){var r=n("23e7"),d=n("60da");r({target:"Object",stat:!0,forced:Object.assign!==d},{assign:d})},cdf9:function(t,e,n){var r=n("825a"),d=n("861d"),i=n("f069");t.exports=function(t,e){if(r(t),d(e)&&e.constructor===t)return e;var n=i.f(t),o=n.resolve;return o(e),n.promise}},ce4e:function(t,e,n){var r=n("da84"),d=n("9112");t.exports=function(t,e){try{d(r,t,e)}catch(n){r[t]=e}return e}},d012:function(t,e){t.exports={}},d039:function(t,e){t.exports=function(t){try{return!!t()}catch(e){return!0}}},d066:function(t,e,n){var r=n("428f"),d=n("da84"),i=function(t){return"function"==typeof t?t:void 0};t.exports=function(t,e){return arguments.length<2?i(r[t])||i(d[t]):r[t]&&r[t][e]||d[t]&&d[t][e]}},d1e7:function(t,e,n){"use strict";var r={}.propertyIsEnumerable,d=Object.getOwnPropertyDescriptor,i=d&&!r.call({1:2},1);e.f=i?function(t){var e=d(this,t);return!!e&&e.enumerable}:r},d28b:function(t,e,n){var r=n("746f");r("iterator")},d2bb:function(t,e,n){var r=n("825a"),d=n("3bbe");t.exports=Object.setPrototypeOf||("__proto__"in{}?function(){var t,e=!1,n={};try{t=Object.getOwnPropertyDescriptor(Object.prototype,"__proto__").set,t.call(n,[]),e=n instanceof Array}catch(i){}return function(n,i){return r(n),d(i),e?t.call(n,i):n.__proto__=i,n}}():void 0)},d3b7:function(t,e,n){var r=n("00ee"),d=n("6eeb"),i=n("b041");r||d(Object.prototype,"toString",i,{unsafe:!0})},d44e:function(t,e,n){var r=n("9bf2").f,d=n("5135"),i=n("b622"),o=i("toStringTag");t.exports=function(t,e,n){t&&!d(t=n?t:t.prototype,o)&&r(t,o,{configurable:!0,value:e})}},d58f:function(t,e,n){var r=n("1c0b"),d=n("7b0b"),i=n("44ad"),o=n("50c4"),a=function(t){return function(e,n,a,u){r(n);var c=d(e),$=i(c),s=o(c.length),f=t?s-1:0,l=t?-1:1;if(a<2)while(1){if(f in $){u=$[f],f+=l;break}if(f+=l,t?f<0:s<=f)throw TypeError("Reduce of empty array with no initial value")}for(;t?f>=0:s>f;f+=l)f in $&&(u=n(u,$[f],f,c));return u}};t.exports={left:a(!1),right:a(!0)}},d784:function(t,e,n){"use strict";n("ac1f");var r=n("6eeb"),d=n("d039"),i=n("b622"),o=n("9263"),a=n("9112"),u=i("species"),c=!d((function(){var t=/./;return t.exec=function(){var t=[];return t.groups={a:"7"},t},"7"!=="".replace(t,"$<a>")})),$=function(){return"$0"==="a".replace(/./,"$0")}(),s=i("replace"),f=function(){return!!/./[s]&&""===/./[s]("a","$0")}(),l=!d((function(){var t=/(?:)/,e=t.exec;t.exec=function(){return e.apply(this,arguments)};var n="ab".split(t);return 2!==n.length||"a"!==n[0]||"b"!==n[1]}));t.exports=function(t,e,n,s){var p=i(t),h=!d((function(){var e={};return e[p]=function(){return 7},7!=""[t](e)})),v=h&&!d((function(){var e=!1,n=/a/;return"split"===t&&(n={},n.constructor={},n.constructor[u]=function(){return n},n.flags="",n[p]=/./[p]),n.exec=function(){return e=!0,null},n[p](""),!e}));if(!h||!v||"replace"===t&&(!c||!$||f)||"split"===t&&!l){var y=/./[p],b=n(p,""[t],(function(t,e,n,r,d){return e.exec===o?h&&!d?{done:!0,value:y.call(e,n,r)}:{done:!0,value:t.call(n,e,r)}:{done:!1}}),{REPLACE_KEEPS_$0:$,REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE:f}),g=b[0],m=b[1];r(String.prototype,t,g),r(RegExp.prototype,p,2==e?function(t,e){return m.call(t,this,e)}:function(t){return m.call(t,this)})}s&&a(RegExp.prototype[p],"sham",!0)}},d81d:function(t,e,n){"use strict";var r=n("23e7"),d=n("b727").map,i=n("1dde"),o=n("ae40"),a=i("map"),u=o("map");r({target:"Array",proto:!0,forced:!a||!u},{map:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}})},da84:function(t,e,n){(function(e){var n=function(t){return t&&t.Math==Math&&t};t.exports=n("object"==typeof globalThis&&globalThis)||n("object"==typeof window&&window)||n("object"==typeof self&&self)||n("object"==typeof e&&e)||function(){return this}()||Function("return this")()}).call(this,n("c8ba"))},dbb4:function(t,e,n){var r=n("23e7"),d=n("83ab"),i=n("56ef"),o=n("fc6a"),a=n("06cf"),u=n("8418");r({target:"Object",stat:!0,sham:!d},{getOwnPropertyDescriptors:function(t){var e,n,r=o(t),d=a.f,c=i(r),$={},s=0;while(c.length>s)n=d(r,e=c[s++]),void 0!==n&&u($,e,n);return $}})},ddb0:function(t,e,n){var r=n("da84"),d=n("fdbc"),i=n("e260"),o=n("9112"),a=n("b622"),u=a("iterator"),c=a("toStringTag"),$=i.values;for(var s in d){var f=r[s],l=f&&f.prototype;if(l){if(l[u]!==$)try{o(l,u,$)}catch(h){l[u]=$}if(l[c]||o(l,c,s),d[s])for(var p in i)if(l[p]!==i[p])try{o(l,p,i[p])}catch(h){l[p]=i[p]}}}},df75:function(t,e,n){var r=n("ca84"),d=n("7839");t.exports=Object.keys||function(t){return r(t,d)}},e01a:function(t,e,n){"use strict";var r=n("23e7"),d=n("83ab"),i=n("da84"),o=n("5135"),a=n("861d"),u=n("9bf2").f,c=n("e893"),$=i.Symbol;if(d&&"function"==typeof $&&(!("description"in $.prototype)||void 0!==$().description)){var s={},f=function(){var t=arguments.length<1||void 0===arguments[0]?void 0:String(arguments[0]),e=this instanceof f?new $(t):void 0===t?$():$(t);return""===t&&(s[e]=!0),e};c(f,$);var l=f.prototype=$.prototype;l.constructor=f;var p=l.toString,h="Symbol(test)"==String($("test")),v=/^Symbol\((.*)\)[^)]+$/;u(l,"description",{configurable:!0,get:function(){var t=a(this)?this.valueOf():this,e=p.call(t);if(o(s,t))return"";var n=h?e.slice(7,-1):e.replace(v,"$1");return""===n?void 0:n}}),r({global:!0,forced:!0},{Symbol:f})}},e103:function(t,e,n){"use strict";n("f3f2")},e163:function(t,e,n){var r=n("5135"),d=n("7b0b"),i=n("f772"),o=n("e177"),a=i("IE_PROTO"),u=Object.prototype;t.exports=o?Object.getPrototypeOf:function(t){return t=d(t),r(t,a)?t[a]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},e177:function(t,e,n){var r=n("d039");t.exports=!r((function(){function t(){}return t.prototype.constructor=null,Object.getPrototypeOf(new t)!==t.prototype}))},e260:function(t,e,n){"use strict";var r=n("fc6a"),d=n("44d2"),i=n("3f8c"),o=n("69f3"),a=n("7dd0"),u="Array Iterator",c=o.set,$=o.getterFor(u);t.exports=a(Array,"Array",(function(t,e){c(this,{type:u,target:r(t),index:0,kind:e})}),(function(){var t=$(this),e=t.target,n=t.kind,r=t.index++;return!e||r>=e.length?(t.target=void 0,{value:void 0,done:!0}):"keys"==n?{value:r,done:!1}:"values"==n?{value:e[r],done:!1}:{value:[r,e[r]],done:!1}}),"values"),i.Arguments=i.Array,d("keys"),d("values"),d("entries")},e2cc:function(t,e,n){var r=n("6eeb");t.exports=function(t,e,n){for(var d in e)r(t,d,e[d],n);return t}},e348:function(t,e,n){"use strict";n("b0c0");var r=n("8bbf"),d={class:"vti__selection"},i={key:1,class:"vti__country-code"},o={class:"vti__dropdown-arrow"},a={key:1};function u(t,e,n,u,c,$){var s=Object(r["resolveDirective"])("click-outside");return Object(r["openBlock"])(),Object(r["createBlock"])("div",{class:["vue-tel-input",n.styleClasses,{disabled:n.disabled}]},[Object(r["withDirectives"])(Object(r["createVNode"])("div",{class:["vti__dropdown",{open:c.open}],tabindex:n.dropdownOptions.tabindex,onKeydown:[e[1]||(e[1]=function(){return $.keyboardNav&&$.keyboardNav.apply($,arguments)}),e[3]||(e[3]=Object(r["withKeys"])((function(){return $.reset&&$.reset.apply($,arguments)}),["esc"]))],onClick:e[2]||(e[2]=function(){return $.toggleDropdown&&$.toggleDropdown.apply($,arguments)})},[Object(r["createVNode"])("span",d,[n.dropdownOptions.showFlags?(Object(r["openBlock"])(),Object(r["createBlock"])("div",{key:0,class:["vti__flag",c.activeCountryCode.toLowerCase()]},null,2)):Object(r["createCommentVNode"])("",!0),n.dropdownOptions.showDialCodeInSelection?(Object(r["openBlock"])(),Object(r["createBlock"])("span",i," +"+Object(r["toDisplayString"])($.activeCountry&&$.activeCountry.dialCode),1)):Object(r["createCommentVNode"])("",!0),Object(r["renderSlot"])(t.$slots,"arrow-icon",{open:c.open},(function(){return[Object(r["createVNode"])("span",o,Object(r["toDisplayString"])(c.open?"▲":"▼"),1)]}))]),Object(r["withDirectives"])(Object(r["createVNode"])("ul",{ref:"list",class:["vti__dropdown-list",c.dropdownOpenDirection]},[(Object(r["openBlock"])(!0),Object(r["createBlock"])(r["Fragment"],null,Object(r["renderList"])($.sortedCountries,(function(t,e){return Object(r["openBlock"])(),Object(r["createBlock"])("li",{class:["vti__dropdown-item",$.getItemClass(e,t.iso2)],key:t.iso2+(t.preferred?"-preferred":""),onClick:function(e){return $.choose(t)},onMousemove:function(t){return c.selectedIndex=e}},[n.dropdownOptions.showFlags?(Object(r["openBlock"])(),Object(r["createBlock"])("div",{key:0,class:["vti__flag",t.iso2.toLowerCase()]},null,2)):Object(r["createCommentVNode"])("",!0),Object(r["createVNode"])("strong",null,Object(r["toDisplayString"])(t.name),1),n.dropdownOptions.showDialCodeInList?(Object(r["openBlock"])(),Object(r["createBlock"])("span",a," +"+Object(r["toDisplayString"])(t.dialCode),1)):Object(r["createCommentVNode"])("",!0)],42,["onClick","onMousemove"])})),128))],2),[[r["vShow"],c.open]])],42,["tabindex"]),[[s,$.clickedOutside]]),Object(r["withDirectives"])(Object(r["createVNode"])("input",{"onUpdate:modelValue":e[4]||(e[4]=function(t){return c.phone=t}),ref:"input",type:n.inputOptions.type,autocomplete:n.inputOptions.autocomplete,autofocus:n.inputOptions.autofocus,class:["vti__input",n.inputOptions.styleClasses],disabled:n.disabled,id:n.inputOptions.id,maxlength:n.inputOptions.maxlength,name:n.inputOptions.name,placeholder:c.parsedPlaceholder,readonly:n.inputOptions.readonly,required:n.inputOptions.required,tabindex:n.inputOptions.tabindex,onBlur:e[5]||(e[5]=function(){return $.onBlur&&$.onBlur.apply($,arguments)}),onFocus:e[6]||(e[6]=function(){return $.onFocus&&$.onFocus.apply($,arguments)}),onInput:e[7]||(e[7]=function(){return $.onInput&&$.onInput.apply($,arguments)}),onKeyup:[e[8]||(e[8]=Object(r["withKeys"])((function(){return $.onEnter&&$.onEnter.apply($,arguments)}),["enter"])),e[9]||(e[9]=Object(r["withKeys"])((function(){return $.onSpace&&$.onSpace.apply($,arguments)}),["space"]))]},null,42,["type","autocomplete","autofocus","disabled","id","maxlength","name","placeholder","readonly","required","tabindex"]),[[r["vModelDynamic"],c.phone]])],2)}n("99af"),n("4de4"),n("7db0"),n("c740"),n("caad"),n("c975"),n("a15b"),n("d81d"),n("fb6a"),n("45fc"),n("cca6"),n("d3b7"),n("e6cf"),n("4d63"),n("ac1f"),n("25f0"),n("2532"),n("466d"),n("2ca0"),n("498a");var c=n("15fd"),$=n("6b75");function s(t){if(Array.isArray(t))return Object($["a"])(t)}n("a4d3"),n("e01a"),n("d28b"),n("a630"),n("e260"),n("3ca3"),n("ddb0");function f(t){if("undefined"!==typeof Symbol&&Symbol.iterator in Object(t))return Array.from(t)}var l=n("06c5");function p(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}function h(t){return s(t)||f(t)||Object(l["a"])(t)||p()}var v=n("5530"),y={version:4,country_calling_codes:{1:["US","AG","AI","AS","BB","BM","BS","CA","DM","DO","GD","GU","JM","KN","KY","LC","MP","MS","PR","SX","TC","TT","VC","VG","VI"],7:["RU","KZ"],20:["EG"],27:["ZA"],30:["GR"],31:["NL"],32:["BE"],33:["FR"],34:["ES"],36:["HU"],39:["IT","VA"],40:["RO"],41:["CH"],43:["AT"],44:["GB","GG","IM","JE"],45:["DK"],46:["SE"],47:["NO","SJ"],48:["PL"],49:["DE"],51:["PE"],52:["MX"],53:["CU"],54:["AR"],55:["BR"],56:["CL"],57:["CO"],58:["VE"],60:["MY"],61:["AU","CC","CX"],62:["ID"],63:["PH"],64:["NZ"],65:["SG"],66:["TH"],81:["JP"],82:["KR"],84:["VN"],86:["CN"],90:["TR"],91:["IN"],92:["PK"],93:["AF"],94:["LK"],95:["MM"],98:["IR"],211:["SS"],212:["MA","EH"],213:["DZ"],216:["TN"],218:["LY"],220:["GM"],221:["SN"],222:["MR"],223:["ML"],224:["GN"],225:["CI"],226:["BF"],227:["NE"],228:["TG"],229:["BJ"],230:["MU"],231:["LR"],232:["SL"],233:["GH"],234:["NG"],235:["TD"],236:["CF"],237:["CM"],238:["CV"],239:["ST"],240:["GQ"],241:["GA"],242:["CG"],243:["CD"],244:["AO"],245:["GW"],246:["IO"],247:["AC"],248:["SC"],249:["SD"],250:["RW"],251:["ET"],252:["SO"],253:["DJ"],254:["KE"],255:["TZ"],256:["UG"],257:["BI"],258:["MZ"],260:["ZM"],261:["MG"],262:["RE","YT"],263:["ZW"],264:["NA"],265:["MW"],266:["LS"],267:["BW"],268:["SZ"],269:["KM"],290:["SH","TA"],291:["ER"],297:["AW"],298:["FO"],299:["GL"],350:["GI"],351:["PT"],352:["LU"],353:["IE"],354:["IS"],355:["AL"],356:["MT"],357:["CY"],358:["FI","AX"],359:["BG"],370:["LT"],371:["LV"],372:["EE"],373:["MD"],374:["AM"],375:["BY"],376:["AD"],377:["MC"],378:["SM"],380:["UA"],381:["RS"],382:["ME"],383:["XK"],385:["HR"],386:["SI"],387:["BA"],389:["MK"],420:["CZ"],421:["SK"],423:["LI"],500:["FK"],501:["BZ"],502:["GT"],503:["SV"],504:["HN"],505:["NI"],506:["CR"],507:["PA"],508:["PM"],509:["HT"],590:["GP","BL","MF"],591:["BO"],592:["GY"],593:["EC"],594:["GF"],595:["PY"],596:["MQ"],597:["SR"],598:["UY"],599:["CW","BQ"],670:["TL"],672:["NF"],673:["BN"],674:["NR"],675:["PG"],676:["TO"],677:["SB"],678:["VU"],679:["FJ"],680:["PW"],681:["WF"],682:["CK"],683:["NU"],685:["WS"],686:["KI"],687:["NC"],688:["TV"],689:["PF"],690:["TK"],691:["FM"],692:["MH"],850:["KP"],852:["HK"],853:["MO"],855:["KH"],856:["LA"],880:["BD"],886:["TW"],960:["MV"],961:["LB"],962:["JO"],963:["SY"],964:["IQ"],965:["KW"],966:["SA"],967:["YE"],968:["OM"],970:["PS"],971:["AE"],972:["IL"],973:["BH"],974:["QA"],975:["BT"],976:["MN"],977:["NP"],992:["TJ"],993:["TM"],994:["AZ"],995:["GE"],996:["KG"],998:["UZ"]},countries:{AC:["247","00","(?:[01589]\\d|[46])\\d{4}",[5,6]],AD:["376","00","(?:1|6\\d)\\d{7}|[135-9]\\d{5}",[6,8,9],[["(\\d{3})(\\d{3})","$1 $2",["[135-9]"]],["(\\d{4})(\\d{4})","$1 $2",["1"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["6"]]]],AE:["971","00","(?:[4-7]\\d|9[0-689])\\d{7}|800\\d{2,9}|[2-4679]\\d{7}",[5,6,7,8,9,10,11,12],[["(\\d{3})(\\d{2,9})","$1 $2",["60|8"]],["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["[236]|[479][2-8]"],"0$1"],["(\\d{3})(\\d)(\\d{5})","$1 $2 $3",["[479]"]],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["5"],"0$1"]],"0"],AF:["93","00","[2-7]\\d{8}",[9],[["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[2-7]"],"0$1"]],"0"],AG:["1","011","(?:268|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([457]\\d{6})$","268$1",0,"268"],AI:["1","011","(?:264|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2457]\\d{6})$","264$1",0,"264"],AL:["355","00","(?:700\\d\\d|900)\\d{3}|8\\d{5,7}|(?:[2-5]|6\\d)\\d{7}",[6,7,8,9],[["(\\d{3})(\\d{3,4})","$1 $2",["80|9"],"0$1"],["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["4[2-6]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[2358][2-5]|4"],"0$1"],["(\\d{3})(\\d{5})","$1 $2",["[23578]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["6"],"0$1"]],"0"],AM:["374","00","(?:[1-489]\\d|55|60|77)\\d{6}",[8],[["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["[89]0"],"0 $1"],["(\\d{3})(\\d{5})","$1 $2",["2|3[12]"],"(0$1)"],["(\\d{2})(\\d{6})","$1 $2",["1|47"],"(0$1)"],["(\\d{2})(\\d{6})","$1 $2",["[3-9]"],"0$1"]],"0"],AO:["244","00","[29]\\d{8}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[29]"]]]],AR:["54","00","11\\d{8}|(?:[2368]|9\\d)\\d{9}",[10,11],[["(\\d{4})(\\d{2})(\\d{4})","$1 $2-$3",["2(?:2[024-9]|3[0-59]|47|6[245]|9[02-8])|3(?:3[28]|4[03-9]|5[2-46-8]|7[1-578]|8[2-9])","2(?:[23]02|6(?:[25]|4[6-8])|9(?:[02356]|4[02568]|72|8[23]))|3(?:3[28]|4(?:[04679]|3[5-8]|5[4-68]|8[2379])|5(?:[2467]|3[237]|8[2-5])|7[1-578]|8(?:[2469]|3[2578]|5[4-8]|7[36-8]|8[5-8]))|2(?:2[24-9]|3[1-59]|47)","2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3[78]|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8[23])|7[1-578]|8(?:[2469]|3[278]|5[56][46]|86[3-6]))|2(?:2[24-9]|3[1-59]|47)|38(?:[58][78]|7[378])|3(?:4[35][56]|58[45]|8(?:[38]5|54|76))[4-6]","2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3(?:5(?:4[0-25689]|[56])|[78])|58|8[2379])|5(?:[2467]|3[237]|8(?:[23]|4(?:[45]|60)|5(?:4[0-39]|5|64)))|7[1-578]|8(?:[2469]|3[278]|54(?:4|5[13-7]|6[89])|86[3-6]))|2(?:2[24-9]|3[1-59]|47)|38(?:[58][78]|7[378])|3(?:454|85[56])[46]|3(?:4(?:36|5[56])|8(?:[38]5|76))[4-6]"],"0$1",1],["(\\d{2})(\\d{4})(\\d{4})","$1 $2-$3",["1"],"0$1",1],["(\\d{3})(\\d{3})(\\d{4})","$1-$2-$3",["[68]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2-$3",["[23]"],"0$1",1],["(\\d)(\\d{4})(\\d{2})(\\d{4})","$2 15-$3-$4",["9(?:2[2-469]|3[3-578])","9(?:2(?:2[024-9]|3[0-59]|47|6[245]|9[02-8])|3(?:3[28]|4[03-9]|5[2-46-8]|7[1-578]|8[2-9]))","9(?:2(?:[23]02|6(?:[25]|4[6-8])|9(?:[02356]|4[02568]|72|8[23]))|3(?:3[28]|4(?:[04679]|3[5-8]|5[4-68]|8[2379])|5(?:[2467]|3[237]|8[2-5])|7[1-578]|8(?:[2469]|3[2578]|5[4-8]|7[36-8]|8[5-8])))|92(?:2[24-9]|3[1-59]|47)","9(?:2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3[78]|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8[23])|7[1-578]|8(?:[2469]|3[278]|5(?:[56][46]|[78])|7[378]|8(?:6[3-6]|[78]))))|92(?:2[24-9]|3[1-59]|47)|93(?:4[35][56]|58[45]|8(?:[38]5|54|76))[4-6]","9(?:2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3(?:5(?:4[0-25689]|[56])|[78])|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8(?:[23]|4(?:[45]|60)|5(?:4[0-39]|5|64)))|7[1-578]|8(?:[2469]|3[278]|5(?:4(?:4|5[13-7]|6[89])|[56][46]|[78])|7[378]|8(?:6[3-6]|[78]))))|92(?:2[24-9]|3[1-59]|47)|93(?:4(?:36|5[56])|8(?:[38]5|76))[4-6]"],"0$1",0,"$1 $2 $3-$4"],["(\\d)(\\d{2})(\\d{4})(\\d{4})","$2 15-$3-$4",["91"],"0$1",0,"$1 $2 $3-$4"],["(\\d)(\\d{3})(\\d{3})(\\d{4})","$2 15-$3-$4",["9"],"0$1",0,"$1 $2 $3-$4"]],"0",0,"0?(?:(11|2(?:2(?:02?|[13]|2[13-79]|4[1-6]|5[2457]|6[124-8]|7[1-4]|8[13-6]|9[1267])|3(?:02?|1[467]|2[03-6]|3[13-8]|[49][2-6]|5[2-8]|[67])|4(?:7[3-578]|9)|6(?:[0136]|2[24-6]|4[6-8]?|5[15-8])|80|9(?:0[1-3]|[19]|2\\d|3[1-6]|4[02568]?|5[2-4]|6[2-46]|72?|8[23]?))|3(?:3(?:2[79]|6|8[2578])|4(?:0[0-24-9]|[12]|3[5-8]?|4[24-7]|5[4-68]?|6[02-9]|7[126]|8[2379]?|9[1-36-8])|5(?:1|2[1245]|3[237]?|4[1-46-9]|6[2-4]|7[1-6]|8[2-5]?)|6[24]|7(?:[069]|1[1568]|2[15]|3[145]|4[13]|5[14-8]|7[2-57]|8[126])|8(?:[01]|2[15-7]|3[2578]?|4[13-6]|5[4-8]?|6[1-357-9]|7[36-8]?|8[5-8]?|9[124])))15)?","9$1"],AS:["1","011","(?:[58]\\d\\d|684|900)\\d{7}",[10],0,"1",0,"1|([267]\\d{6})$","684$1",0,"684"],AT:["43","00","1\\d{3,12}|2\\d{6,12}|43(?:(?:0\\d|5[02-9])\\d{3,9}|2\\d{4,5}|[3467]\\d{4}|8\\d{4,6}|9\\d{4,7})|5\\d{4,12}|8\\d{7,12}|9\\d{8,12}|(?:[367]\\d|4[0-24-9])\\d{4,11}",[4,5,6,7,8,9,10,11,12,13],[["(\\d)(\\d{3,12})","$1 $2",["1(?:11|[2-9])"],"0$1"],["(\\d{3})(\\d{2})","$1 $2",["517"],"0$1"],["(\\d{2})(\\d{3,5})","$1 $2",["5[079]"],"0$1"],["(\\d{3})(\\d{3,10})","$1 $2",["(?:31|4)6|51|6(?:5[0-3579]|[6-9])|7(?:20|32|8)|[89]"],"0$1"],["(\\d{4})(\\d{3,9})","$1 $2",["[2-467]|5[2-6]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["5"],"0$1"],["(\\d{2})(\\d{4})(\\d{4,7})","$1 $2 $3",["5"],"0$1"]],"0"],AU:["61","001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011","1(?:[0-79]\\d{7,8}|8[0-24-9]\\d{7})|[2-478]\\d{8}|1\\d{4,7}",[5,6,7,8,9,10],[["(\\d{2})(\\d{3,4})","$1 $2",["16"],"0$1"],["(\\d{2})(\\d{3})(\\d{2,4})","$1 $2 $3",["16"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["14|4"],"0$1"],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["[2378]"],"(0$1)"],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1(?:30|[89])"]]],"0",0,"0|(183[12])",0,0,0,[["8(?:51(?:0(?:0[03-9]|[12479]\\d|3[2-9]|5[0-8]|6[1-9]|8[0-7])|1(?:[0235689]\\d|1[0-69]|4[0-589]|7[0-47-9])|2(?:0[0-7]|3[2-4]|[4-6]\\d))|91(?:[0-57-9]\\d|6[0135-9])\\d)\\d{3}|(?:2(?:[0-26-9]\\d|3[0-8]|4[02-9]|5[0135-9])|3(?:[0-3589]\\d|4[0-578]|6[1-9]|7[0-35-9])|7(?:[013-57-9]\\d|2[0-8])|8(?:6[0-8]|[78]\\d|9[02-9]))\\d{6}",[9]],["4(?:83[0-38]|93[0-4])\\d{5}|4(?:[0-3]\\d|4[047-9]|5[0-25-9]|6[06-9]|7[02-9]|8[0-24-9]|9[0-27-9])\\d{6}",[9]],["180(?:0\\d{3}|2)\\d{3}",[7,10]],["190[0-26]\\d{6}",[10]],0,0,0,["163\\d{2,6}",[5,6,7,8,9]],["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}",[9]],["13(?:00\\d{3}|45[0-4])\\d{3}|13\\d{4}",[6,8,10]]],"0011"],AW:["297","00","(?:[25-79]\\d\\d|800)\\d{4}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[25-9]"]]]],AX:["358","00|99(?:[01469]|5(?:[14]1|3[23]|5[59]|77|88|9[09]))","2\\d{4,9}|35\\d{4,5}|(?:60\\d\\d|800)\\d{4,6}|7\\d{5,11}|(?:[14]\\d|3[0-46-9]|50)\\d{4,8}",[5,6,7,8,9,10,11,12],0,"0",0,0,0,0,"18",0,"00"],AZ:["994","00","365\\d{6}|(?:[124579]\\d|60|88)\\d{7}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["90"],"0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["1[28]|2|365|46","1[28]|2|365|46","1[28]|2|365(?:[0-46-9]|5[0-35-9])|46"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[13-9]"],"0$1"]],"0"],BA:["387","00","6\\d{8}|(?:[35689]\\d|49|70)\\d{6}",[8,9],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["6[1-3]|[7-9]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2-$3",["[3-5]|6[56]"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3 $4",["6"],"0$1"]],"0"],BB:["1","011","(?:246|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-9]\\d{6})$","246$1",0,"246"],BD:["880","00","1\\d{9}|2\\d{7,8}|88\\d{4,6}|(?:8[0-79]|9\\d)\\d{4,8}|(?:[346]\\d|[57])\\d{5,8}",[6,7,8,9,10],[["(\\d{2})(\\d{4,6})","$1-$2",["31[5-8]|[459]1"],"0$1"],["(\\d{3})(\\d{3,7})","$1-$2",["3(?:[67]|8[013-9])|4(?:6[168]|7|[89][18])|5(?:6[128]|9)|6(?:28|4[14]|5)|7[2-589]|8(?:0[014-9]|[12])|9[358]|(?:3[2-5]|4[235]|5[2-578]|6[0389]|76|8[3-7]|9[24])1|(?:44|66)[01346-9]"],"0$1"],["(\\d{4})(\\d{3,6})","$1-$2",["[13-9]"],"0$1"],["(\\d)(\\d{7,8})","$1-$2",["2"],"0$1"]],"0"],BE:["32","00","4\\d{8}|[1-9]\\d{7}",[8,9],[["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["(?:80|9)0"],"0$1"],["(\\d)(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[239]|4[23]"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[15-8]"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["4"],"0$1"]],"0"],BF:["226","00","[025-7]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[025-7]"]]]],BG:["359","00","[2-7]\\d{6,7}|[89]\\d{6,8}|2\\d{5}",[6,7,8,9],[["(\\d)(\\d)(\\d{2})(\\d{2})","$1 $2 $3 $4",["2"],"0$1"],["(\\d{3})(\\d{4})","$1 $2",["43[1-6]|70[1-9]"],"0$1"],["(\\d)(\\d{3})(\\d{3,4})","$1 $2 $3",["2"],"0$1"],["(\\d{2})(\\d{3})(\\d{2,3})","$1 $2 $3",["[356]|4[124-7]|7[1-9]|8[1-6]|9[1-7]"],"0$1"],["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["(?:70|8)0"],"0$1"],["(\\d{3})(\\d{3})(\\d{2})","$1 $2 $3",["43[1-7]|7"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[48]|9[08]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["9"],"0$1"]],"0"],BH:["973","00","[136-9]\\d{7}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[13679]|8[047]"]]]],BI:["257","00","(?:[267]\\d|31)\\d{6}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2367]"]]]],BJ:["229","00","(?:[2689]\\d|51)\\d{6}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[25689]"]]]],BL:["590","00","(?:590|69\\d|976)\\d{6}",[9],0,"0",0,0,0,0,0,[["590(?:2[7-9]|5[12]|87)\\d{4}"],["69(?:0\\d\\d|1(?:2[29]|3[0-5]))\\d{4}"],0,0,0,0,0,0,["976[01]\\d{5}"]]],BM:["1","011","(?:441|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-8]\\d{6})$","441$1",0,"441"],BN:["673","00","[2-578]\\d{6}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[2-578]"]]]],BO:["591","00(?:1\\d)?","(?:[2-467]\\d\\d|8001)\\d{5}",[8,9],[["(\\d)(\\d{7})","$1 $2",["[23]|4[46]"]],["(\\d{8})","$1",["[67]"]],["(\\d{3})(\\d{2})(\\d{4})","$1 $2 $3",["8"]]],"0",0,"0(1\\d)?"],BQ:["599","00","(?:[34]1|7\\d)\\d{5}",[7],0,0,0,0,0,0,"[347]"],BR:["55","00(?:1[245]|2[1-35]|31|4[13]|[56]5|99)","(?:[1-46-9]\\d\\d|5(?:[0-46-9]\\d|5[0-24679]))\\d{8}|[1-9]\\d{9}|[3589]\\d{8}|[34]\\d{7}",[8,9,10,11],[["(\\d{4})(\\d{4})","$1-$2",["300|4(?:0[02]|37)","4(?:02|37)0|[34]00"]],["(\\d{3})(\\d{2,3})(\\d{4})","$1 $2 $3",["(?:[358]|90)0"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1 $2-$3",["(?:[14689][1-9]|2[12478]|3[1-578]|5[13-5]|7[13-579])[2-57]"],"($1)"],["(\\d{2})(\\d{5})(\\d{4})","$1 $2-$3",["[16][1-9]|[2-57-9]"],"($1)"]],"0",0,"(?:0|90)(?:(1[245]|2[1-35]|31|4[13]|[56]5|99)(\\d{10,11}))?","$2"],BS:["1","011","(?:242|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([3-8]\\d{6})$","242$1",0,"242"],BT:["975","00","[17]\\d{7}|[2-8]\\d{6}",[7,8],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["[2-68]|7[246]"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["1[67]|7"]]]],BW:["267","00","90\\d{5}|(?:0800|[2-6]|7\\d)\\d{6}",[7,8,10],[["(\\d{2})(\\d{5})","$1 $2",["90"]],["(\\d{3})(\\d{4})","$1 $2",["[2-6]"]],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["7"]],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["0"]]]],BY:["375","810","(?:[12]\\d|33|44|902)\\d{7}|8(?:0[0-79]\\d{5,7}|[1-7]\\d{9})|8(?:1[0-489]|[5-79]\\d)\\d{7}|8[1-79]\\d{6,7}|8[0-79]\\d{5}|8\\d{5}",[6,7,8,9,10,11],[["(\\d{3})(\\d{3})","$1 $2",["800"],"8 $1"],["(\\d{3})(\\d{2})(\\d{2,4})","$1 $2 $3",["800"],"8 $1"],["(\\d{4})(\\d{2})(\\d{3})","$1 $2-$3",["1(?:5[169]|6[3-5]|7[179])|2(?:1[35]|2[34]|3[3-5])","1(?:5[169]|6(?:3[1-3]|4|5[125])|7(?:1[3-9]|7[0-24-6]|9[2-7]))|2(?:1[35]|2[34]|3[3-5])"],"8 0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2-$3-$4",["1(?:[56]|7[467])|2[1-3]"],"8 0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2-$3-$4",["[1-4]"],"8 0$1"],["(\\d{3})(\\d{3,4})(\\d{4})","$1 $2 $3",["[89]"],"8 $1"]],"8",0,"0|80?",0,0,0,0,"8~10"],BZ:["501","00","(?:0800\\d|[2-8])\\d{6}",[7,11],[["(\\d{3})(\\d{4})","$1-$2",["[2-8]"]],["(\\d)(\\d{3})(\\d{4})(\\d{3})","$1-$2-$3-$4",["0"]]]],CA:["1","011","(?:[2-8]\\d|90)\\d{8}",[10],0,"1",0,0,0,0,0,[["(?:2(?:04|[23]6|[48]9|50)|3(?:06|43|6[57])|4(?:03|1[68]|3[178]|50)|5(?:06|1[49]|48|79|8[17])|6(?:04|13|39|47|72)|7(?:0[59]|78|8[02])|8(?:[06]7|19|25|73)|90[25])[2-9]\\d{6}"],[""],["8(?:00|33|44|55|66|77|88)[2-9]\\d{6}"],["900[2-9]\\d{6}"],["52(?:3(?:[2-46-9][02-9]\\d|5(?:[02-46-9]\\d|5[0-46-9]))|4(?:[2-478][02-9]\\d|5(?:[034]\\d|2[024-9]|5[0-46-9])|6(?:0[1-9]|[2-9]\\d)|9(?:[05-9]\\d|2[0-5]|49)))\\d{4}|52[34][2-9]1[02-9]\\d{4}|(?:5(?:00|2[12]|33|44|66|77|88)|622)[2-9]\\d{6}"],0,0,0,["600[2-9]\\d{6}"]]],CC:["61","001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011","1(?:[0-79]\\d|8[0-24-9])\\d{7}|[148]\\d{8}|1\\d{5,7}",[6,7,8,9,10],0,"0",0,"0|([59]\\d{7})$","8$1",0,0,[["8(?:51(?:0(?:02|31|60|89)|118)|91(?:0(?:1[0-2]|29)|1(?:[28]2|50|79)|2(?:10|64)|3(?:[06]8|22)|4[29]8|62\\d|70[23]|959))\\d{3}",[9]],["4(?:83[0-38]|93[0-4])\\d{5}|4(?:[0-3]\\d|4[047-9]|5[0-25-9]|6[06-9]|7[02-9]|8[0-24-9]|9[0-27-9])\\d{6}",[9]],["180(?:0\\d{3}|2)\\d{3}",[7,10]],["190[0-26]\\d{6}",[10]],0,0,0,0,["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}",[9]],["13(?:00\\d{3}|45[0-4])\\d{3}|13\\d{4}",[6,8,10]]],"0011"],CD:["243","00","[189]\\d{8}|[1-68]\\d{6}",[7,9],[["(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3",["88"],"0$1"],["(\\d{2})(\\d{5})","$1 $2",["[1-6]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["1"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[89]"],"0$1"]],"0"],CF:["236","00","(?:[27]\\d{3}|8776)\\d{4}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[278]"]]]],CG:["242","00","222\\d{6}|(?:0\\d|80)\\d{7}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["801"]],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["8"]],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[02]"]]]],CH:["41","00","8\\d{11}|[2-9]\\d{8}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["8[047]|90"],"0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2-79]|81"],"0$1"],["(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4 $5",["8"],"0$1"]],"0"],CI:["225","00","[02-9]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[02-9]"]]]],CK:["682","00","[2-578]\\d{4}",[5],[["(\\d{2})(\\d{3})","$1 $2",["[2-578]"]]]],CL:["56","(?:0|1(?:1[0-69]|2[02-5]|5[13-58]|69|7[0167]|8[018]))0","12300\\d{6}|6\\d{9,10}|[2-9]\\d{8}",[9,10,11],[["(\\d{5})(\\d{4})","$1 $2",["219","2196"],"($1)"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["44"]],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["2[1-3]"],"($1)"],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["9[2-9]"]],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["3[2-5]|[47]|5[1-3578]|6[13-57]|8(?:0[1-9]|[1-9])"],"($1)"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["60|8"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["1"]],["(\\d{3})(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3 $4",["60"]]]],CM:["237","00","(?:[26]\\d\\d|88)\\d{6}",[8,9],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["88"]],["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4 $5",["[26]"]]]],CN:["86","00|1(?:[12]\\d|79)\\d\\d00","1[127]\\d{8,9}|2\\d{9}(?:\\d{2})?|[12]\\d{6,7}|86\\d{6}|(?:1[03-689]\\d|6)\\d{7,9}|(?:[3-579]\\d|8[0-57-9])\\d{6,9}",[7,8,9,10,11,12],[["(\\d{2})(\\d{5,6})","$1 $2",["(?:10|2[0-57-9])[19]","(?:10|2[0-57-9])(?:10|9[56])","(?:10|2[0-57-9])(?:100|9[56])"],"0$1"],["(\\d{3})(\\d{5,6})","$1 $2",["3(?:[157]|35|49|9[1-68])|4(?:[17]|2[179]|6[47-9]|8[23])|5(?:[1357]|2[37]|4[36]|6[1-46]|80)|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]|4[13]|5[1-5])|(?:4[35]|59|85)[1-9]","(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[1-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))[19]","85[23](?:10|95)|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:10|9[56])","85[23](?:100|95)|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:100|9[56])"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["(?:4|80)0"]],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["10|2(?:[02-57-9]|1[1-9])","10|2(?:[02-57-9]|1[1-9])","10[0-79]|2(?:[02-57-9]|1[1-79])|(?:10|21)8(?:0[1-9]|[1-9])"],"0$1",1],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["3(?:[3-59]|7[02-68])|4(?:[26-8]|3[3-9]|5[2-9])|5(?:3[03-9]|[468]|7[028]|9[2-46-9])|6|7(?:[0-247]|3[04-9]|5[0-4689]|6[2368])|8(?:[1-358]|9[1-7])|9(?:[013479]|5[1-5])|(?:[34]1|55|79|87)[02-9]"],"0$1",1],["(\\d{3})(\\d{7,8})","$1 $2",["9"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["80"],"0$1",1],["(\\d{3})(\\d{4})(\\d{4})","$1 $2 $3",["[3-578]"],"0$1",1],["(\\d{3})(\\d{4})(\\d{4})","$1 $2 $3",["1[3-9]"]],["(\\d{2})(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3 $4",["[12]"],"0$1",1]],"0",0,"0|(1(?:[12]\\d|79)\\d\\d)",0,0,0,0,"00"],CO:["57","00(?:4(?:[14]4|56)|[579])","(?:1\\d|3)\\d{9}|[124-8]\\d{7}",[8,10,11],[["(\\d)(\\d{7})","$1 $2",["[14][2-9]|[25-8]"],"($1)"],["(\\d{3})(\\d{7})","$1 $2",["3"]],["(\\d)(\\d{3})(\\d{7})","$1-$2-$3",["1"],"0$1",0,"$1 $2 $3"]],"0",0,"0([3579]|4(?:[14]4|56))?"],CR:["506","00","(?:8\\d|90)\\d{8}|(?:[24-8]\\d{3}|3005)\\d{4}",[8,10],[["(\\d{4})(\\d{4})","$1 $2",["[2-7]|8[3-9]"]],["(\\d{3})(\\d{3})(\\d{4})","$1-$2-$3",["[89]"]]],0,0,"(19(?:0[0-2468]|1[09]|20|66|77|99))"],CU:["53","119","[27]\\d{6,7}|[34]\\d{5,7}|(?:5|8\\d\\d)\\d{7}",[6,7,8,10],[["(\\d{2})(\\d{4,6})","$1 $2",["2[1-4]|[34]"],"(0$1)"],["(\\d)(\\d{6,7})","$1 $2",["7"],"(0$1)"],["(\\d)(\\d{7})","$1 $2",["5"],"0$1"],["(\\d{3})(\\d{7})","$1 $2",["8"],"0$1"]],"0"],CV:["238","0","(?:[2-59]\\d\\d|800)\\d{4}",[7],[["(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3",["[2-589]"]]]],CW:["599","00","(?:[34]1|60|(?:7|9\\d)\\d)\\d{5}",[7,8],[["(\\d{3})(\\d{4})","$1 $2",["[3467]"]],["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["9[4-8]"]]],0,0,0,0,0,"[69]"],CX:["61","001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011","1(?:[0-79]\\d|8[0-24-9])\\d{7}|[148]\\d{8}|1\\d{5,7}",[6,7,8,9,10],0,"0",0,"0|([59]\\d{7})$","8$1",0,0,[["8(?:51(?:0(?:01|30|59|88)|1(?:17|46|75)|235)|91(?:00[6-9]|1(?:[28]1|49|78)|2(?:09|63)|3(?:12|26|75)|4(?:56|97)|64\\d|7(?:0[01]|1[0-2])|958))\\d{3}",[9]],["4(?:83[0-38]|93[0-4])\\d{5}|4(?:[0-3]\\d|4[047-9]|5[0-25-9]|6[06-9]|7[02-9]|8[0-24-9]|9[0-27-9])\\d{6}",[9]],["180(?:0\\d{3}|2)\\d{3}",[7,10]],["190[0-26]\\d{6}",[10]],0,0,0,0,["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}",[9]],["13(?:00\\d{3}|45[0-4])\\d{3}|13\\d{4}",[6,8,10]]],"0011"],CY:["357","00","(?:[279]\\d|[58]0)\\d{6}",[8],[["(\\d{2})(\\d{6})","$1 $2",["[257-9]"]]]],CZ:["420","00","(?:[2-578]\\d|60)\\d{7}|9\\d{8,11}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[2-8]|9[015-7]"]],["(\\d{2})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["9"]],["(\\d{3})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["9"]]]],DE:["49","00","[2579]\\d{5,14}|49(?:[05]\\d{10}|[46][1-8]\\d{4,9})|49(?:[0-25]\\d|3[1-689]|7[1-7])\\d{4,8}|49(?:[0-2579]\\d|[34][1-9]|6[0-8])\\d{3}|49\\d{3,4}|(?:1|[368]\\d|4[0-8])\\d{3,13}",[4,5,6,7,8,9,10,11,12,13,14,15],[["(\\d{2})(\\d{3,13})","$1 $2",["3[02]|40|[68]9"],"0$1"],["(\\d{3})(\\d{3,12})","$1 $2",["2(?:0[1-389]|1[124]|2[18]|3[14])|3(?:[35-9][15]|4[015])|906|(?:2[4-9]|4[2-9]|[579][1-9]|[68][1-8])1","2(?:0[1-389]|12[0-8])|3(?:[35-9][15]|4[015])|906|2(?:[13][14]|2[18])|(?:2[4-9]|4[2-9]|[579][1-9]|[68][1-8])1"],"0$1"],["(\\d{4})(\\d{2,11})","$1 $2",["[24-6]|3(?:[3569][02-46-9]|4[2-4679]|7[2-467]|8[2-46-8])|70[2-8]|8(?:0[2-9]|[1-8])|90[7-9]|[79][1-9]","[24-6]|3(?:3(?:0[1-467]|2[127-9]|3[124578]|7[1257-9]|8[1256]|9[145])|4(?:2[135]|4[13578]|9[1346])|5(?:0[14]|2[1-3589]|6[1-4]|7[13468]|8[13568])|6(?:2[1-489]|3[124-6]|6[13]|7[12579]|8[1-356]|9[135])|7(?:2[1-7]|4[145]|6[1-5]|7[1-4])|8(?:21|3[1468]|6|7[1467]|8[136])|9(?:0[12479]|2[1358]|4[134679]|6[1-9]|7[136]|8[147]|9[1468]))|70[2-8]|8(?:0[2-9]|[1-8])|90[7-9]|[79][1-9]|3[68]4[1347]|3(?:47|60)[1356]|3(?:3[46]|46|5[49])[1246]|3[4579]3[1357]"],"0$1"],["(\\d{3})(\\d{4})","$1 $2",["138"],"0$1"],["(\\d{5})(\\d{2,10})","$1 $2",["3"],"0$1"],["(\\d{3})(\\d{5,11})","$1 $2",["181"],"0$1"],["(\\d{3})(\\d)(\\d{4,10})","$1 $2 $3",["1(?:3|80)|9"],"0$1"],["(\\d{3})(\\d{7,8})","$1 $2",["1[67]"],"0$1"],["(\\d{3})(\\d{7,12})","$1 $2",["8"],"0$1"],["(\\d{5})(\\d{6})","$1 $2",["185","1850","18500"],"0$1"],["(\\d{3})(\\d{4})(\\d{4})","$1 $2 $3",["7"],"0$1"],["(\\d{4})(\\d{7})","$1 $2",["18[68]"],"0$1"],["(\\d{5})(\\d{6})","$1 $2",["15[0568]"],"0$1"],["(\\d{4})(\\d{7})","$1 $2",["15[1279]"],"0$1"],["(\\d{3})(\\d{8})","$1 $2",["18"],"0$1"],["(\\d{3})(\\d{2})(\\d{7,8})","$1 $2 $3",["1(?:6[023]|7)"],"0$1"],["(\\d{4})(\\d{2})(\\d{7})","$1 $2 $3",["15[279]"],"0$1"],["(\\d{3})(\\d{2})(\\d{8})","$1 $2 $3",["15"],"0$1"]],"0"],DJ:["253","00","(?:2\\d|77)\\d{6}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[27]"]]]],DK:["45","00","[2-9]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2-9]"]]]],DM:["1","011","(?:[58]\\d\\d|767|900)\\d{7}",[10],0,"1",0,"1|([2-7]\\d{6})$","767$1",0,"767"],DO:["1","011","(?:[58]\\d\\d|900)\\d{7}",[10],0,"1",0,0,0,0,"8[024]9"],DZ:["213","00","(?:[1-4]|[5-79]\\d|80)\\d{7}",[8,9],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[1-4]"],"0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["9"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[5-8]"],"0$1"]],"0"],EC:["593","00","1\\d{9,10}|(?:[2-7]|9\\d)\\d{7}",[8,9,10,11],[["(\\d)(\\d{3})(\\d{4})","$1 $2-$3",["[2-7]"],"(0$1)",0,"$1-$2-$3"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["9"],"0$1"],["(\\d{4})(\\d{3})(\\d{3,4})","$1 $2 $3",["1"]]],"0"],EE:["372","00","8\\d{9}|[4578]\\d{7}|(?:[3-8]\\d|90)\\d{5}",[7,8,10],[["(\\d{3})(\\d{4})","$1 $2",["[369]|4[3-8]|5(?:[0-2]|5[0-478]|6[45])|7[1-9]|88","[369]|4[3-8]|5(?:[02]|1(?:[0-8]|95)|5[0-478]|6(?:4[0-4]|5[1-589]))|7[1-9]|88"]],["(\\d{4})(\\d{3,4})","$1 $2",["[45]|8(?:00|[1-49])","[45]|8(?:00[1-9]|[1-49])"]],["(\\d{2})(\\d{2})(\\d{4})","$1 $2 $3",["7"]],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["8"]]]],EG:["20","00","[189]\\d{8,9}|[24-6]\\d{8}|[135]\\d{7}",[8,9,10],[["(\\d)(\\d{7,8})","$1 $2",["[23]"],"0$1"],["(\\d{2})(\\d{6,7})","$1 $2",["1[35]|[4-6]|8[2468]|9[235-7]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[189]"],"0$1"]],"0"],EH:["212","00","[5-8]\\d{8}",[9],0,"0",0,0,0,0,"528[89]"],ER:["291","00","[178]\\d{6}",[7],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["[178]"],"0$1"]],"0"],ES:["34","00","[5-9]\\d{8}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[89]00"]],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[5-9]"]]]],ET:["251","00","(?:11|[2-59]\\d)\\d{7}",[9],[["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[1-59]"],"0$1"]],"0"],FI:["358","00|99(?:[01469]|5(?:[14]1|3[23]|5[59]|77|88|9[09]))","[1-35689]\\d{4}|7\\d{10,11}|(?:[124-7]\\d|3[0-46-9])\\d{8}|[1-9]\\d{5,8}",[5,6,7,8,9,10,11,12],[["(\\d)(\\d{4,9})","$1 $2",["[2568][1-8]|3(?:0[1-9]|[1-9])|9"],"0$1"],["(\\d{3})(\\d{3,7})","$1 $2",["[12]00|[368]|70[07-9]"],"0$1"],["(\\d{2})(\\d{4,8})","$1 $2",["[1245]|7[135]"],"0$1"],["(\\d{2})(\\d{6,10})","$1 $2",["7"],"0$1"]],"0",0,0,0,0,"1[03-79]|[2-9]",0,"00"],FJ:["679","0(?:0|52)","45\\d{5}|(?:0800\\d|[235-9])\\d{6}",[7,11],[["(\\d{3})(\\d{4})","$1 $2",["[235-9]|45"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["0"]]],0,0,0,0,0,0,0,"00"],FK:["500","00","[2-7]\\d{4}",[5]],FM:["691","00","(?:[39]\\d\\d|820)\\d{4}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[389]"]]]],FO:["298","00","[2-9]\\d{5}",[6],[["(\\d{6})","$1",["[2-9]"]]],0,0,"(10(?:01|[12]0|88))"],FR:["33","00","[1-9]\\d{8}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["8"],"0 $1"],["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4 $5",["[1-79]"],"0$1"]],"0"],GA:["241","00","(?:[067]\\d|11)\\d{6}|[2-7]\\d{6}",[7,8],[["(\\d)(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2-7]"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["11|[67]"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["0"]]],0,0,"0(11\\d{6}|6[256]\\d{6}|7[47]\\d{6})","$1"],GB:["44","00","[1-357-9]\\d{9}|[18]\\d{8}|8\\d{6}",[7,9,10],[["(\\d{3})(\\d{4})","$1 $2",["800","8001","80011","800111","8001111"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3",["845","8454","84546","845464"],"0$1"],["(\\d{3})(\\d{6})","$1 $2",["800"],"0$1"],["(\\d{5})(\\d{4,5})","$1 $2",["1(?:38|5[23]|69|76|94)","1(?:(?:38|69)7|5(?:24|39)|768|946)","1(?:3873|5(?:242|39[4-6])|(?:697|768)[347]|9467)"],"0$1"],["(\\d{4})(\\d{5,6})","$1 $2",["1(?:[2-69][02-9]|[78])"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["[25]|7(?:0|6[02-9])","[25]|7(?:0|6(?:[03-9]|2[356]))"],"0$1"],["(\\d{4})(\\d{6})","$1 $2",["7"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[1389]"],"0$1"]],"0",0,0,0,0,0,[["(?:1(?:1(?:3(?:[0-58]\\d\\d|73[03])|(?:4[0-5]|5[0-26-9]|6[0-4]|[78][0-49])\\d\\d)|(?:2(?:(?:0[024-9]|2[3-9]|3[3-79]|4[1-689]|[58][02-9]|6[0-47-9]|7[013-9]|9\\d)\\d|1(?:[0-7]\\d|8[02]))|(?:3(?:0\\d|1[0-8]|[25][02-9]|3[02-579]|[468][0-46-9]|7[1-35-79]|9[2-578])|4(?:0[03-9]|[137]\\d|[28][02-57-9]|4[02-69]|5[0-8]|[69][0-79])|5(?:0[1-35-9]|[16]\\d|2[024-9]|3[015689]|4[02-9]|5[03-9]|7[0-35-9]|8[0-468]|9[0-57-9])|6(?:0[034689]|1\\d|2[0-35689]|[38][013-9]|4[1-467]|5[0-69]|6[13-9]|7[0-8]|9[0-24578])|7(?:0[0246-9]|2\\d|3[0236-8]|4[03-9]|5[0-46-9]|6[013-9]|7[0-35-9]|8[024-9]|9[02-9])|8(?:0[35-9]|2[1-57-9]|3[02-578]|4[0-578]|5[124-9]|6[2-69]|7\\d|8[02-9]|9[02569])|9(?:0[02-589]|[18]\\d|2[02-689]|3[1-57-9]|4[2-9]|5[0-579]|6[2-47-9]|7[0-24578]|9[2-57]))\\d)\\d)|2(?:0[013478]|3[0189]|4[017]|8[0-46-9]|9[0-2])\\d{3})\\d{4}|1(?:2(?:0(?:46[1-4]|87[2-9])|545[1-79]|76(?:2\\d|3[1-8]|6[1-6])|9(?:7(?:2[0-4]|3[2-5])|8(?:2[2-8]|7[0-47-9]|8[3-5])))|3(?:6(?:38[2-5]|47[23])|8(?:47[04-9]|64[0157-9]))|4(?:044[1-7]|20(?:2[23]|8\\d)|6(?:0(?:30|5[2-57]|6[1-8]|7[2-8])|140)|8(?:052|87[1-3]))|5(?:2(?:4(?:3[2-79]|6\\d)|76\\d)|6(?:26[06-9]|686))|6(?:06(?:4\\d|7[4-79])|295[5-7]|35[34]\\d|47(?:24|61)|59(?:5[08]|6[67]|74)|9(?:55[0-4]|77[23]))|7(?:26(?:6[13-9]|7[0-7])|(?:442|688)\\d|50(?:2[0-3]|[3-68]2|76))|8(?:27[56]\\d|37(?:5[2-5]|8[239])|843[2-58])|9(?:0(?:0(?:6[1-8]|85)|52\\d)|3583|4(?:66[1-8]|9(?:2[01]|81))|63(?:23|3[1-4])|9561))\\d{3}",[9,10]],["7(?:457[0-57-9]|700[01]|911[028])\\d{5}|7(?:[1-3]\\d\\d|4(?:[0-46-9]\\d|5[0-689])|5(?:0[0-8]|[13-9]\\d|2[0-35-9])|7(?:0[1-9]|[1-7]\\d|8[02-9]|9[0-689])|8(?:[014-9]\\d|[23][0-8])|9(?:[024-9]\\d|1[02-9]|3[0-689]))\\d{6}",[10]],["80[08]\\d{7}|800\\d{6}|8001111"],["(?:8(?:4[2-5]|7[0-3])|9(?:[01]\\d|8[2-49]))\\d{7}|845464\\d",[7,10]],["70\\d{8}",[10]],0,["(?:3[0347]|55)\\d{8}",[10]],["76(?:464|652)\\d{5}|76(?:0[0-2]|2[356]|34|4[01347]|5[49]|6[0-369]|77|81|9[139])\\d{6}",[10]],["56\\d{8}",[10]]],0," x"],GD:["1","011","(?:473|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-9]\\d{6})$","473$1",0,"473"],GE:["995","00","(?:[3-57]\\d\\d|800)\\d{6}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["70"],"0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["32"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[57]"]],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[348]"],"0$1"]],"0"],GF:["594","00","(?:[56]94|976)\\d{6}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[569]"],"0$1"]],"0"],GG:["44","00","(?:1481|[357-9]\\d{3})\\d{6}|8\\d{6}(?:\\d{2})?",[7,9,10],0,"0",0,"0|([25-9]\\d{5})$","1481$1",0,0,[["1481[25-9]\\d{5}",[10]],["7(?:(?:781|839)\\d|911[17])\\d{5}",[10]],["80[08]\\d{7}|800\\d{6}|8001111"],["(?:8(?:4[2-5]|7[0-3])|9(?:[01]\\d|8[0-3]))\\d{7}|845464\\d",[7,10]],["70\\d{8}",[10]],0,["(?:3[0347]|55)\\d{8}",[10]],["76(?:464|652)\\d{5}|76(?:0[0-2]|2[356]|34|4[01347]|5[49]|6[0-369]|77|81|9[139])\\d{6}",[10]],["56\\d{8}",[10]]]],GH:["233","00","(?:[235]\\d{3}|800)\\d{5}",[8,9],[["(\\d{3})(\\d{5})","$1 $2",["8"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[235]"],"0$1"]],"0"],GI:["350","00","[256]\\d{7}",[8],[["(\\d{3})(\\d{5})","$1 $2",["2"]]]],GL:["299","00","(?:19|[2-689]\\d)\\d{4}",[6],[["(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3",["19|[2-689]"]]]],GM:["220","00","[2-9]\\d{6}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[2-9]"]]]],GN:["224","00","722\\d{6}|(?:3|6\\d)\\d{7}",[8,9],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["3"]],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[67]"]]]],GP:["590","00","(?:590|69\\d|976)\\d{6}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[569]"],"0$1"]],"0",0,0,0,0,0,[["590(?:0[1-68]|1[0-2]|2[0-68]|3[1289]|4[0-24-9]|5[3-579]|6[0189]|7[08]|8[0-689]|9\\d)\\d{4}"],["69(?:0\\d\\d|1(?:2[29]|3[0-5]))\\d{4}"],0,0,0,0,0,0,["976[01]\\d{5}"]]],GQ:["240","00","222\\d{6}|(?:3\\d|55|[89]0)\\d{7}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[235]"]],["(\\d{3})(\\d{6})","$1 $2",["[89]"]]]],GR:["30","00","5005000\\d{3}|(?:[2689]\\d|70)\\d{8}",[10],[["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["21|7"]],["(\\d{4})(\\d{6})","$1 $2",["2(?:2|3[2-57-9]|4[2-469]|5[2-59]|6[2-9]|7[2-69]|8[2-49])|5"]],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[2689]"]]]],GT:["502","00","(?:1\\d{3}|[2-7])\\d{7}",[8,11],[["(\\d{4})(\\d{4})","$1 $2",["[2-7]"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["1"]]]],GU:["1","011","(?:[58]\\d\\d|671|900)\\d{7}",[10],0,"1",0,"1|([3-9]\\d{6})$","671$1",0,"671"],GW:["245","00","[49]\\d{8}|4\\d{6}",[7,9],[["(\\d{3})(\\d{4})","$1 $2",["40"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[49]"]]]],GY:["592","001","(?:862\\d|9008)\\d{3}|(?:[2-46]\\d|77)\\d{5}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[2-46-9]"]]]],HK:["852","00(?:30|5[09]|[126-9]?)","8[0-46-9]\\d{6,7}|9\\d{4}(?:\\d(?:\\d(?:\\d{4})?)?)?|(?:[235-79]\\d|46)\\d{6}",[5,6,7,8,9,11],[["(\\d{3})(\\d{2,5})","$1 $2",["900","9003"]],["(\\d{4})(\\d{4})","$1 $2",["[2-7]|8[1-4]|9(?:0[1-9]|[1-8])"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["8"]],["(\\d{3})(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3 $4",["9"]]],0,0,0,0,0,0,0,"00"],HN:["504","00","8\\d{10}|[237-9]\\d{7}",[8,11],[["(\\d{4})(\\d{4})","$1-$2",["[237-9]"]]]],HR:["385","00","(?:[24-69]\\d|3[0-79])\\d{7}|80\\d{5,7}|[1-79]\\d{7}|6\\d{5,6}",[6,7,8,9],[["(\\d{2})(\\d{2})(\\d{2,3})","$1 $2 $3",["6[01]"],"0$1"],["(\\d{3})(\\d{2})(\\d{2,3})","$1 $2 $3",["8"],"0$1"],["(\\d)(\\d{4})(\\d{3})","$1 $2 $3",["1"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[67]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["9"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[2-5]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["8"],"0$1"]],"0"],HT:["509","00","[2-489]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{4})","$1 $2 $3",["[2-489]"]]]],HU:["36","00","[235-7]\\d{8}|[1-9]\\d{7}",[8,9],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["1"],"(06 $1)"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[27][2-9]|3[2-7]|4[24-9]|5[2-79]|6|8[2-57-9]|9[2-69]"],"(06 $1)"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[2-9]"],"06 $1"]],"06"],ID:["62","00[89]","(?:(?:00[1-9]|8\\d)\\d{4}|[1-36])\\d{6}|00\\d{10}|[1-9]\\d{8,10}|[2-9]\\d{7}",[7,8,9,10,11,12,13],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["15"]],["(\\d{2})(\\d{5,9})","$1 $2",["2[124]|[36]1"],"(0$1)"],["(\\d{3})(\\d{5,7})","$1 $2",["800"],"0$1"],["(\\d{3})(\\d{5,8})","$1 $2",["[2-79]"],"(0$1)"],["(\\d{3})(\\d{3,4})(\\d{3})","$1-$2-$3",["8[1-35-9]"],"0$1"],["(\\d{3})(\\d{6,8})","$1 $2",["1"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["804"],"0$1"],["(\\d{3})(\\d)(\\d{3})(\\d{3})","$1 $2 $3 $4",["80"],"0$1"],["(\\d{3})(\\d{4})(\\d{4,5})","$1-$2-$3",["8"],"0$1"]],"0"],IE:["353","00","(?:1\\d|[2569])\\d{6,8}|4\\d{6,9}|7\\d{8}|8\\d{8,9}",[7,8,9,10],[["(\\d{2})(\\d{5})","$1 $2",["2[24-9]|47|58|6[237-9]|9[35-9]"],"(0$1)"],["(\\d{3})(\\d{5})","$1 $2",["[45]0"],"(0$1)"],["(\\d)(\\d{3,4})(\\d{4})","$1 $2 $3",["1"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[2569]|4[1-69]|7[14]"],"(0$1)"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["70"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["81"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[78]"],"0$1"],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1"]],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["4"],"(0$1)"],["(\\d{2})(\\d)(\\d{3})(\\d{4})","$1 $2 $3 $4",["8"],"0$1"]],"0"],IL:["972","0(?:0|1[2-9])","1\\d{6}(?:\\d{3,5})?|[57]\\d{8}|[1-489]\\d{7}",[7,8,9,10,11,12],[["(\\d{4})(\\d{3})","$1-$2",["125"]],["(\\d{4})(\\d{2})(\\d{2})","$1-$2-$3",["121"]],["(\\d)(\\d{3})(\\d{4})","$1-$2-$3",["[2-489]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1-$2-$3",["[57]"],"0$1"],["(\\d{4})(\\d{3})(\\d{3})","$1-$2-$3",["12"]],["(\\d{4})(\\d{6})","$1-$2",["159"]],["(\\d)(\\d{3})(\\d{3})(\\d{3})","$1-$2-$3-$4",["1[7-9]"]],["(\\d{3})(\\d{1,2})(\\d{3})(\\d{4})","$1-$2 $3-$4",["15"]]],"0"],IM:["44","00","1624\\d{6}|(?:[3578]\\d|90)\\d{8}",[10],0,"0",0,"0|([5-8]\\d{5})$","1624$1",0,"74576|(?:16|7[56])24"],IN:["91","00","(?:000800|[2-9]\\d\\d)\\d{7}|1\\d{7,12}",[8,9,10,11,12,13],[["(\\d{8})","$1",["5(?:0|2[23]|3[03]|[67]1|88)","5(?:0|2(?:21|3)|3(?:0|3[23])|616|717|888)","5(?:0|2(?:21|3)|3(?:0|3[23])|616|717|8888)"],0,1],["(\\d{4})(\\d{4,5})","$1 $2",["180","1800"],0,1],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["140"],0,1],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["11|2[02]|33|4[04]|79[1-7]|80[2-46]","11|2[02]|33|4[04]|79(?:[1-6]|7[19])|80(?:[2-4]|6[0-589])","11|2[02]|33|4[04]|79(?:[124-6]|3(?:[02-9]|1[0-24-9])|7(?:1|9[1-6]))|80(?:[2-4]|6[0-589])"],"0$1",1],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["1(?:2[0-249]|3[0-25]|4[145]|[68]|7[1257])|2(?:1[257]|3[013]|4[01]|5[0137]|6[0158]|78|8[1568])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|5[12]|[78]1)|6(?:12|[2-4]1|5[17]|6[13]|80)|7(?:12|3[134]|4[47]|61|88)|8(?:16|2[014]|3[126]|6[136]|7[078]|8[34]|91)|(?:43|59|75)[15]|(?:1[59]|29|67|72)[14]","1(?:2[0-24]|3[0-25]|4[145]|[59][14]|6[1-9]|7[1257]|8[1-57-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[058]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|[578]1|9[15])|674|7(?:(?:2[14]|3[34]|5[15])[2-6]|61[346]|88[0-8])|8(?:70[2-6]|84[235-7]|91[3-7])|(?:1(?:29|60|8[06])|261|552|6(?:12|[2-47]1|5[17]|6[13]|80)|7(?:12|31|4[47])|8(?:16|2[014]|3[126]|6[136]|7[78]|83))[2-7]","1(?:2[0-24]|3[0-25]|4[145]|[59][14]|6[1-9]|7[1257]|8[1-57-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[058]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|[578]1|9[15])|6(?:12(?:[2-6]|7[0-8])|74[2-7])|7(?:(?:2[14]|5[15])[2-6]|3171|61[346]|88(?:[2-7]|82))|8(?:70[2-6]|84(?:[2356]|7[19])|91(?:[3-6]|7[19]))|73[134][2-6]|(?:74[47]|8(?:16|2[014]|3[126]|6[136]|7[78]|83))(?:[2-6]|7[19])|(?:1(?:29|60|8[06])|261|552|6(?:[2-4]1|5[17]|6[13]|7(?:1|4[0189])|80)|7(?:12|88[01]))[2-7]"],"0$1",1],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1(?:[2-479]|5[0235-9])|[2-5]|6(?:1[1358]|2[2457-9]|3[2-5]|4[235-7]|5[2-689]|6[24578]|7[235689]|8[1-6])|7(?:1[013-9]|28|3[129]|4[1-35689]|5[29]|6[02-5]|70)|807","1(?:[2-479]|5[0235-9])|[2-5]|6(?:1[1358]|2(?:[2457]|84|95)|3(?:[2-4]|55)|4[235-7]|5[2-689]|6[24578]|7[235689]|8[1-6])|7(?:1(?:[013-8]|9[6-9])|28[6-8]|3(?:17|2[0-49]|9[2-57])|4(?:1[2-4]|[29][0-7]|3[0-8]|[56]|8[0-24-7])|5(?:2[1-3]|9[0-6])|6(?:0[5689]|2[5-9]|3[02-8]|4|5[0-367])|70[13-7])|807[19]","1(?:[2-479]|5(?:[0236-9]|5[013-9]))|[2-5]|6(?:2(?:84|95)|355|83)|73179|807(?:1|9[1-3])|(?:1552|6(?:1[1358]|2[2457]|3[2-4]|4[235-7]|5[2-689]|6[24578]|7[235689]|8[124-6])\\d|7(?:1(?:[013-8]\\d|9[6-9])|28[6-8]|3(?:2[0-49]|9[2-57])|4(?:1[2-4]|[29][0-7]|3[0-8]|[56]\\d|8[0-24-7])|5(?:2[1-3]|9[0-6])|6(?:0[5689]|2[5-9]|3[02-8]|4\\d|5[0-367])|70[13-7]))[2-7]"],"0$1",1],["(\\d{5})(\\d{5})","$1 $2",["[6-9]"],"0$1",1],["(\\d{4})(\\d{2,4})(\\d{4})","$1 $2 $3",["1(?:6|8[06])","1(?:6|8[06]0)"],0,1],["(\\d{4})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["18"],0,1]],"0"],IO:["246","00","3\\d{6}",[7],[["(\\d{3})(\\d{4})","$1 $2",["3"]]]],IQ:["964","00","(?:1|7\\d\\d)\\d{7}|[2-6]\\d{7,8}",[8,9,10],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["1"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[2-6]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["7"],"0$1"]],"0"],IR:["98","00","[1-9]\\d{9}|(?:[1-8]\\d\\d|9)\\d{3,4}",[4,5,6,7,10],[["(\\d{4,5})","$1",["96"],"0$1"],["(\\d{2})(\\d{4,5})","$1 $2",["(?:1[137]|2[13-68]|3[1458]|4[145]|5[1468]|6[16]|7[1467]|8[13467])[12689]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["9"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["[1-8]"],"0$1"]],"0"],IS:["354","00|1(?:0(?:01|[12]0)|100)","(?:38\\d|[4-9])\\d{6}",[7,9],[["(\\d{3})(\\d{4})","$1 $2",["[4-9]"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["3"]]],0,0,0,0,0,0,0,"00"],IT:["39","00","0\\d{5,10}|3[0-8]\\d{7,10}|55\\d{8}|8\\d{5}(?:\\d{2,4})?|(?:1\\d|39)\\d{7,8}",[6,7,8,9,10,11],[["(\\d{2})(\\d{4,6})","$1 $2",["0[26]"]],["(\\d{3})(\\d{3,6})","$1 $2",["0[13-57-9][0159]|8(?:03|4[17]|9[245])","0[13-57-9][0159]|8(?:03|4[17]|9(?:2|[45][0-4]))"]],["(\\d{4})(\\d{2,6})","$1 $2",["0(?:[13-579][2-46-8]|8[236-8])"]],["(\\d{4})(\\d{4})","$1 $2",["894"]],["(\\d{2})(\\d{3,4})(\\d{4})","$1 $2 $3",["0[26]|5"]],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["1[4679]|[38]"]],["(\\d{3})(\\d{3,4})(\\d{4})","$1 $2 $3",["0[13-57-9][0159]"]],["(\\d{2})(\\d{4})(\\d{5})","$1 $2 $3",["0[26]"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["0"]],["(\\d{3})(\\d{4})(\\d{4,5})","$1 $2 $3",["3"]]],0,0,0,0,0,0,[["0669[0-79]\\d{1,6}|0(?:1(?:[0159]\\d|[27][1-5]|31|4[1-4]|6[1356]|8[2-57])|2\\d\\d|3(?:[0159]\\d|2[1-4]|3[12]|[48][1-6]|6[2-59]|7[1-7])|4(?:[0159]\\d|[23][1-9]|4[245]|6[1-5]|7[1-4]|81)|5(?:[0159]\\d|2[1-5]|3[2-6]|4[1-79]|6[4-6]|7[1-578]|8[3-8])|6(?:[0-57-9]\\d|6[0-8])|7(?:[0159]\\d|2[12]|3[1-7]|4[2-46]|6[13569]|7[13-6]|8[1-59])|8(?:[0159]\\d|2[3-578]|3[1-356]|[6-8][1-5])|9(?:[0159]\\d|[238][1-5]|4[12]|6[1-8]|7[1-6]))\\d{2,7}"],["3[1-9]\\d{8}|3[2-9]\\d{7}",[9,10]],["80(?:0\\d{3}|3)\\d{3}",[6,9]],["(?:0878\\d\\d|89(?:2|4[5-9]\\d))\\d{3}|89[45][0-4]\\d\\d|(?:1(?:44|6[346])|89(?:5[5-9]|9))\\d{6}",[6,8,9,10]],["1(?:78\\d|99)\\d{6}",[9,10]],0,0,0,["55\\d{8}",[10]],["84(?:[08]\\d{3}|[17])\\d{3}",[6,9]]]],JE:["44","00","1534\\d{6}|(?:[3578]\\d|90)\\d{8}",[10],0,"0",0,"0|([0-24-8]\\d{5})$","1534$1",0,0,[["1534[0-24-8]\\d{5}"],["7(?:(?:(?:50|82)9|937)\\d|7(?:00[378]|97[7-9]))\\d{5}"],["80(?:07(?:35|81)|8901)\\d{4}"],["(?:8(?:4(?:4(?:4(?:05|42|69)|703)|5(?:041|800))|7(?:0002|1206))|90(?:066[59]|1810|71(?:07|55)))\\d{4}"],["701511\\d{4}"],0,["(?:3(?:0(?:07(?:35|81)|8901)|3\\d{4}|4(?:4(?:4(?:05|42|69)|703)|5(?:041|800))|7(?:0002|1206))|55\\d{4})\\d{4}"],["76(?:464|652)\\d{5}|76(?:0[0-2]|2[356]|34|4[01347]|5[49]|6[0-369]|77|81|9[139])\\d{6}"],["56\\d{8}"]]],JM:["1","011","(?:[58]\\d\\d|658|900)\\d{7}",[10],0,"1",0,0,0,0,"658|876"],JO:["962","00","(?:(?:[2689]|7\\d)\\d|32|53)\\d{6}",[8,9],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["[2356]|87"],"(0$1)"],["(\\d{3})(\\d{5,6})","$1 $2",["[89]"],"0$1"],["(\\d{2})(\\d{7})","$1 $2",["70"],"0$1"],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["7"],"0$1"]],"0"],JP:["81","010","00[1-9]\\d{6,14}|[257-9]\\d{9}|(?:00|[1-9]\\d\\d)\\d{6}",[8,9,10,11,12,13,14,15,16,17],[["(\\d{3})(\\d{3})(\\d{3})","$1-$2-$3",["(?:12|57|99)0"],"0$1"],["(\\d{4})(\\d)(\\d{4})","$1-$2-$3",["1(?:26|3[79]|4[56]|5[4-68]|6[3-5])|499|5(?:76|97)|746|8(?:3[89]|47|51|63)|9(?:49|80|9[16])","1(?:267|3(?:7[247]|9[278])|466|5(?:47|58|64)|6(?:3[245]|48|5[4-68]))|499[2468]|5(?:76|97)9|7468|8(?:3(?:8[7-9]|96)|477|51[2-9]|636)|9(?:496|802|9(?:1[23]|69))|1(?:45|58)[67]","1(?:267|3(?:7[247]|9[278])|466|5(?:47|58|64)|6(?:3[245]|48|5[4-68]))|499[2468]|5(?:769|979[2-69])|7468|8(?:3(?:8[7-9]|96[2457-9])|477|51[2-9]|636[457-9])|9(?:496|802|9(?:1[23]|69))|1(?:45|58)[67]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1-$2-$3",["60"],"0$1"],["(\\d)(\\d{4})(\\d{4})","$1-$2-$3",["[36]|4(?:2[09]|7[01])","[36]|4(?:2(?:0|9[02-69])|7(?:0[019]|1))"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1-$2-$3",["1(?:1|5[45]|77|88|9[69])|2(?:2[1-37]|3[0-269]|4[59]|5|6[24]|7[1-358]|8[1369]|9[0-38])|4(?:[28][1-9]|3[0-57]|[45]|6[248]|7[2-579]|9[29])|5(?:2|3[045]|4[0-369]|5[29]|8[02389]|9[0-389])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9[2-6])|8(?:2[124589]|3[27-9]|49|51|6|7[0-468]|8[68]|9[019])|9(?:[23][1-9]|4[15]|5[138]|6[1-3]|7[156]|8[189]|9[1-489])","1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2(?:[127]|3[014-9])|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|9[19])|62|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|8[1-9])|5(?:2|3[045]|4[0-369]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9[0-2469])|49|51|6(?:[0-24]|36|5[0-3589]|72|9[01459])|7[0-468]|8[68])|9(?:[23][1-9]|4[15]|5[138]|6[1-3]|7[156]|8[189]|9(?:[1289]|3[34]|4[0178]))|(?:49|55|83)[29]|(?:264|837)[016-9]|2(?:57|93)[015-9]|(?:25[0468]|422|838)[01]|(?:47[59]|59[89]|8(?:6[68]|9))[019]","1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2[127]|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|9(?:17|99))|6(?:2|4[016-9])|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|9[29])|5(?:2|3[045]|4[0-369]|5[29]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9[0169])|3(?:[29]|7(?:[017-9]|6[6-8]))|49|51|6(?:[0-24]|36[23]|5(?:[0-389]|5[23])|6(?:[01]|9[178])|72|9[0145])|7[0-468]|8[68])|9(?:4[15]|5[138]|7[156]|8[189]|9(?:[1289]|3(?:31|4[357])|4[0178]))|(?:8294|96)[1-3]|2(?:57|93)[015-9]|(?:223|8699)[014-9]|(?:25[0468]|422|838)[01]|(?:48|8292|9[23])[1-9]|(?:47[59]|59[89]|8(?:68|9))[019]","1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2[127]|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|7[015-9]|9(?:17|99))|6(?:2|4[016-9])|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17|3[015-9]))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|9[29])|5(?:2|3[045]|4[0-369]|5[29]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9(?:[019]|4[1-3]|6(?:[0-47-9]|5[01346-9])))|3(?:[29]|7(?:[017-9]|6[6-8]))|49|51|6(?:[0-24]|36[23]|5(?:[0-389]|5[23])|6(?:[01]|9[178])|72|9[0145])|7[0-468]|8[68])|9(?:4[15]|5[138]|6[1-3]|7[156]|8[189]|9(?:[1289]|3(?:31|4[357])|4[0178]))|(?:223|8699)[014-9]|(?:25[0468]|422|838)[01]|(?:48|829(?:2|66)|9[23])[1-9]|(?:47[59]|59[89]|8(?:68|9))[019]"],"0$1"],["(\\d{3})(\\d{2})(\\d{4})","$1-$2-$3",["[14]|[289][2-9]|5[3-9]|7[2-4679]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1-$2-$3",["800"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1-$2-$3",["[257-9]"],"0$1"]],"0"],KE:["254","000","(?:[17]\\d\\d|900)\\d{6}|(?:2|80)0\\d{6,7}|[4-6]\\d{6,8}",[7,8,9,10],[["(\\d{2})(\\d{5,7})","$1 $2",["[24-6]"],"0$1"],["(\\d{3})(\\d{6})","$1 $2",["[17]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["[89]"],"0$1"]],"0"],KG:["996","00","8\\d{9}|(?:[235-8]\\d|99)\\d{7}",[9,10],[["(\\d{4})(\\d{5})","$1 $2",["3(?:1[346]|[24-79])"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[235-79]|88"],"0$1"],["(\\d{3})(\\d{3})(\\d)(\\d{2,3})","$1 $2 $3 $4",["8"],"0$1"]],"0"],KH:["855","00[14-9]","1\\d{9}|[1-9]\\d{7,8}",[8,9,10],[["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[1-9]"],"0$1"],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1"]]],"0"],KI:["686","00","(?:[37]\\d|6[0-79])\\d{6}|(?:[2-48]\\d|50)\\d{3}",[5,8],0,"0"],KM:["269","00","[3478]\\d{6}",[7],[["(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3",["[3478]"]]]],KN:["1","011","(?:[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-7]\\d{6})$","869$1",0,"869"],KP:["850","00|99","85\\d{6}|(?:19\\d|[2-7])\\d{7}",[8,10],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["8"],"0$1"],["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["[2-7]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["1"],"0$1"]],"0"],KR:["82","00(?:[125689]|3(?:[46]5|91)|7(?:00|27|3|55|6[126]))","00[1-9]\\d{8,11}|(?:[12]|5\\d{3})\\d{7}|[13-6]\\d{9}|(?:[1-6]\\d|80)\\d{7}|[3-6]\\d{4,5}|(?:00|7)0\\d{8}",[5,6,8,9,10,11,12,13,14],[["(\\d{2})(\\d{3,4})","$1-$2",["(?:3[1-3]|[46][1-4]|5[1-5])1"],"0$1"],["(\\d{4})(\\d{4})","$1-$2",["1"]],["(\\d)(\\d{3,4})(\\d{4})","$1-$2-$3",["2"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1-$2-$3",["60|8"],"0$1"],["(\\d{2})(\\d{3,4})(\\d{4})","$1-$2-$3",["[1346]|5[1-5]"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1-$2-$3",["[57]"],"0$1"],["(\\d{2})(\\d{5})(\\d{4})","$1-$2-$3",["5"],"0$1"]],"0",0,"0(8(?:[1-46-8]|5\\d\\d))?"],KW:["965","00","(?:18|[2569]\\d\\d)\\d{5}",[7,8],[["(\\d{4})(\\d{3,4})","$1 $2",["[169]|2(?:[235]|4[1-35-9])|52"]],["(\\d{3})(\\d{5})","$1 $2",["[25]"]]]],KY:["1","011","(?:345|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-9]\\d{6})$","345$1",0,"345"],KZ:["7","810","33622\\d{5}|(?:7\\d|80)\\d{8}",[10],0,"8",0,0,0,0,"33|7",0,"8~10"],LA:["856","00","[23]\\d{9}|3\\d{8}|(?:[235-8]\\d|41)\\d{6}",[8,9,10],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["2[13]|3[14]|[4-8]"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3 $4",["30[013-9]"],"0$1"],["(\\d{2})(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3 $4",["[23]"],"0$1"]],"0"],LB:["961","00","[7-9]\\d{7}|[13-9]\\d{6}",[7,8],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["[13-69]|7(?:[2-57]|62|8[0-7]|9[04-9])|8[02-9]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[7-9]"]]],"0"],LC:["1","011","(?:[58]\\d\\d|758|900)\\d{7}",[10],0,"1",0,"1|([2-8]\\d{6})$","758$1",0,"758"],LI:["423","00","90\\d{5}|(?:[2378]|6\\d\\d)\\d{6}",[7,9],[["(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3",["[237-9]"]],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["69"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["6"]]],"0",0,"0|(1001)"],LK:["94","00","[1-9]\\d{8}",[9],[["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["7"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[1-689]"],"0$1"]],"0"],LR:["231","00","(?:2|33|5\\d|77|88)\\d{7}|[4-6]\\d{6}",[7,8,9],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["[4-6]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["2"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[3578]"],"0$1"]],"0"],LS:["266","00","(?:[256]\\d\\d|800)\\d{5}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[2568]"]]]],LT:["370","00","(?:[3469]\\d|52|[78]0)\\d{6}",[8],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["52[0-7]"],"(8-$1)",1],["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["[7-9]"],"8 $1",1],["(\\d{2})(\\d{6})","$1 $2",["37|4(?:[15]|6[1-8])"],"(8-$1)",1],["(\\d{3})(\\d{5})","$1 $2",["[3-6]"],"(8-$1)",1]],"8",0,"[08]"],LU:["352","00","35[013-9]\\d{4,8}|6\\d{8}|35\\d{2,4}|(?:[2457-9]\\d|3[0-46-9])\\d{2,9}",[4,5,6,7,8,9,10,11],[["(\\d{2})(\\d{3})","$1 $2",["2(?:0[2-689]|[2-9])|[3-57]|8(?:0[2-9]|[13-9])|9(?:0[89]|[2-579])"]],["(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3",["2(?:0[2-689]|[2-9])|[3-57]|8(?:0[2-9]|[13-9])|9(?:0[89]|[2-579])"]],["(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3",["20[2-689]"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})","$1 $2 $3 $4",["2(?:[0367]|4[3-8])"]],["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["80[01]|90[015]"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3 $4",["20"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["6"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})","$1 $2 $3 $4 $5",["2(?:[0367]|4[3-8])"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{1,5})","$1 $2 $3 $4",["[3-57]|8[13-9]|9(?:0[89]|[2-579])|(?:2|80)[2-9]"]]],0,0,"(15(?:0[06]|1[12]|[35]5|4[04]|6[26]|77|88|99)\\d)"],LV:["371","00","(?:[268]\\d|90)\\d{6}",[8],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[269]|8[01]"]]]],LY:["218","00","[2-9]\\d{8}",[9],[["(\\d{2})(\\d{7})","$1-$2",["[2-9]"],"0$1"]],"0"],MA:["212","00","[5-8]\\d{8}",[9],[["(\\d{5})(\\d{4})","$1-$2",["5(?:29|38)","5(?:29|38)[89]","5(?:29|38)[89]0"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["5[45]"],"0$1"],["(\\d{4})(\\d{5})","$1-$2",["5(?:2[2-489]|3[5-9]|9)|892","5(?:2(?:[2-49]|8[235-9])|3[5-9]|9)|892"],"0$1"],["(\\d{2})(\\d{7})","$1-$2",["8"],"0$1"],["(\\d{3})(\\d{6})","$1-$2",["[5-7]"],"0$1"]],"0",0,0,0,0,0,[["5(?:29(?:[189][05]|2[29]|3[01])|38[89][05])\\d{4}|5(?:2(?:[015-7]\\d|2[02-9]|3[0-578]|4[02-46-8]|8[0235-7]|90)|3(?:[0-47]\\d|5[02-9]|6[02-8]|80|9[3-9])|(?:4[067]|5[03])\\d)\\d{5}"],["(?:6(?:[0-79]\\d|8[0-247-9])|7(?:0[0-8]|6[1267]|7[0-37]))\\d{6}"],["80\\d{7}"],["89\\d{7}"],0,0,0,0,["592(?:4[0-2]|93)\\d{4}"]]],MC:["377","00","870\\d{5}|(?:[349]|6\\d)\\d{7}",[8,9],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["4"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[39]"]],["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4 $5",["6"],"0$1"]],"0"],MD:["373","00","(?:[235-7]\\d|[89]0)\\d{6}",[8],[["(\\d{3})(\\d{5})","$1 $2",["[89]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["22|3"],"0$1"],["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["[25-7]"],"0$1"]],"0"],ME:["382","00","(?:20|[3-79]\\d)\\d{6}|80\\d{6,7}",[8,9],[["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[2-9]"],"0$1"]],"0"],MF:["590","00","(?:590|69\\d|976)\\d{6}",[9],0,"0",0,0,0,0,0,[["590(?:0[079]|[14]3|[27][79]|30|5[0-268]|87)\\d{4}"],["69(?:0\\d\\d|1(?:2[29]|3[0-5]))\\d{4}"],0,0,0,0,0,0,["976[01]\\d{5}"]]],MG:["261","00","[23]\\d{8}",[9],[["(\\d{2})(\\d{2})(\\d{3})(\\d{2})","$1 $2 $3 $4",["[23]"],"0$1"]],"0",0,"0|([24-9]\\d{6})$","20$1"],MH:["692","011","329\\d{4}|(?:[256]\\d|45)\\d{5}",[7],[["(\\d{3})(\\d{4})","$1-$2",["[2-6]"]]],"1"],MK:["389","00","[2-578]\\d{7}",[8],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["2"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[347]"],"0$1"],["(\\d{3})(\\d)(\\d{2})(\\d{2})","$1 $2 $3 $4",["[58]"],"0$1"]],"0"],ML:["223","00","[24-9]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[24-9]"]]]],MM:["95","00","1\\d{5,7}|95\\d{6}|(?:[4-7]|9[0-46-9])\\d{6,8}|(?:2|8\\d)\\d{5,8}",[6,7,8,9,10],[["(\\d)(\\d{2})(\\d{3})","$1 $2 $3",["16|2"],"0$1"],["(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3",["[45]|6(?:0[23]|[1-689]|7[235-7])|7(?:[0-4]|5[2-7])|8[1-6]"],"0$1"],["(\\d)(\\d{3})(\\d{3,4})","$1 $2 $3",["[12]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[4-7]|8[1-35]"],"0$1"],["(\\d)(\\d{3})(\\d{4,6})","$1 $2 $3",["9(?:2[0-4]|[35-9]|4[137-9])"],"0$1"],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["2"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["8"],"0$1"],["(\\d)(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["92"],"0$1"],["(\\d)(\\d{5})(\\d{4})","$1 $2 $3",["9"],"0$1"]],"0"],MN:["976","001","[12]\\d{7,9}|[57-9]\\d{7}",[8,9,10],[["(\\d{2})(\\d{2})(\\d{4})","$1 $2 $3",["[12]1"],"0$1"],["(\\d{4})(\\d{4})","$1 $2",["[57-9]"]],["(\\d{3})(\\d{5,6})","$1 $2",["[12]2[1-3]"],"0$1"],["(\\d{4})(\\d{5,6})","$1 $2",["[12](?:27|3[2-8]|4[2-68]|5[1-4689])","[12](?:27|3[2-8]|4[2-68]|5[1-4689])[0-3]"],"0$1"],["(\\d{5})(\\d{4,5})","$1 $2",["[12]"],"0$1"]],"0"],MO:["853","00","(?:28|[68]\\d)\\d{6}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[268]"]]]],MP:["1","011","[58]\\d{9}|(?:67|90)0\\d{7}",[10],0,"1",0,"1|([2-9]\\d{6})$","670$1",0,"670"],MQ:["596","00","69\\d{7}|(?:59|97)6\\d{6}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[569]"],"0$1"]],"0"],MR:["222","00","(?:[2-4]\\d\\d|800)\\d{5}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2-48]"]]]],MS:["1","011","(?:[58]\\d\\d|664|900)\\d{7}",[10],0,"1",0,"1|([34]\\d{6})$","664$1",0,"664"],MT:["356","00","3550\\d{4}|(?:[2579]\\d\\d|800)\\d{5}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[2357-9]"]]]],MU:["230","0(?:0|[24-7]0|3[03])","(?:[2-468]|5\\d)\\d{6}",[7,8],[["(\\d{3})(\\d{4})","$1 $2",["[2-46]|8[013]"]],["(\\d{4})(\\d{4})","$1 $2",["5"]]],0,0,0,0,0,0,0,"020"],MV:["960","0(?:0|19)","(?:800|9[0-57-9]\\d)\\d{7}|[34679]\\d{6}",[7,10],[["(\\d{3})(\\d{4})","$1-$2",["[3467]|9[13-9]"]],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[89]"]]],0,0,0,0,0,0,0,"00"],MW:["265","00","1\\d{6}(?:\\d{2})?|(?:[23]1|77|88|99)\\d{7}",[7,9],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["1[2-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["2"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[137-9]"],"0$1"]],"0"],MX:["52","0[09]","(?:1(?:[01467]\\d|[2359][1-9]|8[1-79])|[2-9]\\d)\\d{8}",[10,11],[["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["33|5[56]|81"],0,1],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[2-9]"],0,1],["(\\d)(\\d{2})(\\d{4})(\\d{4})","$2 $3 $4",["1(?:33|5[56]|81)"],0,1],["(\\d)(\\d{3})(\\d{3})(\\d{4})","$2 $3 $4",["1"],0,1]],"01",0,"0(?:[12]|4[45])|1",0,0,0,0,"00"],MY:["60","00","1\\d{8,9}|(?:3\\d|[4-9])\\d{7}",[8,9,10],[["(\\d)(\\d{3})(\\d{4})","$1-$2 $3",["[4-79]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1-$2 $3",["1(?:[02469]|[378][1-9])|8"],"0$1"],["(\\d)(\\d{4})(\\d{4})","$1-$2 $3",["3"],"0$1"],["(\\d)(\\d{3})(\\d{2})(\\d{4})","$1-$2-$3-$4",["1[36-8]"]],["(\\d{3})(\\d{3})(\\d{4})","$1-$2 $3",["15"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1-$2 $3",["1"],"0$1"]],"0"],MZ:["258","00","(?:2|8\\d)\\d{7}",[8,9],[["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["2|8[2-79]"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["8"]]]],NA:["264","00","[68]\\d{7,8}",[8,9],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["88"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["6"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["87"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["8"],"0$1"]],"0"],NC:["687","00","[2-57-9]\\d{5}",[6],[["(\\d{2})(\\d{2})(\\d{2})","$1.$2.$3",["[2-57-9]"]]]],NE:["227","00","[027-9]\\d{7}",[8],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["08"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[089]|2[013]|7[04]"]]]],NF:["672","00","[13]\\d{5}",[6],[["(\\d{2})(\\d{4})","$1 $2",["1[0-3]"]],["(\\d)(\\d{5})","$1 $2",["[13]"]]],0,0,"([0-258]\\d{4})$","3$1"],NG:["234","009","(?:[124-7]|9\\d{3})\\d{6}|[1-9]\\d{7}|[78]\\d{9,13}",[7,8,10,11,12,13,14],[["(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3",["78"],"0$1"],["(\\d)(\\d{3})(\\d{3,4})","$1 $2 $3",["[12]|9(?:0[3-9]|[1-9])"],"0$1"],["(\\d{2})(\\d{3})(\\d{2,3})","$1 $2 $3",["[3-7]|8[2-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["[7-9]"],"0$1"],["(\\d{3})(\\d{4})(\\d{4,5})","$1 $2 $3",["[78]"],"0$1"],["(\\d{3})(\\d{5})(\\d{5,6})","$1 $2 $3",["[78]"],"0$1"]],"0"],NI:["505","00","(?:1800|[25-8]\\d{3})\\d{4}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[125-8]"]]]],NL:["31","00","(?:[124-7]\\d\\d|3(?:[02-9]\\d|1[0-8]))\\d{6}|[89]\\d{6,9}|1\\d{4,5}",[5,6,7,8,9,10],[["(\\d{3})(\\d{4,7})","$1 $2",["[89]0"],"0$1"],["(\\d{2})(\\d{7})","$1 $2",["66"],"0$1"],["(\\d)(\\d{8})","$1 $2",["6"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["1[16-8]|2[259]|3[124]|4[17-9]|5[124679]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[1-57-9]"],"0$1"]],"0"],NO:["47","00","(?:0|[2-9]\\d{3})\\d{4}",[5,8],[["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["[489]|5[89]"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[235-7]"]]],0,0,0,0,0,"[02-689]|7[0-8]"],NP:["977","00","(?:1\\d|9)\\d{9}|[1-9]\\d{7}",[8,10,11],[["(\\d)(\\d{7})","$1-$2",["1[2-6]"],"0$1"],["(\\d{2})(\\d{6})","$1-$2",["1[01]|[2-8]|9(?:[1-579]|6[2-6])"],"0$1"],["(\\d{3})(\\d{7})","$1-$2",["9"]]],"0"],NR:["674","00","(?:444|(?:55|8\\d)\\d|666)\\d{4}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[4-68]"]]]],NU:["683","00","(?:[47]|888\\d)\\d{3}",[4,7],[["(\\d{3})(\\d{4})","$1 $2",["8"]]]],NZ:["64","0(?:0|161)","[29]\\d{7,9}|50\\d{5}(?:\\d{2,3})?|6[0-35-9]\\d{6}|7\\d{7,8}|8\\d{4,9}|(?:11\\d|[34])\\d{7}",[5,6,7,8,9,10],[["(\\d{2})(\\d{3,8})","$1 $2",["8[1-579]"],"0$1"],["(\\d{3})(\\d{2})(\\d{2,3})","$1 $2 $3",["50[036-8]|[89]0","50(?:[0367]|88)|[89]0"],"0$1"],["(\\d)(\\d{3})(\\d{4})","$1-$2 $3",["24|[346]|7[2-57-9]|9[2-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["2(?:10|74)|[59]|80"],"0$1"],["(\\d{2})(\\d{3,4})(\\d{4})","$1 $2 $3",["1|2[028]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,5})","$1 $2 $3",["2(?:[169]|7[0-35-9])|7|86"],"0$1"]],"0",0,0,0,0,0,0,"00"],OM:["968","00","(?:1505|[279]\\d{3}|500)\\d{4}|8007\\d{4,5}",[7,8,9],[["(\\d{3})(\\d{4,6})","$1 $2",["[58]"]],["(\\d{2})(\\d{6})","$1 $2",["2"]],["(\\d{4})(\\d{4})","$1 $2",["[179]"]]]],PA:["507","00","8\\d{9}|[68]\\d{7}|[1-57-9]\\d{6}",[7,8,10],[["(\\d{3})(\\d{4})","$1-$2",["[1-57-9]"]],["(\\d{4})(\\d{4})","$1-$2",["[68]"]],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["8"]]]],PE:["51","19(?:1[124]|77|90)00","(?:[14-8]|9\\d)\\d{7}",[8,9],[["(\\d{3})(\\d{5})","$1 $2",["80"],"(0$1)"],["(\\d)(\\d{7})","$1 $2",["1"],"(0$1)"],["(\\d{2})(\\d{6})","$1 $2",["[4-8]"],"(0$1)"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["9"]]],"0",0,0,0,0,0,0,0," Anexo "],PF:["689","00","[48]\\d{7}|4\\d{5}",[6,8],[["(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3",["44"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[48]"]]]],PG:["675","00|140[1-3]","(?:180|[78]\\d{3})\\d{4}|(?:[2-589]\\d|64)\\d{5}",[7,8],[["(\\d{3})(\\d{4})","$1 $2",["18|[2-69]|85"]],["(\\d{4})(\\d{4})","$1 $2",["[78]"]]],0,0,0,0,0,0,0,"00"],PH:["63","00","1800\\d{7,9}|(?:2|[89]\\d{4})\\d{5}|[2-8]\\d{8}|[28]\\d{7}",[6,8,9,10,11,12,13],[["(\\d)(\\d{5})","$1 $2",["2"],"(0$1)"],["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["2"],"(0$1)"],["(\\d{4})(\\d{4,6})","$1 $2",["3(?:23|39|46)|4(?:2[3-6]|[35]9|4[26]|76)|544|88[245]|(?:52|64|86)2","3(?:230|397|461)|4(?:2(?:35|[46]4|51)|396|4(?:22|63)|59[347]|76[15])|5(?:221|446)|642[23]|8(?:622|8(?:[24]2|5[13]))"],"(0$1)"],["(\\d{5})(\\d{4})","$1 $2",["346|4(?:27|9[35])|883","3469|4(?:279|9(?:30|56))|8834"],"(0$1)"],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["2"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[3-7]|8[2-8]"],"(0$1)"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[89]"],"0$1"],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["1"]],["(\\d{4})(\\d{1,2})(\\d{3})(\\d{4})","$1 $2 $3 $4",["1"]]],"0"],PK:["92","00","122\\d{6}|[24-8]\\d{10,11}|9(?:[013-9]\\d{8,10}|2(?:[01]\\d\\d|2(?:[06-8]\\d|1[01]))\\d{7})|(?:[2-8]\\d{3}|92(?:[0-7]\\d|8[1-9]))\\d{6}|[24-9]\\d{8}|[89]\\d{7}",[8,9,10,11,12],[["(\\d{3})(\\d{3})(\\d{2,7})","$1 $2 $3",["[89]0"],"0$1"],["(\\d{4})(\\d{5})","$1 $2",["1"]],["(\\d{3})(\\d{6,7})","$1 $2",["2(?:3[2358]|4[2-4]|9[2-8])|45[3479]|54[2-467]|60[468]|72[236]|8(?:2[2-689]|3[23578]|4[3478]|5[2356])|9(?:2[2-8]|3[27-9]|4[2-6]|6[3569]|9[25-8])","9(?:2[3-8]|98)|(?:2(?:3[2358]|4[2-4]|9[2-8])|45[3479]|54[2-467]|60[468]|72[236]|8(?:2[2-689]|3[23578]|4[3478]|5[2356])|9(?:22|3[27-9]|4[2-6]|6[3569]|9[25-7]))[2-9]"],"(0$1)"],["(\\d{2})(\\d{7,8})","$1 $2",["(?:2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91)[2-9]"],"(0$1)"],["(\\d{5})(\\d{5})","$1 $2",["58"],"(0$1)"],["(\\d{3})(\\d{7})","$1 $2",["3"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91"],"(0$1)"],["(\\d{3})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["[24-9]"],"(0$1)"]],"0"],PL:["48","00","6\\d{5}(?:\\d{2})?|8\\d{9}|[1-9]\\d{6}(?:\\d{2})?",[6,7,8,9,10],[["(\\d{5})","$1",["19"]],["(\\d{3})(\\d{3})","$1 $2",["11|64"]],["(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3",["(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])1","(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])19"]],["(\\d{3})(\\d{2})(\\d{2,3})","$1 $2 $3",["64"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["39|45|5[0137]|6[0469]|7[02389]|8(?:0[14]|8)"]],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["1[2-8]|[2-7]|8[1-79]|9[145]"]],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["8"]]]],PM:["508","00","[45]\\d{5}",[6],[["(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3",["[45]"],"0$1"]],"0"],PR:["1","011","(?:[589]\\d\\d|787)\\d{7}",[10],0,"1",0,0,0,0,"787|939"],PS:["970","00","[2489]2\\d{6}|(?:1\\d|5)\\d{8}",[8,9,10],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["[2489]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["5"],"0$1"],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1"]]],"0"],PT:["351","00","(?:[26-9]\\d|30)\\d{7}",[9],[["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["2[12]"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[236-9]"]]]],PW:["680","01[12]","(?:[24-8]\\d\\d|345|900)\\d{4}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[2-9]"]]]],PY:["595","00","59\\d{4,6}|9\\d{5,10}|(?:[2-46-8]\\d|5[0-8])\\d{4,7}",[6,7,8,9,10,11],[["(\\d{3})(\\d{3,6})","$1 $2",["[2-9]0"],"0$1"],["(\\d{2})(\\d{5})","$1 $2",["[26]1|3[289]|4[1246-8]|7[1-3]|8[1-36]"],"(0$1)"],["(\\d{3})(\\d{4,5})","$1 $2",["2[279]|3[13-5]|4[359]|5|6(?:[34]|7[1-46-8])|7[46-8]|85"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["2[14-68]|3[26-9]|4[1246-8]|6(?:1|75)|7[1-35]|8[1-36]"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["87"]],["(\\d{3})(\\d{6})","$1 $2",["9(?:[5-79]|8[1-6])"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[2-8]"],"0$1"],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["9"]]],"0"],QA:["974","00","[2-7]\\d{7}|(?:2\\d\\d|800)\\d{4}",[7,8],[["(\\d{3})(\\d{4})","$1 $2",["2[126]|8"]],["(\\d{4})(\\d{4})","$1 $2",["[2-7]"]]]],RE:["262","00","9769\\d{5}|(?:26|[68]\\d)\\d{7}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2689]"],"0$1"]],"0",0,0,0,0,"26[23]|69|[89]"],RO:["40","00","(?:[237]\\d|[89]0)\\d{7}|[23]\\d{5}",[6,9],[["(\\d{3})(\\d{3})","$1 $2",["2[3-6]","2[3-6]\\d9"],"0$1"],["(\\d{2})(\\d{4})","$1 $2",["219|31"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[23]1"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[237-9]"],"0$1"]],"0",0,0,0,0,0,0,0," int "],RS:["381","00","38[02-9]\\d{6,9}|6\\d{7,9}|90\\d{4,8}|38\\d{5,6}|(?:7\\d\\d|800)\\d{3,9}|(?:[12]\\d|3[0-79])\\d{5,10}",[6,7,8,9,10,11,12],[["(\\d{3})(\\d{3,9})","$1 $2",["(?:2[389]|39)0|[7-9]"],"0$1"],["(\\d{2})(\\d{5,10})","$1 $2",["[1-36]"],"0$1"]],"0"],RU:["7","810","[347-9]\\d{9}",[10],[["(\\d{4})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["7(?:1[0-8]|2[1-9])","7(?:1(?:[0-6]2|7|8[27])|2(?:1[23]|[2-9]2))","7(?:1(?:[0-6]2|7|8[27])|2(?:13[03-69]|62[013-9]))|72[1-57-9]2"],"8 ($1)",1],["(\\d{5})(\\d)(\\d{2})(\\d{2})","$1 $2 $3 $4",["7(?:1[0-68]|2[1-9])","7(?:1(?:[06][3-6]|[18]|2[35]|[3-5][3-5])|2(?:[13][3-5]|[24-689]|7[457]))","7(?:1(?:0(?:[356]|4[023])|[18]|2(?:3[013-9]|5)|3[45]|43[013-79]|5(?:3[1-8]|4[1-7]|5)|6(?:3[0-35-9]|[4-6]))|2(?:1(?:3[178]|[45])|[24-689]|3[35]|7[457]))|7(?:14|23)4[0-8]|71(?:33|45)[1-79]"],"8 ($1)",1],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["7"],"8 ($1)",1],["(\\d{3})(\\d{3})(\\d{2})(\\d{2})","$1 $2-$3-$4",["[3489]"],"8 ($1)",1]],"8",0,0,0,0,"3[04-689]|[489]",0,"8~10"],RW:["250","00","(?:06|[27]\\d\\d|[89]00)\\d{6}",[8,9],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["0"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[7-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["2"]]],"0"],SA:["966","00","92\\d{7}|(?:[15]|8\\d)\\d{8}",[9,10],[["(\\d{4})(\\d{5})","$1 $2",["9"]],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["1"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["5"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["81"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["8"]]],"0"],SB:["677","0[01]","(?:[1-6]|[7-9]\\d\\d)\\d{4}",[5,7],[["(\\d{2})(\\d{5})","$1 $2",["7|8[4-9]|9(?:[1-8]|9[0-8])"]]]],SC:["248","010|0[0-2]","8000\\d{3}|(?:[249]\\d|64)\\d{5}",[7],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["[246]|9[57]"]]],0,0,0,0,0,0,0,"00"],SD:["249","00","[19]\\d{8}",[9],[["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[19]"],"0$1"]],"0"],SE:["46","00","(?:[26]\\d\\d|9)\\d{9}|[1-9]\\d{8}|[1-689]\\d{7}|[1-4689]\\d{6}|2\\d{5}",[6,7,8,9,10],[["(\\d{2})(\\d{2,3})(\\d{2})","$1-$2 $3",["20"],"0$1",0,"$1 $2 $3"],["(\\d{3})(\\d{4})","$1-$2",["9(?:00|39|44)"],"0$1",0,"$1 $2"],["(\\d{2})(\\d{3})(\\d{2})","$1-$2 $3",["[12][136]|3[356]|4[0246]|6[03]|90[1-9]"],"0$1",0,"$1 $2 $3"],["(\\d)(\\d{2,3})(\\d{2})(\\d{2})","$1-$2 $3 $4",["8"],"0$1",0,"$1 $2 $3 $4"],["(\\d{3})(\\d{2,3})(\\d{2})","$1-$2 $3",["1[2457]|2(?:[247-9]|5[0138])|3[0247-9]|4[1357-9]|5[0-35-9]|6(?:[125689]|4[02-57]|7[0-2])|9(?:[125-8]|3[02-5]|4[0-3])"],"0$1",0,"$1 $2 $3"],["(\\d{3})(\\d{2,3})(\\d{3})","$1-$2 $3",["9(?:00|39|44)"],"0$1",0,"$1 $2 $3"],["(\\d{2})(\\d{2,3})(\\d{2})(\\d{2})","$1-$2 $3 $4",["1[13689]|2[0136]|3[1356]|4[0246]|54|6[03]|90[1-9]"],"0$1",0,"$1 $2 $3 $4"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1-$2 $3 $4",["10|7"],"0$1",0,"$1 $2 $3 $4"],["(\\d)(\\d{3})(\\d{3})(\\d{2})","$1-$2 $3 $4",["8"],"0$1",0,"$1 $2 $3 $4"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1-$2 $3 $4",["[13-5]|2(?:[247-9]|5[0138])|6(?:[124-689]|7[0-2])|9(?:[125-8]|3[02-5]|4[0-3])"],"0$1",0,"$1 $2 $3 $4"],["(\\d{3})(\\d{2})(\\d{2})(\\d{3})","$1-$2 $3 $4",["9"],"0$1",0,"$1 $2 $3 $4"],["(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1-$2 $3 $4 $5",["[26]"],"0$1",0,"$1 $2 $3 $4 $5"]],"0"],SG:["65","0[0-3]\\d","(?:(?:1\\d|8)\\d\\d|7000)\\d{7}|[3689]\\d{7}",[8,10,11],[["(\\d{4})(\\d{4})","$1 $2",["[369]|8(?:0[1-3]|[1-9])"]],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["8"]],["(\\d{4})(\\d{4})(\\d{3})","$1 $2 $3",["7"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["1"]]]],SH:["290","00","(?:[256]\\d|8)\\d{3}",[4,5],0,0,0,0,0,0,"[256]"],SI:["386","00|10(?:22|66|88|99)","[1-7]\\d{7}|8\\d{4,7}|90\\d{4,6}",[5,6,7,8],[["(\\d{2})(\\d{3,6})","$1 $2",["8[09]|9"],"0$1"],["(\\d{3})(\\d{5})","$1 $2",["59|8"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[37][01]|4[0139]|51|6"],"0$1"],["(\\d)(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[1-57]"],"(0$1)"]],"0",0,0,0,0,0,0,"00"],SJ:["47","00","0\\d{4}|(?:[4589]\\d|79)\\d{6}",[5,8],0,0,0,0,0,0,"79"],SK:["421","00","[2-689]\\d{8}|[2-59]\\d{6}|[2-5]\\d{5}",[6,7,9],[["(\\d)(\\d{2})(\\d{3,4})","$1 $2 $3",["21"],"0$1"],["(\\d{2})(\\d{2})(\\d{2,3})","$1 $2 $3",["[3-5][1-8]1","[3-5][1-8]1[67]"],"0$1"],["(\\d)(\\d{3})(\\d{3})(\\d{2})","$1/$2 $3 $4",["2"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[689]"],"0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1/$2 $3 $4",["[3-5]"],"0$1"]],"0"],SL:["232","00","(?:[2378]\\d|66|99)\\d{6}",[8],[["(\\d{2})(\\d{6})","$1 $2",["[236-9]"],"(0$1)"]],"0"],SM:["378","00","(?:0549|[5-7]\\d)\\d{6}",[8,10],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[5-7]"]],["(\\d{4})(\\d{6})","$1 $2",["0"]]],0,0,"([89]\\d{5})$","0549$1"],SN:["221","00","(?:[378]\\d{4}|93330)\\d{4}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["8"]],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[379]"]]]],SO:["252","00","[346-9]\\d{8}|[12679]\\d{7}|[1-5]\\d{6}|[1348]\\d{5}",[6,7,8,9],[["(\\d{2})(\\d{4})","$1 $2",["8[125]"]],["(\\d{6})","$1",["[134]"]],["(\\d)(\\d{6})","$1 $2",["[15]|2[0-79]|3[0-46-8]|4[0-7]"]],["(\\d)(\\d{7})","$1 $2",["24|[67]"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[3478]|64|90"]],["(\\d{2})(\\d{5,7})","$1 $2",["1|28|6[1-35-9]|9[2-9]"]]],"0"],SR:["597","00","(?:[2-5]|68|[78]\\d)\\d{5}",[6,7],[["(\\d{2})(\\d{2})(\\d{2})","$1-$2-$3",["56"]],["(\\d{3})(\\d{3})","$1-$2",["[2-5]"]],["(\\d{3})(\\d{4})","$1-$2",["[6-8]"]]]],SS:["211","00","[19]\\d{8}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[19]"],"0$1"]],"0"],ST:["239","00","(?:22|9\\d)\\d{5}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[29]"]]]],SV:["503","00","[267]\\d{7}|[89]00\\d{4}(?:\\d{4})?",[7,8,11],[["(\\d{3})(\\d{4})","$1 $2",["[89]"]],["(\\d{4})(\\d{4})","$1 $2",["[267]"]],["(\\d{3})(\\d{4})(\\d{4})","$1 $2 $3",["[89]"]]]],SX:["1","011","7215\\d{6}|(?:[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|(5\\d{6})$","721$1",0,"721"],SY:["963","00","[1-39]\\d{8}|[1-5]\\d{7}",[8,9],[["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[1-5]"],"0$1",1],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["9"],"0$1",1]],"0"],SZ:["268","00","0800\\d{4}|(?:[237]\\d|900)\\d{6}",[8,9],[["(\\d{4})(\\d{4})","$1 $2",["[0237]"]],["(\\d{5})(\\d{4})","$1 $2",["9"]]]],TA:["290","00","8\\d{3}",[4],0,0,0,0,0,0,"8"],TC:["1","011","(?:[58]\\d\\d|649|900)\\d{7}",[10],0,"1",0,"1|([2-479]\\d{6})$","649$1",0,"649"],TD:["235","00|16","(?:22|[69]\\d|77)\\d{6}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2679]"]]],0,0,0,0,0,0,0,"00"],TG:["228","00","[279]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[279]"]]]],TH:["66","00[1-9]","1\\d{9}|[1689]\\d{8}|[1-57]\\d{7}",[8,9,10],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["2"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[13-9]"],"0$1"],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1"]]],"0"],TJ:["992","810","(?:[02]0|11|[3-57-9]\\d)\\d{7}",[9],[["(\\d{6})(\\d)(\\d{2})","$1 $2 $3",["331","3317"],0,1],["(\\d{3})(\\d{2})(\\d{4})","$1 $2 $3",["[34]7|91[78]"],0,1],["(\\d{4})(\\d)(\\d{4})","$1 $2 $3",["3"],0,1],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[02457-9]|11"],0,1]],"8",0,0,0,0,0,0,"8~10"],TK:["690","00","[2-47]\\d{3,6}",[4,5,6,7]],TL:["670","00","7\\d{7}|(?:[2-47]\\d|[89]0)\\d{5}",[7,8],[["(\\d{3})(\\d{4})","$1 $2",["[2-489]|70"]],["(\\d{4})(\\d{4})","$1 $2",["7"]]]],TM:["993","810","[1-6]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2-$3-$4",["12"],"(8 $1)"],["(\\d{3})(\\d)(\\d{2})(\\d{2})","$1 $2-$3-$4",["[1-5]"],"(8 $1)"],["(\\d{2})(\\d{6})","$1 $2",["6"],"8 $1"]],"8",0,0,0,0,0,0,"8~10"],TN:["216","00","[2-57-9]\\d{7}",[8],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[2-57-9]"]]]],TO:["676","00","(?:0800|[5-8]\\d{3})\\d{3}|[2-8]\\d{4}",[5,7],[["(\\d{2})(\\d{3})","$1-$2",["[2-4]|50|6[09]|7[0-24-69]|8[05]"]],["(\\d{4})(\\d{3})","$1 $2",["0"]],["(\\d{3})(\\d{4})","$1 $2",["[5-8]"]]]],TR:["90","00","4\\d{6}|8\\d{11,12}|(?:[2-58]\\d\\d|900)\\d{7}",[7,10,12,13],[["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["512|8[0589]|90"],"0$1",1],["(\\d{3})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["5(?:[0-59]|61)","5(?:[0-59]|616)","5(?:[0-59]|6161)"],"0$1",1],["(\\d{3})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[24][1-8]|3[1-9]"],"(0$1)",1],["(\\d{3})(\\d{3})(\\d{6,7})","$1 $2 $3",["80"],"0$1",1]],"0"],TT:["1","011","(?:[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-46-8]\\d{6})$","868$1",0,"868"],TV:["688","00","(?:2|7\\d\\d|90)\\d{4}",[5,6,7],[["(\\d{2})(\\d{3})","$1 $2",["2"]],["(\\d{2})(\\d{4})","$1 $2",["90"]],["(\\d{2})(\\d{5})","$1 $2",["7"]]]],TW:["886","0(?:0[25-79]|19)","[2-689]\\d{8}|7\\d{9,10}|[2-8]\\d{7}|2\\d{6}",[7,8,9,10,11],[["(\\d{2})(\\d)(\\d{4})","$1 $2 $3",["202"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[258]0"],"0$1"],["(\\d)(\\d{3,4})(\\d{4})","$1 $2 $3",["[23568]|4(?:0[02-48]|[1-47-9])|7[1-9]","[23568]|4(?:0[2-48]|[1-47-9])|(?:400|7)[1-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[49]"],"0$1"],["(\\d{2})(\\d{4})(\\d{4,5})","$1 $2 $3",["7"],"0$1"]],"0",0,0,0,0,0,0,0,"#"],TZ:["255","00[056]","(?:[26-8]\\d|41|90)\\d{7}",[9],[["(\\d{3})(\\d{2})(\\d{4})","$1 $2 $3",["[89]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[24]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[67]"],"0$1"]],"0"],UA:["380","00","[89]\\d{9}|[3-9]\\d{8}",[9,10],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["6[12][29]|(?:3[1-8]|4[136-8]|5[12457]|6[49])2|(?:56|65)[24]","6[12][29]|(?:35|4[1378]|5[12457]|6[49])2|(?:56|65)[24]|(?:3[1-46-8]|46)2[013-9]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["4[45][0-5]|5(?:0|6[37])|6(?:[12][018]|[36-8])|7|89|9[1-9]|(?:48|57)[0137-9]","4[45][0-5]|5(?:0|6(?:3[14-7]|7))|6(?:[12][018]|[36-8])|7|89|9[1-9]|(?:48|57)[0137-9]"],"0$1"],["(\\d{4})(\\d{5})","$1 $2",["[3-6]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["[89]"],"0$1"]],"0",0,0,0,0,0,0,"0~0"],UG:["256","00[057]","800\\d{6}|(?:[29]0|[347]\\d)\\d{7}",[9],[["(\\d{4})(\\d{5})","$1 $2",["202","2024"],"0$1"],["(\\d{3})(\\d{6})","$1 $2",["[27-9]|4(?:6[45]|[7-9])"],"0$1"],["(\\d{2})(\\d{7})","$1 $2",["[34]"],"0$1"]],"0"],US:["1","011","[2-9]\\d{9}",[10],[["(\\d{3})(\\d{3})(\\d{4})","($1) $2-$3",["[2-9]"],0,1,"$1-$2-$3"]],"1",0,0,0,0,0,[["(?:2(?:0[1-35-9]|1[02-9]|2[03-589]|3[149]|4[08]|5[1-46]|6[0279]|7[0269]|8[13])|3(?:0[1-57-9]|1[02-9]|2[01356]|3[0-24679]|4[167]|5[12]|6[014]|8[056])|4(?:0[124-9]|1[02-579]|2[3-5]|3[0245]|4[0235]|58|6[39]|7[0589]|8[04])|5(?:0[1-57-9]|1[0235-8]|20|3[0149]|4[01]|5[19]|6[1-47]|7[013-5]|8[056])|6(?:0[1-35-9]|1[024-9]|2[03689]|[34][016]|5[0179]|6[0-279]|78|8[0-29])|7(?:0[1-46-8]|1[2-9]|2[04-7]|3[1247]|4[037]|5[47]|6[02359]|7[02-59]|8[156])|8(?:0[1-68]|1[02-8]|2[08]|3[0-289]|4[3578]|5[046-9]|6[02-5]|7[028])|9(?:0[1346-9]|1[02-9]|2[0589]|3[0146-8]|4[0179]|5[12469]|7[0-389]|8[04-69]))[2-9]\\d{6}"],[""],["8(?:00|33|44|55|66|77|88)[2-9]\\d{6}"],["900[2-9]\\d{6}"],["52(?:3(?:[2-46-9][02-9]\\d|5(?:[02-46-9]\\d|5[0-46-9]))|4(?:[2-478][02-9]\\d|5(?:[034]\\d|2[024-9]|5[0-46-9])|6(?:0[1-9]|[2-9]\\d)|9(?:[05-9]\\d|2[0-5]|49)))\\d{4}|52[34][2-9]1[02-9]\\d{4}|5(?:00|2[12]|33|44|66|77|88)[2-9]\\d{6}"]]],UY:["598","0(?:0|1[3-9]\\d)","4\\d{9}|[249]\\d{7}|(?:[49]\\d|80)\\d{5}",[7,8,10],[["(\\d{3})(\\d{4})","$1 $2",["405|8|90"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["9"],"0$1"],["(\\d{4})(\\d{4})","$1 $2",["[24]"]],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["4"],"0$1"]],"0",0,0,0,0,0,0,"00"," int. "],UZ:["998","810","55501\\d{4}|(?:33|[679]\\d|88)\\d{7}",[9],[["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[35-9]"],"8 $1"]],"8",0,0,0,0,0,0,"8~10"],VA:["39","00","0\\d{5,10}|3[0-8]\\d{7,10}|55\\d{8}|8\\d{5}(?:\\d{2,4})?|(?:1\\d|39)\\d{7,8}",[6,7,8,9,10,11],0,0,0,0,0,0,"06698"],VC:["1","011","(?:[58]\\d\\d|784|900)\\d{7}",[10],0,"1",0,"1|([2-7]\\d{6})$","784$1",0,"784"],VE:["58","00","[68]00\\d{7}|(?:[24]\\d|[59]0)\\d{8}",[10],[["(\\d{3})(\\d{7})","$1-$2",["[24-689]"],"0$1"]],"0"],VG:["1","011","(?:284|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-578]\\d{6})$","284$1",0,"284"],VI:["1","011","[58]\\d{9}|(?:34|90)0\\d{7}",[10],0,"1",0,"1|([2-9]\\d{6})$","340$1",0,"340"],VN:["84","00","[12]\\d{9}|[135-9]\\d{8}|[16]\\d{7}|[16-8]\\d{6}",[7,8,9,10],[["(\\d{2})(\\d{5})","$1 $2",["80"],"0$1",1],["(\\d{4})(\\d{4,6})","$1 $2",["1"],0,1],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[69]"],"0$1",1],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[3578]"],"0$1",1],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["2[48]"],"0$1",1],["(\\d{3})(\\d{4})(\\d{3})","$1 $2 $3",["2"],"0$1",1]],"0"],VU:["678","00","(?:[23]\\d|[48]8)\\d{3}|(?:[57]\\d|90)\\d{5}",[5,7],[["(\\d{3})(\\d{4})","$1 $2",["[579]"]]]],WF:["681","00","(?:[45]0|68|72|8\\d)\\d{4}",[6],[["(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3",["[4-8]"]]]],WS:["685","0","(?:[2-6]|8\\d{5})\\d{4}|[78]\\d{6}|[68]\\d{5}",[5,6,7,10],[["(\\d{5})","$1",["[2-5]|6[1-9]"]],["(\\d{3})(\\d{3,7})","$1 $2",["[68]"]],["(\\d{2})(\\d{5})","$1 $2",["7"]]]],XK:["383","00","[23]\\d{7,8}|(?:4\\d\\d|[89]00)\\d{5}",[8,9],[["(\\d{3})(\\d{5})","$1 $2",["[89]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[2-4]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[23]"],"0$1"]],"0"],YE:["967","00","(?:1|7\\d)\\d{7}|[1-7]\\d{6}",[7,8,9],[["(\\d)(\\d{3})(\\d{3,4})","$1 $2 $3",["[1-6]|7[24-68]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["7"],"0$1"]],"0"],YT:["262","00","80\\d{7}|(?:26|63)9\\d{6}",[9],0,"0",0,0,0,0,"269|63"],ZA:["27","00","[1-79]\\d{8}|8\\d{4,9}",[5,6,7,8,9,10],[["(\\d{2})(\\d{3,4})","$1 $2",["8[1-4]"],"0$1"],["(\\d{2})(\\d{3})(\\d{2,3})","$1 $2 $3",["8[1-4]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["860"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[1-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["8"],"0$1"]],"0"],ZM:["260","00","(?:63|80)0\\d{6}|(?:21|[79]\\d)\\d{7}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[28]"],"0$1"],["(\\d{2})(\\d{7})","$1 $2",["[79]"],"0$1"]],"0"],ZW:["263","00","2(?:[0-57-9]\\d{6,8}|6[0-24-9]\\d{6,7})|[38]\\d{9}|[35-8]\\d{8}|[3-6]\\d{7}|[1-689]\\d{6}|[1-3569]\\d{5}|[1356]\\d{4}",[5,6,7,8,9,10],[["(\\d{3})(\\d{3,5})","$1 $2",["2(?:0[45]|2[278]|[49]8)|3(?:[09]8|17)|6(?:[29]8|37|75)|[23][78]|(?:33|5[15]|6[68])[78]"],"0$1"],["(\\d)(\\d{3})(\\d{2,4})","$1 $2 $3",["[49]"],"0$1"],["(\\d{3})(\\d{4})","$1 $2",["80"],"0$1"],["(\\d{2})(\\d{7})","$1 $2",["24|8[13-59]|(?:2[05-79]|39|5[45]|6[15-8])2","2(?:02[014]|4|[56]20|[79]2)|392|5(?:42|525)|6(?:[16-8]21|52[013])|8[13-59]"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["7"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["2(?:1[39]|2[0157]|[378]|[56][14])|3(?:12|29)","2(?:1[39]|2[0157]|[378]|[56][14])|3(?:123|29)"],"0$1"],["(\\d{4})(\\d{6})","$1 $2",["8"],"0$1"],["(\\d{2})(\\d{3,5})","$1 $2",["1|2(?:0[0-36-9]|12|29|[56])|3(?:1[0-689]|[24-6])|5(?:[0236-9]|1[2-4])|6(?:[013-59]|7[0-46-9])|(?:33|55|6[68])[0-69]|(?:29|3[09]|62)[0-79]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["29[013-9]|39|54"],"0$1"],["(\\d{4})(\\d{3,5})","$1 $2",["(?:25|54)8","258|5483"],"0$1"]],"0"]},nonGeographic:{800:["800",0,"[1-9]\\d{7}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[1-9]"]]],0,0,0,0,0,0,[0,0,["[1-9]\\d{7}"]]],808:["808",0,"[1-9]\\d{7}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[1-9]"]]],0,0,0,0,0,0,[0,0,0,0,0,0,0,0,0,["[1-9]\\d{7}"]]],870:["870",0,"[35-7]\\d{8}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[35-7]"]]],0,0,0,0,0,0,[0,["(?:[356]\\d|7[6-8])\\d{7}"]]],878:["878",0,"10\\d{10}",[12],[["(\\d{2})(\\d{5})(\\d{5})","$1 $2 $3",["1"]]],0,0,0,0,0,0,[0,0,0,0,0,0,0,0,["10\\d{10}"]]],881:["881",0,"[0-36-9]\\d{8}",[9],[["(\\d)(\\d{3})(\\d{5})","$1 $2 $3",["[0-36-9]"]]],0,0,0,0,0,0,[0,["[0-36-9]\\d{8}"]]],882:["882",0,"[13]\\d{6}(?:\\d{2,5})?|285\\d{9}|[19]\\d{7}",[7,8,9,10,11,12],[["(\\d{2})(\\d{5})","$1 $2",["16|342"]],["(\\d{2})(\\d{2})(\\d{4})","$1 $2 $3",["[19]"]],["(\\d{2})(\\d{4})(\\d{3})","$1 $2 $3",["3[23]"]],["(\\d{2})(\\d{3,4})(\\d{4})","$1 $2 $3",["1"]],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["34[57]"]],["(\\d{3})(\\d{4})(\\d{4})","$1 $2 $3",["34"]],["(\\d{2})(\\d{4,5})(\\d{5})","$1 $2 $3",["[1-3]"]]],0,0,0,0,0,0,[0,["3(?:37\\d\\d|42)\\d{4}|3(?:2|47|7\\d{3})\\d{7}",[7,9,10,12]],0,0,0,0,0,0,["1(?:3(?:0[0347]|[13][0139]|2[035]|4[013568]|6[0459]|7[06]|8[15-8]|9[0689])\\d{4}|6\\d{5,10})|(?:(?:285\\d\\d|3(?:45|[69]\\d{3}))\\d|9[89])\\d{6}"]]],883:["883",0,"51\\d{7}(?:\\d{3})?",[9,12],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["510"]],["(\\d{3})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["510"]],["(\\d{4})(\\d{4})(\\d{4})","$1 $2 $3",["5"]]],0,0,0,0,0,0,[0,0,0,0,0,0,0,0,["51[013]0\\d{8}|5100\\d{5}"]]],888:["888",0,"\\d{11}",[11],[["(\\d{3})(\\d{3})(\\d{5})","$1 $2 $3"]],0,0,0,0,0,0,[0,0,0,0,0,0,["\\d{11}"]]],979:["979",0,"[1359]\\d{8}",[9],[["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["[1359]"]]],0,0,0,0,0,0,[0,0,0,["[1359]\\d{8}"]]]}};function b(t,e){var n=Array.prototype.slice.call(e);return n.push(y),t.apply(this,n)}var g=2,m=17,O=3,C="0-9０-９٠-٩۰-۹",x="-‐-―−ー－",w="／/",S="．.",E="  ­​⁠　",P="()（）［］\\[\\]",I="~⁓∼～",N="".concat(x).concat(w).concat(S).concat(E).concat(P).concat(I),j="+＋";function T(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}var A=function t(e){T(this,t),this.name=this.constructor.name,this.message=e,this.stack=new Error(e).stack};A.prototype=Object.create(Error.prototype),A.prototype.constructor=A;var k=function(t,e){t=t.split("-"),e=e.split("-");for(var n=t[0].split("."),r=e[0].split("."),d=0;d<3;d++){var i=Number(n[d]),o=Number(r[d]);if(i>o)return 1;if(o>i)return-1;if(!isNaN(i)&&isNaN(o))return 1;if(isNaN(i)&&!isNaN(o))return-1}return t[1]&&e[1]?t[1]>e[1]?1:t[1]<e[1]?-1:0:!t[1]&&e[1]?1:t[1]&&!e[1]?-1:0};function M(t){return M="function"===typeof Symbol&&"symbol"===typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"===typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},M(t)}function R(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function D(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}function L(t,e,n){return e&&D(t.prototype,e),n&&D(t,n),t}var F="1.2.0",B="1.7.35",_=" ext. ",G=/^\d+$/,V=function(){function t(e){R(this,t),Y(e),this.metadata=e,Q.call(this,e)}return L(t,[{key:"getCountries",value:function(){return Object.keys(this.metadata.countries).filter((function(t){return"001"!==t}))}},{key:"getCountryMetadata",value:function(t){return this.metadata.countries[t]}},{key:"nonGeographic",value:function(){if(!(this.v1||this.v2||this.v3))return this.metadata.nonGeographic||this.metadata.nonGeographical}},{key:"hasCountry",value:function(t){return void 0!==this.getCountryMetadata(t)}},{key:"hasCallingCode",value:function(t){if(this.getCountryCodesForCallingCode(t))return!0;if(this.nonGeographic()){if(this.nonGeographic()[t])return!0}else{var e=this.countryCallingCodes()[t];if(e&&1===e.length&&"001"===e[0])return!0}}},{key:"isNonGeographicCallingCode",value:function(t){return this.nonGeographic()?!!this.nonGeographic()[t]:!this.getCountryCodesForCallingCode(t)}},{key:"country",value:function(t){return this.selectNumberingPlan(t)}},{key:"selectNumberingPlan",value:function(t,e){if(t&&G.test(t)&&(e=t,t=null),t&&"001"!==t){if(!this.hasCountry(t))throw new Error("Unknown country: ".concat(t));this.numberingPlan=new U(this.getCountryMetadata(t),this)}else if(e){if(!this.hasCallingCode(e))throw new Error("Unknown calling code: ".concat(e));this.numberingPlan=new U(this.getNumberingPlanMetadata(e),this)}else this.numberingPlan=void 0;return this}},{key:"getCountryCodesForCallingCode",value:function(t){var e=this.countryCallingCodes()[t];if(e){if(1===e.length&&3===e[0].length)return;return e}}},{key:"getCountryCodeForCallingCode",value:function(t){var e=this.getCountryCodesForCallingCode(t);if(e)return e[0]}},{key:"getNumberingPlanMetadata",value:function(t){var e=this.getCountryCodeForCallingCode(t);if(e)return this.getCountryMetadata(e);if(this.nonGeographic()){var n=this.nonGeographic()[t];if(n)return n}else{var r=this.countryCallingCodes()[t];if(r&&1===r.length&&"001"===r[0])return this.metadata.countries["001"]}}},{key:"countryCallingCode",value:function(){return this.numberingPlan.callingCode()}},{key:"IDDPrefix",value:function(){return this.numberingPlan.IDDPrefix()}},{key:"defaultIDDPrefix",value:function(){return this.numberingPlan.defaultIDDPrefix()}},{key:"nationalNumberPattern",value:function(){return this.numberingPlan.nationalNumberPattern()}},{key:"possibleLengths",value:function(){return this.numberingPlan.possibleLengths()}},{key:"formats",value:function(){return this.numberingPlan.formats()}},{key:"nationalPrefixForParsing",value:function(){return this.numberingPlan.nationalPrefixForParsing()}},{key:"nationalPrefixTransformRule",value:function(){return this.numberingPlan.nationalPrefixTransformRule()}},{key:"leadingDigits",value:function(){return this.numberingPlan.leadingDigits()}},{key:"hasTypes",value:function(){return this.numberingPlan.hasTypes()}},{key:"type",value:function(t){return this.numberingPlan.type(t)}},{key:"ext",value:function(){return this.numberingPlan.ext()}},{key:"countryCallingCodes",value:function(){return this.v1?this.metadata.country_phone_code_to_countries:this.metadata.country_calling_codes}},{key:"chooseCountryByCountryCallingCode",value:function(t){return this.selectNumberingPlan(t)}},{key:"hasSelectedNumberingPlan",value:function(){return void 0!==this.numberingPlan}}]),t}(),U=function(){function t(e,n){R(this,t),this.globalMetadataObject=n,this.metadata=e,Q.call(this,n.metadata)}return L(t,[{key:"callingCode",value:function(){return this.metadata[0]}},{key:"getDefaultCountryMetadataForRegion",value:function(){return this.globalMetadataObject.getNumberingPlanMetadata(this.callingCode())}},{key:"IDDPrefix",value:function(){if(!this.v1&&!this.v2)return this.metadata[1]}},{key:"defaultIDDPrefix",value:function(){if(!this.v1&&!this.v2)return this.metadata[12]}},{key:"nationalNumberPattern",value:function(){return this.v1||this.v2?this.metadata[1]:this.metadata[2]}},{key:"possibleLengths",value:function(){if(!this.v1)return this.metadata[this.v2?2:3]}},{key:"_getFormats",value:function(t){return t[this.v1?2:this.v2?3:4]}},{key:"formats",value:function(){var t=this,e=this._getFormats(this.metadata)||this._getFormats(this.getDefaultCountryMetadataForRegion())||[];return e.map((function(e){return new K(e,t)}))}},{key:"nationalPrefix",value:function(){return this.metadata[this.v1?3:this.v2?4:5]}},{key:"_getNationalPrefixFormattingRule",value:function(t){return t[this.v1?4:this.v2?5:6]}},{key:"nationalPrefixFormattingRule",value:function(){return this._getNationalPrefixFormattingRule(this.metadata)||this._getNationalPrefixFormattingRule(this.getDefaultCountryMetadataForRegion())}},{key:"_nationalPrefixForParsing",value:function(){return this.metadata[this.v1?5:this.v2?6:7]}},{key:"nationalPrefixForParsing",value:function(){return this._nationalPrefixForParsing()||this.nationalPrefix()}},{key:"nationalPrefixTransformRule",value:function(){return this.metadata[this.v1?6:this.v2?7:8]}},{key:"_getNationalPrefixIsOptionalWhenFormatting",value:function(){return!!this.metadata[this.v1?7:this.v2?8:9]}},{key:"nationalPrefixIsOptionalWhenFormattingInNationalFormat",value:function(){return this._getNationalPrefixIsOptionalWhenFormatting(this.metadata)||this._getNationalPrefixIsOptionalWhenFormatting(this.getDefaultCountryMetadataForRegion())}},{key:"leadingDigits",value:function(){return this.metadata[this.v1?8:this.v2?9:10]}},{key:"types",value:function(){return this.metadata[this.v1?9:this.v2?10:11]}},{key:"hasTypes",value:function(){return(!this.types()||0!==this.types().length)&&!!this.types()}},{key:"type",value:function(t){if(this.hasTypes()&&z(this.types(),t))return new W(z(this.types(),t),this)}},{key:"ext",value:function(){return this.v1||this.v2?_:this.metadata[13]||_}}]),t}(),K=function(){function t(e,n){R(this,t),this._format=e,this.metadata=n}return L(t,[{key:"pattern",value:function(){return this._format[0]}},{key:"format",value:function(){return this._format[1]}},{key:"leadingDigitsPatterns",value:function(){return this._format[2]||[]}},{key:"nationalPrefixFormattingRule",value:function(){return this._format[3]||this.metadata.nationalPrefixFormattingRule()}},{key:"nationalPrefixIsOptionalWhenFormattingInNationalFormat",value:function(){return!!this._format[4]||this.metadata.nationalPrefixIsOptionalWhenFormattingInNationalFormat()}},{key:"nationalPrefixIsMandatoryWhenFormattingInNationalFormat",value:function(){return this.usesNationalPrefix()&&!this.nationalPrefixIsOptionalWhenFormattingInNationalFormat()}},{key:"usesNationalPrefix",value:function(){return!(!this.nationalPrefixFormattingRule()||H.test(this.nationalPrefixFormattingRule()))}},{key:"internationalFormat",value:function(){return this._format[5]||this.format()}}]),t}(),H=/^\(?\$1\)?$/,W=function(){function t(e,n){R(this,t),this.type=e,this.metadata=n}return L(t,[{key:"pattern",value:function(){return this.metadata.v1?this.type:this.type[0]}},{key:"possibleLengths",value:function(){if(!this.metadata.v1)return this.type[1]||this.metadata.possibleLengths()}}]),t}();function z(t,e){switch(e){case"FIXED_LINE":return t[0];case"MOBILE":return t[1];case"TOLL_FREE":return t[2];case"PREMIUM_RATE":return t[3];case"PERSONAL_NUMBER":return t[4];case"VOICEMAIL":return t[5];case"UAN":return t[6];case"PAGER":return t[7];case"VOIP":return t[8];case"SHARED_COST":return t[9]}}function Y(t){if(!t)throw new Error("[libphonenumber-js] `metadata` argument not passed. Check your arguments.");if(!Z(t)||!Z(t.countries))throw new Error("[libphonenumber-js] `metadata` argument was passed but it's not a valid metadata. Must be an object having `.countries` child object property. Got ".concat(Z(t)?"an object of shape: { "+Object.keys(t).join(", ")+" }":"a "+q(t)+": "+t,"."))}var Z=function(t){return"object"===M(t)},q=function(t){return M(t)};function J(t,e){if(e=new V(e),e.hasCountry(t))return e.country(t).countryCallingCode();throw new Error("Unknown country: ".concat(t))}function X(t,e){return void 0!==e.countries[t]}function Q(t){var e=t.version;"number"===typeof e?(this.v1=1===e,this.v2=2===e,this.v3=3===e,this.v4=4===e):e?-1===k(e,F)?this.v2=!0:-1===k(e,B)?this.v3=!0:this.v4=!0:this.v1=!0}var tt=";ext=",et=function(t){return"([".concat(C,"]{1,").concat(t,"})")};function nt(t){var e="20",n="15",r="9",d="6",i="[  \\t,]*",o="[:\\.．]?[  \\t,-]*",a="#?",u="(?:e?xt(?:ensi(?:ó?|ó))?n?|ｅ?ｘｔｎ?|доб|anexo)",c="(?:[xｘ#＃~～]|int|ｉｎｔ)",$="[- ]+",s="[  \\t]*",f="(?:,{2}|;)",l=tt+et(e),p=i+u+o+et(e)+a,h=i+c+o+et(r)+a,v=$+et(d)+"#",y=s+f+o+et(n)+a,b=s+"(?:,)+"+o+et(r)+a;return l+"|"+p+"|"+h+"|"+v+"|"+y+"|"+b}var rt="["+C+"]{"+g+"}",dt="["+j+"]{0,1}(?:["+N+"]*["+C+"]){3,}["+N+C+"]*",it=dt+"(?:"+nt()+")?",ot=new RegExp("^"+rt+"$|^"+it+"$","i");function at(t){return t.length>=g&&ot.test(t)}var ut=new RegExp("(?:"+nt()+")$","i");function ct(t){var e=t.search(ut);if(e<0)return{};var n=t.slice(0,e),r=t.match(ut),d=1;while(d<r.length){if(r[d])return{number:n,ext:r[d]};d++}}var $t={0:"0",1:"1",2:"2",3:"3",4:"4",5:"5",6:"6",7:"7",8:"8",9:"9","０":"0","１":"1","２":"2","３":"3","４":"4","５":"5","６":"6","７":"7","８":"8","９":"9","٠":"0","١":"1","٢":"2","٣":"3","٤":"4","٥":"5","٦":"6","٧":"7","٨":"8","٩":"9","۰":"0","۱":"1","۲":"2","۳":"3","۴":"4","۵":"5","۶":"6","۷":"7","۸":"8","۹":"9"};function st(t){return $t[t]}function ft(t){var e="",n=t.split(""),r=Array.isArray(n),d=0;for(n=r?n:n[Symbol.iterator]();;){var i;if(r){if(d>=n.length)break;i=n[d++]}else{if(d=n.next(),d.done)break;i=d.value}var o=i;e+=lt(o,e)||""}return e}function lt(t,e){if("+"===t){if(e)return;return"+"}return st(t)}function pt(t,e){var n=t.slice(),r=e,d=Array.isArray(r),i=0;for(r=d?r:r[Symbol.iterator]();;){var o;if(d){if(i>=r.length)break;o=r[i++]}else{if(i=r.next(),i.done)break;o=i.value}var a=o;t.indexOf(a)<0&&n.push(a)}return n.sort((function(t,e){return t-e}))}function ht(t,e){return vt(t,void 0,e)}function vt(t,e,n){var r=n.type(e),d=r&&r.possibleLengths()||n.possibleLengths();if(!d)return"IS_POSSIBLE";if("FIXED_LINE_OR_MOBILE"===e){if(!n.type("FIXED_LINE"))return vt(t,"MOBILE",n);var i=n.type("MOBILE");i&&(d=pt(d,i.possibleLengths()))}else if(e&&!r)return"INVALID_LENGTH";var o=t.length,a=d[0];return a===o?"IS_POSSIBLE":a>o?"TOO_SHORT":d[d.length-1]<o?"TOO_LONG":d.indexOf(o,1)>=0?"IS_POSSIBLE":"INVALID_LENGTH"}function yt(t,e,n){if(void 0===e&&(e={}),n=new V(n),e.v2){if(!t.countryCallingCode)throw new Error("Invalid phone number object passed");n.selectNumberingPlan(t.countryCallingCode)}else{if(!t.phone)return!1;if(t.country){if(!n.hasCountry(t.country))throw new Error("Unknown country: ".concat(t.country));n.country(t.country)}else{if(!t.countryCallingCode)throw new Error("Invalid phone number object passed");n.selectNumberingPlan(t.countryCallingCode)}}if(n.possibleLengths())return bt(t.phone||t.nationalNumber,n);if(t.countryCallingCode&&n.isNonGeographicCallingCode(t.countryCallingCode))return!0;throw new Error('Missing "possibleLengths" in metadata. Perhaps the metadata has been generated before v1.0.18.')}function bt(t,e){switch(ht(t,e)){case"IS_POSSIBLE":return!0;default:return!1}}function gt(t,e){return Ct(t)||Ot(t,e)||mt()}function mt(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}function Ot(t,e){var n=[],r=!0,d=!1,i=void 0;try{for(var o,a=t[Symbol.iterator]();!(r=(o=a.next()).done);r=!0)if(n.push(o.value),e&&n.length===e)break}catch(u){d=!0,i=u}finally{try{r||null==a["return"]||a["return"]()}finally{if(d)throw i}}return n}function Ct(t){if(Array.isArray(t))return t}function xt(t){var e,n;t=t.replace(/^tel:/,"tel=");var r=t.split(";"),d=Array.isArray(r),i=0;for(r=d?r:r[Symbol.iterator]();;){var o;if(d){if(i>=r.length)break;o=r[i++]}else{if(i=r.next(),i.done)break;o=i.value}var a=o,u=a.split("="),c=gt(u,2),$=c[0],s=c[1];switch($){case"tel":e=s;break;case"ext":n=s;break;case"phone-context":"+"===s[0]&&(e=s+e);break}}if(!at(e))return{};var f={number:e};return n&&(f.ext=n),f}function wt(t){var e=t.number,n=t.ext;if(!e)return"";if("+"!==e[0])throw new Error('"formatRFC3966()" expects "number" to be in E.164 format.');return"tel:".concat(e).concat(n?";ext="+n:"")}function St(t,e){return t=t||"",new RegExp("^(?:"+e+")$").test(t)}var Et=["MOBILE","PREMIUM_RATE","TOLL_FREE","SHARED_COST","VOIP","PERSONAL_NUMBER","PAGER","UAN","VOICEMAIL"];function Pt(t,e,n){if(e=e||{},t.country){n=new V(n),n.selectNumberingPlan(t.country,t.countryCallingCode);var r=e.v2?t.nationalNumber:t.phone;if(St(r,n.nationalNumberPattern())){if(It(r,"FIXED_LINE",n))return n.type("MOBILE")&&""===n.type("MOBILE").pattern()?"FIXED_LINE_OR_MOBILE":n.type("MOBILE")?It(r,"MOBILE",n)?"FIXED_LINE_OR_MOBILE":"FIXED_LINE":"FIXED_LINE_OR_MOBILE";for(var d=0,i=Et;d<i.length;d++){var o=i[d];if(It(r,o,n))return o}}}}function It(t,e,n){return e=n.type(e),!(!e||!e.pattern())&&(!(e.possibleLengths()&&e.possibleLengths().indexOf(t.length)<0)&&St(t,e.pattern()))}function Nt(t,e,n){if(e=e||{},n=new V(n),!t.country)return!1;if(n.selectNumberingPlan(t.country,t.countryCallingCode),n.hasTypes())return void 0!==Pt(t,e,n.metadata);var r=e.v2?t.nationalNumber:t.phone;return St(r,n.nationalNumberPattern())}function jt(t){return t.replace(new RegExp("[".concat(N,"]+"),"g")," ").trim()}var Tt=/(\$\d)/;function At(t,e,n){var r=n.useInternationalFormat,d=n.withNationalPrefix,i=(n.carrierCode,n.metadata,t.replace(new RegExp(e.pattern()),r?e.internationalFormat():d&&e.nationalPrefixFormattingRule()?e.format().replace(Tt,e.nationalPrefixFormattingRule()):e.format()));return r?jt(i):i}var kt=/^[\d]+(?:[~\u2053\u223C\uFF5E][\d]+)?$/;function Mt(t,e,n){var r=new V(n);return r.selectNumberingPlan(t,e),kt.test(r.IDDPrefix())?r.IDDPrefix():r.defaultIDDPrefix()}function Rt(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},r=Object.keys(n);"function"===typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter((function(t){return Object.getOwnPropertyDescriptor(n,t).enumerable})))),r.forEach((function(e){Dt(t,e,n[e])}))}return t}function Dt(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}var Lt={formatExtension:function(t,e,n){return"".concat(t).concat(n.ext()).concat(e)}};function Ft(t,e,n,r){if(n=n?Rt({},Lt,n):Lt,r=new V(r),t.country&&"001"!==t.country){if(!r.hasCountry(t.country))throw new Error("Unknown country: ".concat(t.country));r.country(t.country)}else{if(!t.countryCallingCode)return t.phone||"";r.selectNumberingPlan(t.countryCallingCode)}var d,i=r.countryCallingCode(),o=n.v2?t.nationalNumber:t.phone;switch(e){case"NATIONAL":return o?(d=Bt(o,t.carrierCode,"NATIONAL",r,n),Gt(d,t.ext,r,n.formatExtension)):"";case"INTERNATIONAL":return o?(d=Bt(o,null,"INTERNATIONAL",r,n),d="+".concat(i," ").concat(d),Gt(d,t.ext,r,n.formatExtension)):"+".concat(i);case"E.164":return"+".concat(i).concat(o);case"RFC3966":return wt({number:"+".concat(i).concat(o),ext:t.ext});case"IDD":if(!n.fromCountry)return;var a=Vt(o,t.carrierCode,i,n.fromCountry,r);return Gt(a,t.ext,r,n.formatExtension);default:throw new Error('Unknown "format" argument passed to "formatNumber()": "'.concat(e,'"'))}}function Bt(t,e,n,r,d){var i=_t(r.formats(),t);return i?At(t,i,{useInternationalFormat:"INTERNATIONAL"===n,withNationalPrefix:!i.nationalPrefixIsOptionalWhenFormattingInNationalFormat()||!d||!1!==d.nationalPrefix,carrierCode:e,metadata:r}):t}function _t(t,e){var n=t,r=Array.isArray(n),d=0;for(n=r?n:n[Symbol.iterator]();;){var i;if(r){if(d>=n.length)break;i=n[d++]}else{if(d=n.next(),d.done)break;i=d.value}var o=i;if(o.leadingDigitsPatterns().length>0){var a=o.leadingDigitsPatterns()[o.leadingDigitsPatterns().length-1];if(0!==e.search(a))continue}if(St(e,o.pattern()))return o}}function Gt(t,e,n,r){return e?r(t,e,n):t}function Vt(t,e,n,r,d){var i=J(r,d.metadata);if(i===n){var o=Bt(t,e,"NATIONAL",d);return"1"===n?n+" "+o:o}var a=Mt(r,void 0,d.metadata);if(a)return"".concat(a," ").concat(n," ").concat(Bt(t,null,"INTERNATIONAL",d))}function Ut(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},r=Object.keys(n);"function"===typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter((function(t){return Object.getOwnPropertyDescriptor(n,t).enumerable})))),r.forEach((function(e){Kt(t,e,n[e])}))}return t}function Kt(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}function Ht(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function Wt(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}function zt(t,e,n){return e&&Wt(t.prototype,e),n&&Wt(t,n),t}var Yt=!1,Zt=function(){function t(e,n,r){if(Ht(this,t),!e)throw new TypeError("`country` or `countryCallingCode` not passed");if(!n)throw new TypeError("`nationalNumber` not passed");var d=new V(r);qt(e)?(this.country=e,d.country(e),e=d.countryCallingCode()):Yt&&d.isNonGeographicCallingCode(e)&&(this.country="001"),this.countryCallingCode=e,this.nationalNumber=n,this.number="+"+this.countryCallingCode+this.nationalNumber,this.metadata=r}return zt(t,[{key:"isPossible",value:function(){return yt(this,{v2:!0},this.metadata)}},{key:"isValid",value:function(){return Nt(this,{v2:!0},this.metadata)}},{key:"isNonGeographic",value:function(){var t=new V(this.metadata);return t.isNonGeographicCallingCode(this.countryCallingCode)}},{key:"isEqual",value:function(t){return this.number===t.number&&this.ext===t.ext}},{key:"getType",value:function(){return Pt(this,{v2:!0},this.metadata)}},{key:"format",value:function(t,e){return Ft(this,t,e?Ut({},e,{v2:!0}):{v2:!0},this.metadata)}},{key:"formatNational",value:function(t){return this.format("NATIONAL",t)}},{key:"formatInternational",value:function(t){return this.format("INTERNATIONAL",t)}},{key:"getURI",value:function(t){return this.format("RFC3966",t)}}]),t}(),qt=function(t){return/^[A-Z]{2}$/.test(t)},Jt=new RegExp("(["+C+"])");function Xt(t,e,n,r){if(e){var d=new V(r);d.selectNumberingPlan(e,n);var i=new RegExp(d.IDDPrefix());if(0===t.search(i)){t=t.slice(t.match(i)[0].length);var o=t.match(Jt);if(!(o&&null!=o[1]&&o[1].length>0&&"0"===o[1]))return t}}}function Qt(t,e){if(t&&e.numberingPlan.nationalPrefixForParsing()){var n=new RegExp("^(?:"+e.numberingPlan.nationalPrefixForParsing()+")"),r=n.exec(t);if(r){var d,i,o,a=r.length-1,u=a>0&&r[a];if(e.nationalPrefixTransformRule()&&u)d=t.replace(n,e.nationalPrefixTransformRule()),a>1&&(i=r[1]);else{var c=r[0];d=t.slice(c.length),u&&(i=r[1])}if(u){var $=t.indexOf(r[1]),s=t.slice(0,$);s===e.numberingPlan.nationalPrefix()&&(o=e.numberingPlan.nationalPrefix())}else o=r[0];return{nationalNumber:d,nationalPrefix:o,carrierCode:i}}}return{nationalNumber:t}}function te(t,e){var n=Qt(t,e),r=n.nationalNumber,d=n.carrierCode;if(!ee(t,r,e))return{nationalNumber:t};if(t.length!==r.length+(d?d.length:0)&&e.possibleLengths())switch(ht(r,e)){case"TOO_SHORT":case"INVALID_LENGTH":return{nationalNumber:t}}return{nationalNumber:r,carrierCode:d}}function ee(t,e,n){return!(St(t,n.nationalNumberPattern())&&!St(e,n.nationalNumberPattern()))}function ne(t,e,n,r){var d=e?J(e,r):n;if(0===t.indexOf(d)){r=new V(r),r.selectNumberingPlan(e,n);var i=t.slice(d.length),o=te(i,r),a=o.nationalNumber,u=te(t,r),c=u.nationalNumber;if(!St(c,r.nationalNumberPattern())&&St(a,r.nationalNumberPattern())||"TOO_LONG"===ht(c,r))return{countryCallingCode:d,number:i}}return{number:t}}function re(t,e,n,r){if(!t)return{};if("+"!==t[0]){var d=Xt(t,e,n,r);if(!d||d===t){if(e||n){var i=ne(t,e,n,r),o=i.countryCallingCode,a=i.number;if(o)return{countryCallingCode:o,number:a}}return{number:t}}t="+"+d}if("0"===t[1])return{};r=new V(r);var u=2;while(u-1<=O&&u<=t.length){var c=t.slice(1,u);if(r.hasCallingCode(c))return r.selectNumberingPlan(c),{countryCallingCode:c,number:t.slice(u)};u++}return{}}var de=!1;function ie(t,e,n){if(de&&n.isNonGeographicCallingCode(t))return"001";var r=n.getCountryCodesForCallingCode(t);return r?1===r.length?r[0]:oe(r,e,n.metadata):void 0}function oe(t,e,n){n=new V(n);var r=t,d=Array.isArray(r),i=0;for(r=d?r:r[Symbol.iterator]();;){var o;if(d){if(i>=r.length)break;o=r[i++]}else{if(i=r.next(),i.done)break;o=i.value}var a=o;if(n.country(a),n.leadingDigits()){if(e&&0===e.search(n.leadingDigits()))return a}else if(Pt({phone:e,country:a},void 0,n.metadata))return a}}var ae=250,ue=new RegExp("["+j+C+"]"),ce=new RegExp("[^"+C+"#]+$"),$e=!1;function se(t,e,n){if(e=e||{},n=new V(n),e.defaultCountry&&!n.hasCountry(e.defaultCountry)){if(e.v2)throw new A("INVALID_COUNTRY");throw new Error("Unknown country: ".concat(e.defaultCountry))}var r=le(t,e.v2),d=r.number,i=r.ext;if(!d){if(e.v2)throw new A("NOT_A_NUMBER");return{}}var o=he(d,e.defaultCountry,e.defaultCallingCode,n),a=o.country,u=o.nationalNumber,c=o.countryCallingCode,$=o.carrierCode;if(!n.hasSelectedNumberingPlan()){if(e.v2)throw new A("INVALID_COUNTRY");return{}}if(!u||u.length<g){if(e.v2)throw new A("TOO_SHORT");return{}}if(u.length>m){if(e.v2)throw new A("TOO_LONG");return{}}if(e.v2){var s=new Zt(c,u,n.metadata);return a&&(s.country=a),$&&(s.carrierCode=$),i&&(s.ext=i),s}var f=!!(e.extended?n.hasSelectedNumberingPlan():a)&&St(u,n.nationalNumberPattern());return e.extended?{country:a,countryCallingCode:c,carrierCode:$,valid:f,possible:!!f||!(!0!==e.extended||!n.possibleLengths()||!bt(u,n)),phone:u,ext:i}:f?pe(a,u,i):{}}function fe(t,e){if(t)if(t.length>ae){if(e)throw new A("TOO_LONG")}else{var n=t.search(ue);if(!(n<0))return t.slice(n).replace(ce,"")}}function le(t,e){if(t&&0===t.indexOf("tel:"))return xt(t);var n=fe(t,e);if(!n||!at(n))return{};var r=ct(n);return r.ext?r:{number:n}}function pe(t,e,n){var r={country:t,phone:e};return n&&(r.ext=n),r}function he(t,e,n,r){var d,i=re(ft(t),e,n,r.metadata),o=i.countryCallingCode,a=i.number;if(o)r.selectNumberingPlan(o);else{if(!a||!e&&!n)return{};r.selectNumberingPlan(e,n),e?d=e:$e&&r.isNonGeographicCallingCode(n)&&(d="001"),o=n||J(e,r.metadata)}if(!a)return{countryCallingCode:o};var u=te(ft(a),r),c=u.nationalNumber,$=u.carrierCode,s=ie(o,c,r);return s&&(d=s,"001"===s||r.country(d)),{country:d,countryCallingCode:o,nationalNumber:c,carrierCode:$}}function ve(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},r=Object.keys(n);"function"===typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter((function(t){return Object.getOwnPropertyDescriptor(n,t).enumerable})))),r.forEach((function(e){ye(t,e,n[e])}))}return t}function ye(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}function be(t,e,n){return se(t,ve({},e,{v2:!0}),n)}function ge(t){return ge="function"===typeof Symbol&&"symbol"===typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"===typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},ge(t)}function me(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},r=Object.keys(n);"function"===typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter((function(t){return Object.getOwnPropertyDescriptor(n,t).enumerable})))),r.forEach((function(e){Oe(t,e,n[e])}))}return t}function Oe(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}function Ce(t,e){return Se(t)||we(t,e)||xe()}function xe(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}function we(t,e){var n=[],r=!0,d=!1,i=void 0;try{for(var o,a=t[Symbol.iterator]();!(r=(o=a.next()).done);r=!0)if(n.push(o.value),e&&n.length===e)break}catch(u){d=!0,i=u}finally{try{r||null==a["return"]||a["return"]()}finally{if(d)throw i}}return n}function Se(t){if(Array.isArray(t))return t}function Ee(t){var e,n,r,d=Array.prototype.slice.call(t),i=Ce(d,4),o=i[0],a=i[1],u=i[2],c=i[3];if("string"!==typeof o)throw new TypeError("A text for parsing must be a string.");if(e=o,a&&"string"!==typeof a){if(!Pe(a))throw new Error("Invalid second argument: ".concat(a));u?(n=a,r=u):r=a}else c?(n=u,r=c):(n=void 0,r=u),a&&(n=me({defaultCountry:a},n));return{text:e,options:n,metadata:r}}var Pe=function(t){return"object"===ge(t)};function Ie(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},r=Object.keys(n);"function"===typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter((function(t){return Object.getOwnPropertyDescriptor(n,t).enumerable})))),r.forEach((function(e){Ne(t,e,n[e])}))}return t}function Ne(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}function je(t,e,n){e&&e.defaultCountry&&!X(e.defaultCountry,n)&&(e=Ie({},e,{defaultCountry:void 0}));try{return be(t,e,n)}catch(r){if(!(r instanceof A))throw r}}function Te(){var t=Ee(arguments),e=t.text,n=t.options,r=t.metadata;return je(e,n,r)}function Ae(){return b(Te,arguments)}var ke=n("025e"),Me={beforeMount:function(t,e,n){if("function"!==typeof e.value){var r=n.context.name,d="[Vue-click-outside:] provided expression ".concat(e.expression,"\n      is not a function, but has to be");r&&(d+="Found in component ".concat(r)),console.warn(d)}t.clickOutsideEvent=function(n){t===n.target||t.contains(n.target)||e.value(n,t)},document.body.addEventListener("click",t.clickOutsideEvent)},unmounted:function(t){document.body.removeEventListener("click",t.clickOutsideEvent)}};function Re(t){var e=ke["a"].options[t];return"undefined"===typeof e?ke["a"].options[t]:e}var De={name:"VueTelInput",directives:{clickOutside:Me},props:{value:{type:String,default:""},allCountries:{type:Array,default:function(){return Re("allCountries")}},autoFormat:{type:Boolean,default:function(){return Re("autoFormat")}},customValidate:{type:[Boolean,RegExp],default:function(){return Re("customValidate")}},defaultCountry:{type:String,default:function(){return Re("defaultCountry")}},disabled:{type:Boolean,default:function(){return Re("disabled")}},autoDefaultCountry:{type:Boolean,default:function(){return Re("autoDefaultCountry")}},dropdownOptions:{type:Object,default:function(){return Re("dropdownOptions")}},ignoredCountries:{type:Array,default:function(){return Re("ignoredCountries")}},inputOptions:{type:Object,default:function(){return Re("inputOptions")}},invalidMsg:{type:String,default:function(){return Re("invalidMsg")}},mode:{type:String,default:function(){return Re("mode")}},onlyCountries:{type:Array,default:function(){return Re("onlyCountries")}},preferredCountries:{type:Array,default:function(){return Re("preferredCountries")}},validCharactersOnly:{type:Boolean,default:function(){return Re("validCharactersOnly")}},styleClasses:{type:[String,Array,Object],default:function(){return Re("styleClasses")}}},data:function(){return{phone:"",activeCountryCode:"",open:!1,finishMounted:!1,selectedIndex:null,typeToFindInput:"",typeToFindTimer:null,dropdownOpenDirection:"below",parsedPlaceholder:this.inputOptions.placeholder}},computed:{activeCountry:function(){return this.findCountry(this.activeCountryCode)},parsedMode:function(){return"auto"===this.mode?this.phone&&"+"===this.phone[0]?"international":"national":["international","national"].includes(this.mode)?this.mode:(console.error('Invalid value of prop "mode"'),"international")},filteredCountries:function(){var t=this;return this.onlyCountries.length?this.allCountries.filter((function(e){var n=e.iso2;return t.onlyCountries.some((function(t){return t.toUpperCase()===n}))})):this.ignoredCountries.length?this.allCountries.filter((function(e){var n=e.iso2;return!t.ignoredCountries.includes(n.toUpperCase())&&!t.ignoredCountries.includes(n.toLowerCase())})):this.allCountries},sortedCountries:function(){var t=this.getCountries(this.preferredCountries).map((function(t){return Object(v["a"])(Object(v["a"])({},t),{},{preferred:!0})}));return[].concat(h(t),h(this.filteredCountries))},phoneObject:function(){var t,e,n,r;r="+"===(null===(t=this.phone)||void 0===t?void 0:t[0])?Ae(this.phone)||{}:Ae(this.phone,this.activeCountryCode)||{};var d,i,o=r,a=(o.metadata,Object(c["a"])(o,["metadata"])),u=null===(e=(n=r).isValid)||void 0===e?void 0:e.call(n),$=this.phone;u&&($=null===(d=(i=r).format)||void 0===d?void 0:d.call(i,this.parsedMode.toUpperCase()));return r.country&&(this.ignoredCountries.length||this.onlyCountries.length)&&(this.findCountry(r.country)||(u=!1,Object.assign(r,{country:null}))),Object.assign(a,{countryCode:r.country,valid:u,country:this.activeCountry,formatted:$}),a}},watch:{activeCountry:function(t,e){t||null===e||void 0===e||!e.iso2?null!==t&&void 0!==t&&t.iso2&&this.$emit("country-changed",t):this.activeCountryCode=e.iso2},"phoneObject.countryCode":function(t){this.activeCountryCode=t},"phoneObject.valid":function(){this.$emit("validate",this.phoneObject)},"phoneObject.formatted":function(t){var e=this;this.autoFormat&&!this.customValidate&&(this.emitInput(t),this.$nextTick((function(){t&&!e.value&&(e.phone=t)})))},"inputOptions.placeholder":function(){this.resetPlaceholder()},value:function(t,e){var n=this;this.testCharacters()?this.phone=t:this.$nextTick((function(){n.phone=e,n.onInput()}))},open:function(t){t?(this.setDropdownPosition(),this.$emit("open")):this.$emit("close")}},mounted:function(){var t=this;this.value&&(this.phone=this.value.trim()),this.cleanInvalidCharacters(),this.initializeCountry().then((function(){var e;!t.phone&&null!==(e=t.inputOptions)&&void 0!==e&&e.showDialCode&&t.activeCountryCode&&(t.phone="+".concat(t.activeCountryCode)),t.$emit("validate",t.phoneObject)})).catch(console.error).then((function(){t.finishMounted=!0}))},methods:{resetPlaceholder:function(){this.parsedPlaceholder=this.inputOptions.placeholder},initializeCountry:function(){var t=this;return new Promise((function(e){var n;if("+"!==(null===(n=t.phone)||void 0===n?void 0:n[0])){if(t.defaultCountry)return t.choose(t.defaultCountry),void e();var r=t.preferredCountries[0]||t.filteredCountries[0];t.autoDefaultCountry?Object(ke["c"])().then((function(e){t.choose(e||t.activeCountryCode)})).catch((function(e){console.warn(e),t.choose(r)})).then((function(){e()})):(t.choose(r),e())}else e()}))},getCountries:function(){var t=this,e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[];return e.map((function(e){return t.findCountry(e)})).filter(Boolean)},findCountry:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"";return this.filteredCountries.find((function(e){return e.iso2===t.toUpperCase()}))},getItemClass:function(t,e){var n=this.selectedIndex===t,r=t===this.preferredCountries.length-1,d=this.preferredCountries.some((function(t){return t.toUpperCase()===e}));return{highlighted:n,"last-preferred":r,preferred:d}},choose:function(t){var e,n,r=t;if("string"===typeof r&&(r=this.findCountry(r)),r)return"+"===(null===(e=this.phone)||void 0===e?void 0:e[0])&&r.iso2&&this.phoneObject.nationalNumber?(this.activeCountryCode=r.iso2,void(this.phone=Ae(this.phoneObject.nationalNumber,r.iso2).formatInternational())):void(null!==(n=this.inputOptions)&&void 0!==n&&n.showDialCode&&r?this.phone="+".concat(r.dialCode):(this.activeCountryCode=r.iso2,this.emitInput(this.phone)))},cleanInvalidCharacters:function(){var t=this.phone;if(this.validCharactersOnly){var e=this.phone.match(/[()\-+0-9\s]*/g);this.phone=e.join("")}if(this.customValidate&&this.customValidate instanceof RegExp){var n=this.phone.match(this.customValidate);this.phone=n.join("")}t!==this.phone&&this.emitInput(this.phone)},testCharacters:function(){if(this.validCharactersOnly){var t=/^[()\-+0-9\s]*$/.test(this.phone);if(!t)return!1}return!this.customValidate||this.testCustomValidate()},testCustomValidate:function(){return this.customValidate instanceof RegExp&&this.customValidate.test(this.phone)},onInput:function(){this.$refs.input.setCustomValidity(this.phoneObject.valid?"":this.invalidMsg),this.emitInput(this.phone)},emitInput:function(t){this.$emit("input",t,this.phoneObject,this.$refs.input)},onBlur:function(){this.$emit("blur")},onFocus:function(){Object(ke["d"])(this.$refs.input,this.phone.length),this.$emit("focus")},onEnter:function(){this.$emit("enter")},onSpace:function(){this.$emit("space")},focus:function(){this.$refs.input.focus()},toggleDropdown:function(){this.disabled||(this.open=!this.open)},clickedOutside:function(){this.open=!1},keyboardNav:function(t){var e=this;if(40===t.keyCode){t.preventDefault(),this.open=!0,null===this.selectedIndex?this.selectedIndex=0:this.selectedIndex=Math.min(this.sortedCountries.length-1,this.selectedIndex+1);var n=this.$refs.list.children[this.selectedIndex];n.offsetTop+n.clientHeight>this.$refs.list.scrollTop+this.$refs.list.clientHeight&&(this.$refs.list.scrollTop=n.offsetTop-this.$refs.list.clientHeight+n.clientHeight)}else if(38===t.keyCode){t.preventDefault(),this.open=!0,null===this.selectedIndex?this.selectedIndex=this.sortedCountries.length-1:this.selectedIndex=Math.max(0,this.selectedIndex-1);var r=this.$refs.list.children[this.selectedIndex];r.offsetTop<this.$refs.list.scrollTop&&(this.$refs.list.scrollTop=r.offsetTop)}else if(13===t.keyCode)null!==this.selectedIndex&&this.choose(this.sortedCountries[this.selectedIndex]),this.open=!this.open;else{this.typeToFindInput+=t.key,clearTimeout(this.typeToFindTimer),this.typeToFindTimer=setTimeout((function(){e.typeToFindInput=""}),700);var d=this.sortedCountries.slice(this.preferredCountries.length).findIndex((function(t){return t.name.toLowerCase().startsWith(e.typeToFindInput)}));if(d>=0){this.selectedIndex=this.preferredCountries.length+d;var i=this.$refs.list.children[this.selectedIndex],o=i.offsetTop<this.$refs.list.scrollTop,a=i.offsetTop+i.clientHeight>this.$refs.list.scrollTop+this.$refs.list.clientHeight;(o||a)&&(this.$refs.list.scrollTop=i.offsetTop-this.$refs.list.clientHeight/2)}}},reset:function(){this.selectedIndex=this.sortedCountries.map((function(t){return t.iso2})).indexOf(this.activeCountryCode),this.open=!1},setDropdownPosition:function(){var t=window.innerHeight-this.$el.getBoundingClientRect().bottom,e=t>200;this.dropdownOpenDirection=e?"below":"above"}}};n("bfe1"),n("e103");De.render=u;e["a"]=De},e439:function(t,e,n){var r=n("23e7"),d=n("d039"),i=n("fc6a"),o=n("06cf").f,a=n("83ab"),u=d((function(){o(1)})),c=!a||u;r({target:"Object",stat:!0,forced:c,sham:!a},{getOwnPropertyDescriptor:function(t,e){return o(i(t),e)}})},e538:function(t,e,n){var r=n("b622");e.f=r},e667:function(t,e){t.exports=function(t){try{return{error:!1,value:t()}}catch(e){return{error:!0,value:e}}}},e6cf:function(t,e,n){"use strict";var r,d,i,o,a=n("23e7"),u=n("c430"),c=n("da84"),$=n("d066"),s=n("fea9"),f=n("6eeb"),l=n("e2cc"),p=n("d44e"),h=n("2626"),v=n("861d"),y=n("1c0b"),b=n("19aa"),g=n("8925"),m=n("2266"),O=n("1c7e"),C=n("4840"),x=n("2cf4").set,w=n("b575"),S=n("cdf9"),E=n("44de"),P=n("f069"),I=n("e667"),N=n("69f3"),j=n("94ca"),T=n("b622"),A=n("605d"),k=n("2d00"),M=T("species"),R="Promise",D=N.get,L=N.set,F=N.getterFor(R),B=s,_=c.TypeError,G=c.document,V=c.process,U=$("fetch"),K=P.f,H=K,W=!!(G&&G.createEvent&&c.dispatchEvent),z="function"==typeof PromiseRejectionEvent,Y="unhandledrejection",Z="rejectionhandled",q=0,J=1,X=2,Q=1,tt=2,et=j(R,(function(){var t=g(B)!==String(B);if(!t){if(66===k)return!0;if(!A&&!z)return!0}if(u&&!B.prototype["finally"])return!0;if(k>=51&&/native code/.test(B))return!1;var e=B.resolve(1),n=function(t){t((function(){}),(function(){}))},r=e.constructor={};return r[M]=n,!(e.then((function(){}))instanceof n)})),nt=et||!O((function(t){B.all(t)["catch"]((function(){}))})),rt=function(t){var e;return!(!v(t)||"function"!=typeof(e=t.then))&&e},dt=function(t,e){if(!t.notified){t.notified=!0;var n=t.reactions;w((function(){var r=t.value,d=t.state==J,i=0;while(n.length>i){var o,a,u,c=n[i++],$=d?c.ok:c.fail,s=c.resolve,f=c.reject,l=c.domain;try{$?(d||(t.rejection===tt&&ut(t),t.rejection=Q),!0===$?o=r:(l&&l.enter(),o=$(r),l&&(l.exit(),u=!0)),o===c.promise?f(_("Promise-chain cycle")):(a=rt(o))?a.call(o,s,f):s(o)):f(r)}catch(p){l&&!u&&l.exit(),f(p)}}t.reactions=[],t.notified=!1,e&&!t.rejection&&ot(t)}))}},it=function(t,e,n){var r,d;W?(r=G.createEvent("Event"),r.promise=e,r.reason=n,r.initEvent(t,!1,!0),c.dispatchEvent(r)):r={promise:e,reason:n},!z&&(d=c["on"+t])?d(r):t===Y&&E("Unhandled promise rejection",n)},ot=function(t){x.call(c,(function(){var e,n=t.facade,r=t.value,d=at(t);if(d&&(e=I((function(){A?V.emit("unhandledRejection",r,n):it(Y,n,r)})),t.rejection=A||at(t)?tt:Q,e.error))throw e.value}))},at=function(t){return t.rejection!==Q&&!t.parent},ut=function(t){x.call(c,(function(){var e=t.facade;A?V.emit("rejectionHandled",e):it(Z,e,t.value)}))},ct=function(t,e,n){return function(r){t(e,r,n)}},$t=function(t,e,n){t.done||(t.done=!0,n&&(t=n),t.value=e,t.state=X,dt(t,!0))},st=function(t,e,n){if(!t.done){t.done=!0,n&&(t=n);try{if(t.facade===e)throw _("Promise can't be resolved itself");var r=rt(e);r?w((function(){var n={done:!1};try{r.call(e,ct(st,n,t),ct($t,n,t))}catch(d){$t(n,d,t)}})):(t.value=e,t.state=J,dt(t,!1))}catch(d){$t({done:!1},d,t)}}};et&&(B=function(t){b(this,B,R),y(t),r.call(this);var e=D(this);try{t(ct(st,e),ct($t,e))}catch(n){$t(e,n)}},r=function(t){L(this,{type:R,done:!1,notified:!1,parent:!1,reactions:[],rejection:!1,state:q,value:void 0})},r.prototype=l(B.prototype,{then:function(t,e){var n=F(this),r=K(C(this,B));return r.ok="function"!=typeof t||t,r.fail="function"==typeof e&&e,r.domain=A?V.domain:void 0,n.parent=!0,n.reactions.push(r),n.state!=q&&dt(n,!1),r.promise},catch:function(t){return this.then(void 0,t)}}),d=function(){var t=new r,e=D(t);this.promise=t,this.resolve=ct(st,e),this.reject=ct($t,e)},P.f=K=function(t){return t===B||t===i?new d(t):H(t)},u||"function"!=typeof s||(o=s.prototype.then,f(s.prototype,"then",(function(t,e){var n=this;return new B((function(t,e){o.call(n,t,e)})).then(t,e)}),{unsafe:!0}),"function"==typeof U&&a({global:!0,enumerable:!0,forced:!0},{fetch:function(t){return S(B,U.apply(c,arguments))}}))),a({global:!0,wrap:!0,forced:et},{Promise:B}),p(B,R,!1,!0),h(R),i=$(R),a({target:R,stat:!0,forced:et},{reject:function(t){var e=K(this);return e.reject.call(void 0,t),e.promise}}),a({target:R,stat:!0,forced:u||et},{resolve:function(t){return S(u&&this===i?B:this,t)}}),a({target:R,stat:!0,forced:nt},{all:function(t){var e=this,n=K(e),r=n.resolve,d=n.reject,i=I((function(){var n=y(e.resolve),i=[],o=0,a=1;m(t,(function(t){var u=o++,c=!1;i.push(void 0),a++,n.call(e,t).then((function(t){c||(c=!0,i[u]=t,--a||r(i))}),d)})),--a||r(i)}));return i.error&&d(i.value),n.promise},race:function(t){var e=this,n=K(e),r=n.reject,d=I((function(){var d=y(e.resolve);m(t,(function(t){d.call(e,t).then(n.resolve,r)}))}));return d.error&&r(d.value),n.promise}})},e893:function(t,e,n){var r=n("5135"),d=n("56ef"),i=n("06cf"),o=n("9bf2");t.exports=function(t,e){for(var n=d(e),a=o.f,u=i.f,c=0;c<n.length;c++){var $=n[c];r(t,$)||a(t,$,u(e,$))}}},e8b5:function(t,e,n){var r=n("c6b6");t.exports=Array.isArray||function(t){return"Array"==r(t)}},e95a:function(t,e,n){var r=n("b622"),d=n("3f8c"),i=r("iterator"),o=Array.prototype;t.exports=function(t){return void 0!==t&&(d.Array===t||o[i]===t)}},f069:function(t,e,n){"use strict";var r=n("1c0b"),d=function(t){var e,n;this.promise=new t((function(t,r){if(void 0!==e||void 0!==n)throw TypeError("Bad Promise constructor");e=t,n=r})),this.resolve=r(e),this.reject=r(n)};t.exports.f=function(t){return new d(t)}},f3f2:function(t,e,n){},f5df:function(t,e,n){var r=n("00ee"),d=n("c6b6"),i=n("b622"),o=i("toStringTag"),a="Arguments"==d(function(){return arguments}()),u=function(t,e){try{return t[e]}catch(n){}};t.exports=r?d:function(t){var e,n,r;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(n=u(e=Object(t),o))?n:a?d(e):"Object"==(r=d(e))&&"function"==typeof e.callee?"Arguments":r}},f772:function(t,e,n){var r=n("5692"),d=n("90e3"),i=r("keys");t.exports=function(t){return i[t]||(i[t]=d(t))}},fb15:function(t,e,n){"use strict";if(n.r(e),n.d(e,"install",(function(){return o["c"]})),n.d(e,"VueTelInput",(function(){return o["a"]})),"undefined"!==typeof window){var r=window.document.currentScript,d=n("8875");r=d(),"currentScript"in document||Object.defineProperty(document,"currentScript",{get:d});var i=r&&r.src.match(/(.+\/)[^/]+\.js(\?.*)?$/);i&&(n.p=i[1])}var o=n("b635");e["default"]=o["b"]},fb6a:function(t,e,n){"use strict";var r=n("23e7"),d=n("861d"),i=n("e8b5"),o=n("23cb"),a=n("50c4"),u=n("fc6a"),c=n("8418"),$=n("b622"),s=n("1dde"),f=n("ae40"),l=s("slice"),p=f("slice",{ACCESSORS:!0,0:0,1:2}),h=$("species"),v=[].slice,y=Math.max;r({target:"Array",proto:!0,forced:!l||!p},{slice:function(t,e){var n,r,$,s=u(this),f=a(s.length),l=o(t,f),p=o(void 0===e?f:e,f);if(i(s)&&(n=s.constructor,"function"!=typeof n||n!==Array&&!i(n.prototype)?d(n)&&(n=n[h],null===n&&(n=void 0)):n=void 0,n===Array||void 0===n))return v.call(s,l,p);for(r=new(void 0===n?Array:n)(y(p-l,0)),$=0;l<p;l++,$++)l in s&&c(r,$,s[l]);return r.length=$,r}})},fc6a:function(t,e,n){var r=n("44ad"),d=n("1d80");t.exports=function(t){return r(d(t))}},fdbc:function(t,e){t.exports={CSSRuleList:0,CSSStyleDeclaration:0,CSSValueList:0,ClientRectList:0,DOMRectList:0,DOMStringList:0,DOMTokenList:1,DataTransferItemList:0,FileList:0,HTMLAllCollection:0,HTMLCollection:0,HTMLFormElement:0,HTMLSelectElement:0,MediaList:0,MimeTypeArray:0,NamedNodeMap:0,NodeList:1,PaintRequestList:0,Plugin:0,PluginArray:0,SVGLengthList:0,SVGNumberList:0,SVGPathSegList:0,SVGPointList:0,SVGStringList:0,SVGTransformList:0,SourceBufferList:0,StyleSheetList:0,TextTrackCueList:0,TextTrackList:0,TouchList:0}},fdbf:function(t,e,n){var r=n("4930");t.exports=r&&!Symbol.sham&&"symbol"==typeof Symbol.iterator},fea9:function(t,e,n){var r=n("da84");t.exports=r.Promise}})}));
+//# sourceMappingURL=vue3-tel-input.umd.min.js.map
+
+/***/ }),
+
 /***/ "./node_modules/vue/dist/vue.esm-bundler.js":
 /*!**************************************************!*\
   !*** ./node_modules/vue/dist/vue.esm-bundler.js ***!
@@ -59297,6 +59491,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "capitalize": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.capitalize),
 /* harmony export */   "cloneVNode": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.cloneVNode),
 /* harmony export */   "compatUtils": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.compatUtils),
+/* harmony export */   "compile": () => (/* binding */ compileToFunction),
 /* harmony export */   "computed": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.computed),
 /* harmony export */   "createApp": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.createApp),
 /* harmony export */   "createBlock": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.createBlock),
@@ -59338,6 +59533,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "isReadonly": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.isReadonly),
 /* harmony export */   "isRef": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.isRef),
 /* harmony export */   "isRuntimeOnly": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.isRuntimeOnly),
+/* harmony export */   "isShallow": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.isShallow),
 /* harmony export */   "isVNode": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.isVNode),
 /* harmony export */   "markRaw": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.markRaw),
 /* harmony export */   "mergeDefaults": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.mergeDefaults),
@@ -59420,8 +59616,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "withKeys": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.withKeys),
 /* harmony export */   "withMemo": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.withMemo),
 /* harmony export */   "withModifiers": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.withModifiers),
-/* harmony export */   "withScopeId": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.withScopeId),
-/* harmony export */   "compile": () => (/* binding */ compileToFunction)
+/* harmony export */   "withScopeId": () => (/* reexport safe */ _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__.withScopeId)
 /* harmony export */ });
 /* harmony import */ var _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @vue/runtime-dom */ "./node_modules/@vue/runtime-dom/dist/runtime-dom.esm-bundler.js");
 /* harmony import */ var _vue_runtime_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @vue/runtime-dom */ "./node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js");
@@ -59495,17 +59690,6 @@ function compileToFunction(template, options) {
 
 
 
-
-/***/ }),
-
-/***/ "./node_modules/vue3-tel-input/dist/vue3-tel-input.umd.min.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/vue3-tel-input/dist/vue3-tel-input.umd.min.js ***!
-  \********************************************************************/
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-(function(t,e){ true?module.exports=e(__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js")):0})("undefined"!==typeof self?self:this,(function(t){return function(t){var e={};function n(r){if(e[r])return e[r].exports;var d=e[r]={i:r,l:!1,exports:{}};return t[r].call(d.exports,d,d.exports,n),d.l=!0,d.exports}return n.m=t,n.c=e,n.d=function(t,e,r){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:r})},n.r=function(t){"undefined"!==typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"===typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var d in t)n.d(r,d,function(e){return t[e]}.bind(null,d));return r},n.n=function(t){var e=t&&t.__esModule?function(){return t["default"]}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="",n(n.s="fb15")}({"00ee":function(t,e,n){var r=n("b622"),d=r("toStringTag"),i={};i[d]="z",t.exports="[object z]"===String(i)},"025e":function(t,e,n){"use strict";n.d(e,"c",(function(){return f})),n.d(e,"d",(function(){return l})),n.d(e,"b",(function(){return h}));n("99af"),n("caad"),n("13d5"),n("b0c0"),n("a9e3"),n("cca6"),n("d3b7"),n("e6cf"),n("4d63"),n("ac1f"),n("25f0"),n("2532"),n("1276");var r=n("5530"),d=n("ade3");function i(t){if(Array.isArray(t))return t}n("a4d3"),n("e01a"),n("d28b"),n("e260"),n("3ca3"),n("ddb0");function o(t,e){if("undefined"!==typeof Symbol&&Symbol.iterator in Object(t)){var n=[],r=!0,d=!1,i=void 0;try{for(var o,a=t[Symbol.iterator]();!(r=(o=a.next()).done);r=!0)if(n.push(o.value),e&&n.length===e)break}catch(u){d=!0,i=u}finally{try{r||null==a["return"]||a["return"]()}finally{if(d)throw i}}return n}}var a=n("06c5");function u(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}function c(t,e){return i(t)||o(t,e)||Object(a["a"])(t,e)||u()}n("d81d");var $=[["Afghanistan (‫افغانستان‬‎)","af","93"],["Albania (Shqipëri)","al","355"],["Algeria (‫الجزائر‬‎)","dz","213"],["American Samoa","as","1684"],["Andorra","ad","376"],["Angola","ao","244"],["Anguilla","ai","1264"],["Antigua and Barbuda","ag","1268"],["Argentina","ar","54"],["Armenia (Հայաստան)","am","374"],["Aruba","aw","297"],["Australia","au","61",0],["Austria (Österreich)","at","43"],["Azerbaijan (Azərbaycan)","az","994"],["Bahamas","bs","1242"],["Bahrain (‫البحرين‬‎)","bh","973"],["Bangladesh (বাংলাদেশ)","bd","880"],["Barbados","bb","1246"],["Belarus (Беларусь)","by","375"],["Belgium (België)","be","32"],["Belize","bz","501"],["Benin (Bénin)","bj","229"],["Bermuda","bm","1441"],["Bhutan (འབྲུག)","bt","975"],["Bolivia","bo","591"],["Bosnia and Herzegovina (Босна и Херцеговина)","ba","387"],["Botswana","bw","267"],["Brazil (Brasil)","br","55"],["British Indian Ocean Territory","io","246"],["British Virgin Islands","vg","1284"],["Brunei","bn","673"],["Bulgaria (България)","bg","359"],["Burkina Faso","bf","226"],["Burundi (Uburundi)","bi","257"],["Cambodia (កម្ពុជា)","kh","855"],["Cameroon (Cameroun)","cm","237"],["Canada","ca","1",1,["204","226","236","249","250","289","306","343","365","387","403","416","418","431","437","438","450","506","514","519","548","579","581","587","604","613","639","647","672","705","709","742","778","780","782","807","819","825","867","873","902","905"]],["Cape Verde (Kabu Verdi)","cv","238"],["Caribbean Netherlands","bq","599",1],["Cayman Islands","ky","1345"],["Central African Republic (République centrafricaine)","cf","236"],["Chad (Tchad)","td","235"],["Chile","cl","56"],["China (中国)","cn","86"],["Christmas Island","cx","61",2],["Cocos (Keeling) Islands","cc","61",1],["Colombia","co","57"],["Comoros (‫جزر القمر‬‎)","km","269"],["Congo (DRC) (Jamhuri ya Kidemokrasia ya Kongo)","cd","243"],["Congo (Republic) (Congo-Brazzaville)","cg","242"],["Cook Islands","ck","682"],["Costa Rica","cr","506"],["Côte d’Ivoire","ci","225"],["Croatia (Hrvatska)","hr","385"],["Cuba","cu","53"],["Curaçao","cw","599",0],["Cyprus (Κύπρος)","cy","357"],["Czech Republic (Česká republika)","cz","420"],["Denmark (Danmark)","dk","45"],["Djibouti","dj","253"],["Dominica","dm","1767"],["Dominican Republic (República Dominicana)","do","1",2,["809","829","849"]],["Ecuador","ec","593"],["Egypt (‫مصر‬‎)","eg","20"],["El Salvador","sv","503"],["Equatorial Guinea (Guinea Ecuatorial)","gq","240"],["Eritrea","er","291"],["Estonia (Eesti)","ee","372"],["Ethiopia","et","251"],["Falkland Islands (Islas Malvinas)","fk","500"],["Faroe Islands (Føroyar)","fo","298"],["Fiji","fj","679"],["Finland (Suomi)","fi","358",0],["France","fr","33"],["French Guiana (Guyane française)","gf","594"],["French Polynesia (Polynésie française)","pf","689"],["Gabon","ga","241"],["Gambia","gm","220"],["Georgia (საქართველო)","ge","995"],["Germany (Deutschland)","de","49"],["Ghana (Gaana)","gh","233"],["Gibraltar","gi","350"],["Greece (Ελλάδα)","gr","30"],["Greenland (Kalaallit Nunaat)","gl","299"],["Grenada","gd","1473"],["Guadeloupe","gp","590",0],["Guam","gu","1671"],["Guatemala","gt","502"],["Guernsey","gg","44",1],["Guinea (Guinée)","gn","224"],["Guinea-Bissau (Guiné Bissau)","gw","245"],["Guyana","gy","592"],["Haiti","ht","509"],["Honduras","hn","504"],["Hong Kong (香港)","hk","852"],["Hungary (Magyarország)","hu","36"],["Iceland (Ísland)","is","354"],["India (भारत)","in","91"],["Indonesia","id","62"],["Iran (‫ایران‬‎)","ir","98"],["Iraq (‫العراق‬‎)","iq","964"],["Ireland","ie","353"],["Isle of Man","im","44",2],["Israel (‫ישראל‬‎)","il","972"],["Italy (Italia)","it","39",0],["Jamaica","jm","1876"],["Japan (日本)","jp","81"],["Jersey","je","44",3],["Jordan (‫الأردن‬‎)","jo","962"],["Kazakhstan (Казахстан)","kz","7",1],["Kenya","ke","254"],["Kiribati","ki","686"],["Kosovo","xk","383"],["Kuwait (‫الكويت‬‎)","kw","965"],["Kyrgyzstan (Кыргызстан)","kg","996"],["Laos (ລາວ)","la","856"],["Latvia (Latvija)","lv","371"],["Lebanon (‫لبنان‬‎)","lb","961"],["Lesotho","ls","266"],["Liberia","lr","231"],["Libya (‫ليبيا‬‎)","ly","218"],["Liechtenstein","li","423"],["Lithuania (Lietuva)","lt","370"],["Luxembourg","lu","352"],["Macau (澳門)","mo","853"],["Macedonia (FYROM) (Македонија)","mk","389"],["Madagascar (Madagasikara)","mg","261"],["Malawi","mw","265"],["Malaysia","my","60"],["Maldives","mv","960"],["Mali","ml","223"],["Malta","mt","356"],["Marshall Islands","mh","692"],["Martinique","mq","596"],["Mauritania (‫موريتانيا‬‎)","mr","222"],["Mauritius (Moris)","mu","230"],["Mayotte","yt","262",1],["Mexico (México)","mx","52"],["Micronesia","fm","691"],["Moldova (Republica Moldova)","md","373"],["Monaco","mc","377"],["Mongolia (Монгол)","mn","976"],["Montenegro (Crna Gora)","me","382"],["Montserrat","ms","1664"],["Morocco (‫المغرب‬‎)","ma","212",0],["Mozambique (Moçambique)","mz","258"],["Myanmar (Burma) (မြန်မာ)","mm","95"],["Namibia (Namibië)","na","264"],["Nauru","nr","674"],["Nepal (नेपाल)","np","977"],["Netherlands (Nederland)","nl","31"],["New Caledonia (Nouvelle-Calédonie)","nc","687"],["New Zealand","nz","64"],["Nicaragua","ni","505"],["Niger (Nijar)","ne","227"],["Nigeria","ng","234"],["Niue","nu","683"],["Norfolk Island","nf","672"],["North Korea (조선 민주주의 인민 공화국)","kp","850"],["Northern Mariana Islands","mp","1670"],["Norway (Norge)","no","47",0],["Oman (‫عُمان‬‎)","om","968"],["Pakistan (‫پاکستان‬‎)","pk","92"],["Palau","pw","680"],["Palestine (‫فلسطين‬‎)","ps","970"],["Panama (Panamá)","pa","507"],["Papua New Guinea","pg","675"],["Paraguay","py","595"],["Peru (Perú)","pe","51"],["Philippines","ph","63"],["Poland (Polska)","pl","48"],["Portugal","pt","351"],["Puerto Rico","pr","1",3,["787","939"]],["Qatar (‫قطر‬‎)","qa","974"],["Réunion (La Réunion)","re","262",0],["Romania (România)","ro","40"],["Russia (Россия)","ru","7",0],["Rwanda","rw","250"],["Saint Barthélemy","bl","590",1],["Saint Helena","sh","290"],["Saint Kitts and Nevis","kn","1869"],["Saint Lucia","lc","1758"],["Saint Martin (Saint-Martin (partie française))","mf","590",2],["Saint Pierre and Miquelon (Saint-Pierre-et-Miquelon)","pm","508"],["Saint Vincent and the Grenadines","vc","1784"],["Samoa","ws","685"],["San Marino","sm","378"],["São Tomé and Príncipe (São Tomé e Príncipe)","st","239"],["Saudi Arabia (‫المملكة العربية السعودية‬‎)","sa","966"],["Senegal (Sénégal)","sn","221"],["Serbia (Србија)","rs","381"],["Seychelles","sc","248"],["Sierra Leone","sl","232"],["Singapore","sg","65"],["Sint Maarten","sx","1721"],["Slovakia (Slovensko)","sk","421"],["Slovenia (Slovenija)","si","386"],["Solomon Islands","sb","677"],["Somalia (Soomaaliya)","so","252"],["South Africa","za","27"],["South Korea (대한민국)","kr","82"],["South Sudan (‫جنوب السودان‬‎)","ss","211"],["Spain (España)","es","34"],["Sri Lanka (ශ්‍රී ලංකාව)","lk","94"],["Sudan (‫السودان‬‎)","sd","249"],["Suriname","sr","597"],["Svalbard and Jan Mayen","sj","47",1],["Swaziland","sz","268"],["Sweden (Sverige)","se","46"],["Switzerland (Schweiz)","ch","41"],["Syria (‫سوريا‬‎)","sy","963"],["Taiwan (台灣)","tw","886"],["Tajikistan","tj","992"],["Tanzania","tz","255"],["Thailand (ไทย)","th","66"],["Timor-Leste","tl","670"],["Togo","tg","228"],["Tokelau","tk","690"],["Tonga","to","676"],["Trinidad and Tobago","tt","1868"],["Tunisia (‫تونس‬‎)","tn","216"],["Turkey (Türkiye)","tr","90"],["Turkmenistan","tm","993"],["Turks and Caicos Islands","tc","1649"],["Tuvalu","tv","688"],["U.S. Virgin Islands","vi","1340"],["Uganda","ug","256"],["Ukraine (Україна)","ua","380"],["United Arab Emirates (‫الإمارات العربية المتحدة‬‎)","ae","971"],["United Kingdom","gb","44",0],["United States","us","1",0],["Uruguay","uy","598"],["Uzbekistan (Oʻzbekiston)","uz","998"],["Vanuatu","vu","678"],["Vatican City (Città del Vaticano)","va","39",1],["Venezuela","ve","58"],["Vietnam (Việt Nam)","vn","84"],["Wallis and Futuna (Wallis-et-Futuna)","wf","681"],["Western Sahara (‫الصحراء الغربية‬‎)","eh","212",1],["Yemen (‫اليمن‬‎)","ye","967"],["Zambia","zm","260"],["Zimbabwe","zw","263"],["Åland Islands","ax","358",1]],s=$.map((function(t){return{name:t[0],iso2:t[1].toUpperCase(),dialCode:t[2],priority:t[3]||0,areaCodes:t[4]||null}}));function f(){return fetch("https://ip2c.org/s").then((function(t){return t.text()})).then((function(t){var e=(t||"").toString();if(!e||"1"!==e[0])throw new Error("unable to fetch the country");return e.substr(2,2)}))}function l(t,e){if(t.setSelectionRange)t.focus(),t.setSelectionRange(e,e);else if(t.createTextRange){var n=t.createTextRange();n.collapse(!0),n.moveEnd("character",e),n.moveStart("character",e),n.select()}}var p=[{name:"allCountries",type:Array,default:s,description:"All countries that are used in <code>libphonenumber-js</code>, can be overridden by this prop",inDemo:!1},{name:"autoFormat",type:Boolean,default:!0,description:"Auto update the input to the formatted phone number when it's valid",inDemo:!0},{name:"customValidate",type:[Boolean,RegExp],default:!1,description:"Custom validation RegExp for input",inDemo:!1},{name:"defaultCountry",default:"",type:String,description:"Default country, will override the country fetched from IP address of user",inDemo:!1},{name:"disabled",default:!1,type:Boolean,description:"Disable <code>vue-tel-input</code>, including the input & flag dropdown",inDemo:!1},{name:"autoDefaultCountry",default:!0,type:Boolean,description:"To fetch default country based on IP address of user",inDemo:!1},{name:"dropdownOptions",type:Object,description:"Options for dropdown, see below",inDemo:!1},{name:"dropdownOptions.showDialCodeInList",default:!0,type:Boolean,description:"Show dial code in the dropdown list",inDemo:!0},{name:"dropdownOptions.showDialCodeInSelection",default:!1,type:Boolean,description:"Show dial code in the dropdown selection",inDemo:!0},{name:"dropdownOptions.showFlags",default:!0,type:Boolean,description:"Show flags in the dropdown selection and list",inDemo:!0},{name:"dropdownOptions.tabindex",default:0,type:Number,description:"Native dropdown <code>tabindex</code> attribute",inDemo:!1},{name:"ignoredCountries",default:[],type:Array,description:"List of countries will NOT be shown on the dropdown",inDemo:!1},{name:"inputOptions",type:Object,description:"Options for input, see below",inDemo:!1},{name:"inputOptions.autocomplete",type:String,default:"on",description:"Native input <code>autocomplete</code> attribute",inDemo:!1},{name:"inputOptions.autofocus",type:Boolean,default:!1,description:"Native input <code>autofocus</code> attribute",inDemo:!1},{name:"inputOptions.id",default:"",type:String,description:"Native input <code>id</code> attribute",inDemo:!1},{name:"inputOptions.maxlength",default:25,type:Number,description:"Native input <code>maxlength</code> attribute",inDemo:!1},{name:"inputOptions.name",default:"telephone",type:String,description:"Native input <code>name</code> attribute",inDemo:!1},{name:"inputOptions.placeholder",default:"Enter a phone number",type:String,description:"Placeholder for the input",inDemo:!1},{name:"inputOptions.readonly",default:!1,type:Boolean,description:"Native input <code>readonly</code> attribute",inDemo:!1},{name:"inputOptions.required",default:!1,type:Boolean,description:"Native input <code>required</code> attribute",inDemo:!1},{name:"inputOptions.tabindex",default:0,type:Number,description:"Native input <code>tabindex</code> attribute",inDemo:!1},{name:"inputOptions.type",default:"tel",type:String,description:"Native input <code>type</code> attribute",inDemo:!1},{name:"inputOptions.styleClasses",default:"",type:[String,Array,Object],description:"Custom classes for the <code>input</code>",inDemo:!1},{name:"invalidMsg",default:"",type:String,description:"",inDemo:!1},{name:"mode",default:"auto",type:String,description:"Allowed values: <code>'auto'</code> (Default set by phone),  <code>'international'</code> (Format number with the dial code i.e. + 61), <code>'national'</code> (Format number without dial code i.e. 0321232)",inDemo:!0,options:["auto","national","international"]},{name:"onlyCountries",default:[],type:Array,description:"List of countries will be shown on the dropdown",inDemo:!1},{name:"preferredCountries",default:[],type:Array,description:"Preferred countries list, will be on top of the dropdown",inDemo:!1},{name:"styleClasses",default:"",type:[String,Array,Object],description:"Custom classes for the wrapper",inDemo:!1},{name:"validCharactersOnly",default:!1,type:Boolean,description:"Only allow valid characters in a phone number (will also verify in <code>mounted</code>, so phone number with invalid characters will be shown as an empty string)",inDemo:!1}],h=[].concat(p).reduce((function(t,e){if(e.name.includes(".")){var n=e.name.split("."),r=c(n,2),i=r[0],o=r[1];t[i]?Object.assign(t[i],Object(d["a"])({},o,e.default)):Object.assign(t,Object(d["a"])({},i,Object(d["a"])({},o,e.default)))}else Object.assign(t,Object(d["a"])({},e.name,e.default));return t}),{});e["a"]={options:Object(r["a"])({},h)}},"0366":function(t,e,n){var r=n("1c0b");t.exports=function(t,e,n){if(r(t),void 0===e)return t;switch(n){case 0:return function(){return t.call(e)};case 1:return function(n){return t.call(e,n)};case 2:return function(n,r){return t.call(e,n,r)};case 3:return function(n,r,d){return t.call(e,n,r,d)}}return function(){return t.apply(e,arguments)}}},"057f":function(t,e,n){var r=n("fc6a"),d=n("241c").f,i={}.toString,o="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],a=function(t){try{return d(t)}catch(e){return o.slice()}};t.exports.f=function(t){return o&&"[object Window]"==i.call(t)?a(t):d(r(t))}},"06c5":function(t,e,n){"use strict";n.d(e,"a",(function(){return d}));n("a630"),n("fb6a"),n("b0c0"),n("d3b7"),n("25f0"),n("3ca3");var r=n("6b75");function d(t,e){if(t){if("string"===typeof t)return Object(r["a"])(t,e);var n=Object.prototype.toString.call(t).slice(8,-1);return"Object"===n&&t.constructor&&(n=t.constructor.name),"Map"===n||"Set"===n?Array.from(t):"Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)?Object(r["a"])(t,e):void 0}}},"06cf":function(t,e,n){var r=n("83ab"),d=n("d1e7"),i=n("5c6c"),o=n("fc6a"),a=n("c04e"),u=n("5135"),c=n("0cfb"),$=Object.getOwnPropertyDescriptor;e.f=r?$:function(t,e){if(t=o(t),e=a(e,!0),c)try{return $(t,e)}catch(n){}if(u(t,e))return i(!d.f.call(t,e),t[e])}},"0cfb":function(t,e,n){var r=n("83ab"),d=n("d039"),i=n("cc12");t.exports=!r&&!d((function(){return 7!=Object.defineProperty(i("div"),"a",{get:function(){return 7}}).a}))},1276:function(t,e,n){"use strict";var r=n("d784"),d=n("44e7"),i=n("825a"),o=n("1d80"),a=n("4840"),u=n("8aa5"),c=n("50c4"),$=n("14c3"),s=n("9263"),f=n("d039"),l=[].push,p=Math.min,h=4294967295,v=!f((function(){return!RegExp(h,"y")}));r("split",2,(function(t,e,n){var r;return r="c"=="abbc".split(/(b)*/)[1]||4!="test".split(/(?:)/,-1).length||2!="ab".split(/(?:ab)*/).length||4!=".".split(/(.?)(.?)/).length||".".split(/()()/).length>1||"".split(/.?/).length?function(t,n){var r=String(o(this)),i=void 0===n?h:n>>>0;if(0===i)return[];if(void 0===t)return[r];if(!d(t))return e.call(r,t,i);var a,u,c,$=[],f=(t.ignoreCase?"i":"")+(t.multiline?"m":"")+(t.unicode?"u":"")+(t.sticky?"y":""),p=0,v=new RegExp(t.source,f+"g");while(a=s.call(v,r)){if(u=v.lastIndex,u>p&&($.push(r.slice(p,a.index)),a.length>1&&a.index<r.length&&l.apply($,a.slice(1)),c=a[0].length,p=u,$.length>=i))break;v.lastIndex===a.index&&v.lastIndex++}return p===r.length?!c&&v.test("")||$.push(""):$.push(r.slice(p)),$.length>i?$.slice(0,i):$}:"0".split(void 0,0).length?function(t,n){return void 0===t&&0===n?[]:e.call(this,t,n)}:e,[function(e,n){var d=o(this),i=void 0==e?void 0:e[t];return void 0!==i?i.call(e,d,n):r.call(String(d),e,n)},function(t,d){var o=n(r,t,this,d,r!==e);if(o.done)return o.value;var s=i(t),f=String(this),l=a(s,RegExp),y=s.unicode,b=(s.ignoreCase?"i":"")+(s.multiline?"m":"")+(s.unicode?"u":"")+(v?"y":"g"),g=new l(v?s:"^(?:"+s.source+")",b),m=void 0===d?h:d>>>0;if(0===m)return[];if(0===f.length)return null===$(g,f)?[f]:[];var O=0,C=0,x=[];while(C<f.length){g.lastIndex=v?C:0;var w,S=$(g,v?f:f.slice(C));if(null===S||(w=p(c(g.lastIndex+(v?0:C)),f.length))===O)C=u(f,C,y);else{if(x.push(f.slice(O,C)),x.length===m)return x;for(var E=1;E<=S.length-1;E++)if(x.push(S[E]),x.length===m)return x;C=O=w}}return x.push(f.slice(O)),x}]}),!v)},"13d5":function(t,e,n){"use strict";var r=n("23e7"),d=n("d58f").left,i=n("a640"),o=n("ae40"),a=n("2d00"),u=n("605d"),c=i("reduce"),$=o("reduce",{1:0}),s=!u&&a>79&&a<83;r({target:"Array",proto:!0,forced:!c||!$||s},{reduce:function(t){return d(this,t,arguments.length,arguments.length>1?arguments[1]:void 0)}})},"14c3":function(t,e,n){var r=n("c6b6"),d=n("9263");t.exports=function(t,e){var n=t.exec;if("function"===typeof n){var i=n.call(t,e);if("object"!==typeof i)throw TypeError("RegExp exec method returned something other than an Object or null");return i}if("RegExp"!==r(t))throw TypeError("RegExp#exec called on incompatible receiver");return d.call(t,e)}},"159b":function(t,e,n){var r=n("da84"),d=n("fdbc"),i=n("17c2"),o=n("9112");for(var a in d){var u=r[a],c=u&&u.prototype;if(c&&c.forEach!==i)try{o(c,"forEach",i)}catch($){c.forEach=i}}},"15fd":function(t,e,n){"use strict";n.d(e,"a",(function(){return d}));n("a4d3"),n("c975"),n("b64b");function r(t,e){if(null==t)return{};var n,r,d={},i=Object.keys(t);for(r=0;r<i.length;r++)n=i[r],e.indexOf(n)>=0||(d[n]=t[n]);return d}function d(t,e){if(null==t)return{};var n,d,i=r(t,e);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(t);for(d=0;d<o.length;d++)n=o[d],e.indexOf(n)>=0||Object.prototype.propertyIsEnumerable.call(t,n)&&(i[n]=t[n])}return i}},"17c2":function(t,e,n){"use strict";var r=n("b727").forEach,d=n("a640"),i=n("ae40"),o=d("forEach"),a=i("forEach");t.exports=o&&a?[].forEach:function(t){return r(this,t,arguments.length>1?arguments[1]:void 0)}},"19aa":function(t,e){t.exports=function(t,e,n){if(!(t instanceof e))throw TypeError("Incorrect "+(n?n+" ":"")+"invocation");return t}},"1be4":function(t,e,n){var r=n("d066");t.exports=r("document","documentElement")},"1c0b":function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(String(t)+" is not a function");return t}},"1c7e":function(t,e,n){var r=n("b622"),d=r("iterator"),i=!1;try{var o=0,a={next:function(){return{done:!!o++}},return:function(){i=!0}};a[d]=function(){return this},Array.from(a,(function(){throw 2}))}catch(u){}t.exports=function(t,e){if(!e&&!i)return!1;var n=!1;try{var r={};r[d]=function(){return{next:function(){return{done:n=!0}}}},t(r)}catch(u){}return n}},"1cdc":function(t,e,n){var r=n("342f");t.exports=/(iphone|ipod|ipad).*applewebkit/i.test(r)},"1d80":function(t,e){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on "+t);return t}},"1dde":function(t,e,n){var r=n("d039"),d=n("b622"),i=n("2d00"),o=d("species");t.exports=function(t){return i>=51||!r((function(){var e=[],n=e.constructor={};return n[o]=function(){return{foo:1}},1!==e[t](Boolean).foo}))}},2266:function(t,e,n){var r=n("825a"),d=n("e95a"),i=n("50c4"),o=n("0366"),a=n("35a1"),u=n("2a62"),c=function(t,e){this.stopped=t,this.result=e};t.exports=function(t,e,n){var $,s,f,l,p,h,v,y=n&&n.that,b=!(!n||!n.AS_ENTRIES),g=!(!n||!n.IS_ITERATOR),m=!(!n||!n.INTERRUPTED),O=o(e,y,1+b+m),C=function(t){return $&&u($),new c(!0,t)},x=function(t){return b?(r(t),m?O(t[0],t[1],C):O(t[0],t[1])):m?O(t,C):O(t)};if(g)$=t;else{if(s=a(t),"function"!=typeof s)throw TypeError("Target is not iterable");if(d(s)){for(f=0,l=i(t.length);l>f;f++)if(p=x(t[f]),p&&p instanceof c)return p;return new c(!1)}$=s.call(t)}h=$.next;while(!(v=h.call($)).done){try{p=x(v.value)}catch(w){throw u($),w}if("object"==typeof p&&p&&p instanceof c)return p}return new c(!1)}},"23cb":function(t,e,n){var r=n("a691"),d=Math.max,i=Math.min;t.exports=function(t,e){var n=r(t);return n<0?d(n+e,0):i(n,e)}},"23e7":function(t,e,n){var r=n("da84"),d=n("06cf").f,i=n("9112"),o=n("6eeb"),a=n("ce4e"),u=n("e893"),c=n("94ca");t.exports=function(t,e){var n,$,s,f,l,p,h=t.target,v=t.global,y=t.stat;if($=v?r:y?r[h]||a(h,{}):(r[h]||{}).prototype,$)for(s in e){if(l=e[s],t.noTargetGet?(p=d($,s),f=p&&p.value):f=$[s],n=c(v?s:h+(y?".":"#")+s,t.forced),!n&&void 0!==f){if(typeof l===typeof f)continue;u(l,f)}(t.sham||f&&f.sham)&&i(l,"sham",!0),o($,s,l,t)}}},"241c":function(t,e,n){var r=n("ca84"),d=n("7839"),i=d.concat("length","prototype");e.f=Object.getOwnPropertyNames||function(t){return r(t,i)}},2532:function(t,e,n){"use strict";var r=n("23e7"),d=n("5a34"),i=n("1d80"),o=n("ab13");r({target:"String",proto:!0,forced:!o("includes")},{includes:function(t){return!!~String(i(this)).indexOf(d(t),arguments.length>1?arguments[1]:void 0)}})},"25f0":function(t,e,n){"use strict";var r=n("6eeb"),d=n("825a"),i=n("d039"),o=n("ad6d"),a="toString",u=RegExp.prototype,c=u[a],$=i((function(){return"/a/b"!=c.call({source:"a",flags:"b"})})),s=c.name!=a;($||s)&&r(RegExp.prototype,a,(function(){var t=d(this),e=String(t.source),n=t.flags,r=String(void 0===n&&t instanceof RegExp&&!("flags"in u)?o.call(t):n);return"/"+e+"/"+r}),{unsafe:!0})},2626:function(t,e,n){"use strict";var r=n("d066"),d=n("9bf2"),i=n("b622"),o=n("83ab"),a=i("species");t.exports=function(t){var e=r(t),n=d.f;o&&e&&!e[a]&&n(e,a,{configurable:!0,get:function(){return this}})}},"2a62":function(t,e,n){var r=n("825a");t.exports=function(t){var e=t["return"];if(void 0!==e)return r(e.call(t)).value}},"2ca0":function(t,e,n){"use strict";var r=n("23e7"),d=n("06cf").f,i=n("50c4"),o=n("5a34"),a=n("1d80"),u=n("ab13"),c=n("c430"),$="".startsWith,s=Math.min,f=u("startsWith"),l=!c&&!f&&!!function(){var t=d(String.prototype,"startsWith");return t&&!t.writable}();r({target:"String",proto:!0,forced:!l&&!f},{startsWith:function(t){var e=String(a(this));o(t);var n=i(s(arguments.length>1?arguments[1]:void 0,e.length)),r=String(t);return $?$.call(e,r,n):e.slice(n,n+r.length)===r}})},"2cf4":function(t,e,n){var r,d,i,o=n("da84"),a=n("d039"),u=n("0366"),c=n("1be4"),$=n("cc12"),s=n("1cdc"),f=n("605d"),l=o.location,p=o.setImmediate,h=o.clearImmediate,v=o.process,y=o.MessageChannel,b=o.Dispatch,g=0,m={},O="onreadystatechange",C=function(t){if(m.hasOwnProperty(t)){var e=m[t];delete m[t],e()}},x=function(t){return function(){C(t)}},w=function(t){C(t.data)},S=function(t){o.postMessage(t+"",l.protocol+"//"+l.host)};p&&h||(p=function(t){var e=[],n=1;while(arguments.length>n)e.push(arguments[n++]);return m[++g]=function(){("function"==typeof t?t:Function(t)).apply(void 0,e)},r(g),g},h=function(t){delete m[t]},f?r=function(t){v.nextTick(x(t))}:b&&b.now?r=function(t){b.now(x(t))}:y&&!s?(d=new y,i=d.port2,d.port1.onmessage=w,r=u(i.postMessage,i,1)):o.addEventListener&&"function"==typeof postMessage&&!o.importScripts&&l&&"file:"!==l.protocol&&!a(S)?(r=S,o.addEventListener("message",w,!1)):r=O in $("script")?function(t){c.appendChild($("script"))[O]=function(){c.removeChild(this),C(t)}}:function(t){setTimeout(x(t),0)}),t.exports={set:p,clear:h}},"2d00":function(t,e,n){var r,d,i=n("da84"),o=n("342f"),a=i.process,u=a&&a.versions,c=u&&u.v8;c?(r=c.split("."),d=r[0]+r[1]):o&&(r=o.match(/Edge\/(\d+)/),(!r||r[1]>=74)&&(r=o.match(/Chrome\/(\d+)/),r&&(d=r[1]))),t.exports=d&&+d},"342f":function(t,e,n){var r=n("d066");t.exports=r("navigator","userAgent")||""},"35a1":function(t,e,n){var r=n("f5df"),d=n("3f8c"),i=n("b622"),o=i("iterator");t.exports=function(t){if(void 0!=t)return t[o]||t["@@iterator"]||d[r(t)]}},"37e8":function(t,e,n){var r=n("83ab"),d=n("9bf2"),i=n("825a"),o=n("df75");t.exports=r?Object.defineProperties:function(t,e){i(t);var n,r=o(e),a=r.length,u=0;while(a>u)d.f(t,n=r[u++],e[n]);return t}},"3bbe":function(t,e,n){var r=n("861d");t.exports=function(t){if(!r(t)&&null!==t)throw TypeError("Can't set "+String(t)+" as a prototype");return t}},"3ca3":function(t,e,n){"use strict";var r=n("6547").charAt,d=n("69f3"),i=n("7dd0"),o="String Iterator",a=d.set,u=d.getterFor(o);i(String,"String",(function(t){a(this,{type:o,string:String(t),index:0})}),(function(){var t,e=u(this),n=e.string,d=e.index;return d>=n.length?{value:void 0,done:!0}:(t=r(n,d),e.index+=t.length,{value:t,done:!1})}))},"3f8c":function(t,e){t.exports={}},4160:function(t,e,n){"use strict";var r=n("23e7"),d=n("17c2");r({target:"Array",proto:!0,forced:[].forEach!=d},{forEach:d})},"428f":function(t,e,n){var r=n("da84");t.exports=r},"44ad":function(t,e,n){var r=n("d039"),d=n("c6b6"),i="".split;t.exports=r((function(){return!Object("z").propertyIsEnumerable(0)}))?function(t){return"String"==d(t)?i.call(t,""):Object(t)}:Object},"44d2":function(t,e,n){var r=n("b622"),d=n("7c73"),i=n("9bf2"),o=r("unscopables"),a=Array.prototype;void 0==a[o]&&i.f(a,o,{configurable:!0,value:d(null)}),t.exports=function(t){a[o][t]=!0}},"44de":function(t,e,n){var r=n("da84");t.exports=function(t,e){var n=r.console;n&&n.error&&(1===arguments.length?n.error(t):n.error(t,e))}},"44e7":function(t,e,n){var r=n("861d"),d=n("c6b6"),i=n("b622"),o=i("match");t.exports=function(t){var e;return r(t)&&(void 0!==(e=t[o])?!!e:"RegExp"==d(t))}},"45fc":function(t,e,n){"use strict";var r=n("23e7"),d=n("b727").some,i=n("a640"),o=n("ae40"),a=i("some"),u=o("some");r({target:"Array",proto:!0,forced:!a||!u},{some:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}})},"466d":function(t,e,n){"use strict";var r=n("d784"),d=n("825a"),i=n("50c4"),o=n("1d80"),a=n("8aa5"),u=n("14c3");r("match",1,(function(t,e,n){return[function(e){var n=o(this),r=void 0==e?void 0:e[t];return void 0!==r?r.call(e,n):new RegExp(e)[t](String(n))},function(t){var r=n(e,t,this);if(r.done)return r.value;var o=d(t),c=String(this);if(!o.global)return u(o,c);var $=o.unicode;o.lastIndex=0;var s,f=[],l=0;while(null!==(s=u(o,c))){var p=String(s[0]);f[l]=p,""===p&&(o.lastIndex=a(c,i(o.lastIndex),$)),l++}return 0===l?null:f}]}))},4840:function(t,e,n){var r=n("825a"),d=n("1c0b"),i=n("b622"),o=i("species");t.exports=function(t,e){var n,i=r(t).constructor;return void 0===i||void 0==(n=r(i)[o])?e:d(n)}},4930:function(t,e,n){var r=n("d039");t.exports=!!Object.getOwnPropertySymbols&&!r((function(){return!String(Symbol())}))},"498a":function(t,e,n){"use strict";var r=n("23e7"),d=n("58a8").trim,i=n("c8d2");r({target:"String",proto:!0,forced:i("trim")},{trim:function(){return d(this)}})},"4d63":function(t,e,n){var r=n("83ab"),d=n("da84"),i=n("94ca"),o=n("7156"),a=n("9bf2").f,u=n("241c").f,c=n("44e7"),$=n("ad6d"),s=n("9f7f"),f=n("6eeb"),l=n("d039"),p=n("69f3").set,h=n("2626"),v=n("b622"),y=v("match"),b=d.RegExp,g=b.prototype,m=/a/g,O=/a/g,C=new b(m)!==m,x=s.UNSUPPORTED_Y,w=r&&i("RegExp",!C||x||l((function(){return O[y]=!1,b(m)!=m||b(O)==O||"/a/i"!=b(m,"i")})));if(w){var S=function(t,e){var n,r=this instanceof S,d=c(t),i=void 0===e;if(!r&&d&&t.constructor===S&&i)return t;C?d&&!i&&(t=t.source):t instanceof S&&(i&&(e=$.call(t)),t=t.source),x&&(n=!!e&&e.indexOf("y")>-1,n&&(e=e.replace(/y/g,"")));var a=o(C?new b(t,e):b(t,e),r?this:g,S);return x&&n&&p(a,{sticky:n}),a},E=function(t){t in S||a(S,t,{configurable:!0,get:function(){return b[t]},set:function(e){b[t]=e}})},P=u(b),I=0;while(P.length>I)E(P[I++]);g.constructor=S,S.prototype=g,f(d,"RegExp",S)}h("RegExp")},"4d64":function(t,e,n){var r=n("fc6a"),d=n("50c4"),i=n("23cb"),o=function(t){return function(e,n,o){var a,u=r(e),c=d(u.length),$=i(o,c);if(t&&n!=n){while(c>$)if(a=u[$++],a!=a)return!0}else for(;c>$;$++)if((t||$ in u)&&u[$]===n)return t||$||0;return!t&&-1}};t.exports={includes:o(!0),indexOf:o(!1)}},"4de4":function(t,e,n){"use strict";var r=n("23e7"),d=n("b727").filter,i=n("1dde"),o=n("ae40"),a=i("filter"),u=o("filter");r({target:"Array",proto:!0,forced:!a||!u},{filter:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}})},"4df4":function(t,e,n){"use strict";var r=n("0366"),d=n("7b0b"),i=n("9bdd"),o=n("e95a"),a=n("50c4"),u=n("8418"),c=n("35a1");t.exports=function(t){var e,n,$,s,f,l,p=d(t),h="function"==typeof this?this:Array,v=arguments.length,y=v>1?arguments[1]:void 0,b=void 0!==y,g=c(p),m=0;if(b&&(y=r(y,v>2?arguments[2]:void 0,2)),void 0==g||h==Array&&o(g))for(e=a(p.length),n=new h(e);e>m;m++)l=b?y(p[m],m):p[m],u(n,m,l);else for(s=g.call(p),f=s.next,n=new h;!($=f.call(s)).done;m++)l=b?i(s,y,[$.value,m],!0):$.value,u(n,m,l);return n.length=m,n}},"50c4":function(t,e,n){var r=n("a691"),d=Math.min;t.exports=function(t){return t>0?d(r(t),9007199254740991):0}},5135:function(t,e){var n={}.hasOwnProperty;t.exports=function(t,e){return n.call(t,e)}},5530:function(t,e,n){"use strict";n.d(e,"a",(function(){return i}));n("a4d3"),n("4de4"),n("4160"),n("e439"),n("dbb4"),n("b64b"),n("159b");var r=n("ade3");function d(t,e){var n=Object.keys(t);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(t);e&&(r=r.filter((function(e){return Object.getOwnPropertyDescriptor(t,e).enumerable}))),n.push.apply(n,r)}return n}function i(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{};e%2?d(Object(n),!0).forEach((function(e){Object(r["a"])(t,e,n[e])})):Object.getOwnPropertyDescriptors?Object.defineProperties(t,Object.getOwnPropertyDescriptors(n)):d(Object(n)).forEach((function(e){Object.defineProperty(t,e,Object.getOwnPropertyDescriptor(n,e))}))}return t}},5692:function(t,e,n){var r=n("c430"),d=n("c6cd");(t.exports=function(t,e){return d[t]||(d[t]=void 0!==e?e:{})})("versions",[]).push({version:"3.8.1",mode:r?"pure":"global",copyright:"© 2020 Denis Pushkarev (zloirock.ru)"})},"56ef":function(t,e,n){var r=n("d066"),d=n("241c"),i=n("7418"),o=n("825a");t.exports=r("Reflect","ownKeys")||function(t){var e=d.f(o(t)),n=i.f;return n?e.concat(n(t)):e}},5899:function(t,e){t.exports="\t\n\v\f\r                　\u2028\u2029\ufeff"},"58a8":function(t,e,n){var r=n("1d80"),d=n("5899"),i="["+d+"]",o=RegExp("^"+i+i+"*"),a=RegExp(i+i+"*$"),u=function(t){return function(e){var n=String(r(e));return 1&t&&(n=n.replace(o,"")),2&t&&(n=n.replace(a,"")),n}};t.exports={start:u(1),end:u(2),trim:u(3)}},"5a34":function(t,e,n){var r=n("44e7");t.exports=function(t){if(r(t))throw TypeError("The method doesn't accept regular expressions");return t}},"5c6c":function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},"605d":function(t,e,n){var r=n("c6b6"),d=n("da84");t.exports="process"==r(d.process)},"60da":function(t,e,n){"use strict";var r=n("83ab"),d=n("d039"),i=n("df75"),o=n("7418"),a=n("d1e7"),u=n("7b0b"),c=n("44ad"),$=Object.assign,s=Object.defineProperty;t.exports=!$||d((function(){if(r&&1!==$({b:1},$(s({},"a",{enumerable:!0,get:function(){s(this,"b",{value:3,enumerable:!1})}}),{b:2})).b)return!0;var t={},e={},n=Symbol(),d="abcdefghijklmnopqrst";return t[n]=7,d.split("").forEach((function(t){e[t]=t})),7!=$({},t)[n]||i($({},e)).join("")!=d}))?function(t,e){var n=u(t),d=arguments.length,$=1,s=o.f,f=a.f;while(d>$){var l,p=c(arguments[$++]),h=s?i(p).concat(s(p)):i(p),v=h.length,y=0;while(v>y)l=h[y++],r&&!f.call(p,l)||(n[l]=p[l])}return n}:$},6547:function(t,e,n){var r=n("a691"),d=n("1d80"),i=function(t){return function(e,n){var i,o,a=String(d(e)),u=r(n),c=a.length;return u<0||u>=c?t?"":void 0:(i=a.charCodeAt(u),i<55296||i>56319||u+1===c||(o=a.charCodeAt(u+1))<56320||o>57343?t?a.charAt(u):i:t?a.slice(u,u+2):o-56320+(i-55296<<10)+65536)}};t.exports={codeAt:i(!1),charAt:i(!0)}},"65f0":function(t,e,n){var r=n("861d"),d=n("e8b5"),i=n("b622"),o=i("species");t.exports=function(t,e){var n;return d(t)&&(n=t.constructor,"function"!=typeof n||n!==Array&&!d(n.prototype)?r(n)&&(n=n[o],null===n&&(n=void 0)):n=void 0),new(void 0===n?Array:n)(0===e?0:e)}},"69f3":function(t,e,n){var r,d,i,o=n("7f9a"),a=n("da84"),u=n("861d"),c=n("9112"),$=n("5135"),s=n("c6cd"),f=n("f772"),l=n("d012"),p=a.WeakMap,h=function(t){return i(t)?d(t):r(t,{})},v=function(t){return function(e){var n;if(!u(e)||(n=d(e)).type!==t)throw TypeError("Incompatible receiver, "+t+" required");return n}};if(o){var y=s.state||(s.state=new p),b=y.get,g=y.has,m=y.set;r=function(t,e){return e.facade=t,m.call(y,t,e),e},d=function(t){return b.call(y,t)||{}},i=function(t){return g.call(y,t)}}else{var O=f("state");l[O]=!0,r=function(t,e){return e.facade=t,c(t,O,e),e},d=function(t){return $(t,O)?t[O]:{}},i=function(t){return $(t,O)}}t.exports={set:r,get:d,has:i,enforce:h,getterFor:v}},"6b75":function(t,e,n){"use strict";function r(t,e){(null==e||e>t.length)&&(e=t.length);for(var n=0,r=new Array(e);n<e;n++)r[n]=t[n];return r}n.d(e,"a",(function(){return r}))},"6eeb":function(t,e,n){var r=n("da84"),d=n("9112"),i=n("5135"),o=n("ce4e"),a=n("8925"),u=n("69f3"),c=u.get,$=u.enforce,s=String(String).split("String");(t.exports=function(t,e,n,a){var u,c=!!a&&!!a.unsafe,f=!!a&&!!a.enumerable,l=!!a&&!!a.noTargetGet;"function"==typeof n&&("string"!=typeof e||i(n,"name")||d(n,"name",e),u=$(n),u.source||(u.source=s.join("string"==typeof e?e:""))),t!==r?(c?!l&&t[e]&&(f=!0):delete t[e],f?t[e]=n:d(t,e,n)):f?t[e]=n:o(e,n)})(Function.prototype,"toString",(function(){return"function"==typeof this&&c(this).source||a(this)}))},7156:function(t,e,n){var r=n("861d"),d=n("d2bb");t.exports=function(t,e,n){var i,o;return d&&"function"==typeof(i=e.constructor)&&i!==n&&r(o=i.prototype)&&o!==n.prototype&&d(t,o),t}},7418:function(t,e){e.f=Object.getOwnPropertySymbols},"746f":function(t,e,n){var r=n("428f"),d=n("5135"),i=n("e538"),o=n("9bf2").f;t.exports=function(t){var e=r.Symbol||(r.Symbol={});d(e,t)||o(e,t,{value:i.f(t)})}},7839:function(t,e){t.exports=["constructor","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","toLocaleString","toString","valueOf"]},"7b0b":function(t,e,n){var r=n("1d80");t.exports=function(t){return Object(r(t))}},"7c73":function(t,e,n){var r,d=n("825a"),i=n("37e8"),o=n("7839"),a=n("d012"),u=n("1be4"),c=n("cc12"),$=n("f772"),s=">",f="<",l="prototype",p="script",h=$("IE_PROTO"),v=function(){},y=function(t){return f+p+s+t+f+"/"+p+s},b=function(t){t.write(y("")),t.close();var e=t.parentWindow.Object;return t=null,e},g=function(){var t,e=c("iframe"),n="java"+p+":";return e.style.display="none",u.appendChild(e),e.src=String(n),t=e.contentWindow.document,t.open(),t.write(y("document.F=Object")),t.close(),t.F},m=function(){try{r=document.domain&&new ActiveXObject("htmlfile")}catch(e){}m=r?b(r):g();var t=o.length;while(t--)delete m[l][o[t]];return m()};a[h]=!0,t.exports=Object.create||function(t,e){var n;return null!==t?(v[l]=d(t),n=new v,v[l]=null,n[h]=t):n=m(),void 0===e?n:i(n,e)}},"7db0":function(t,e,n){"use strict";var r=n("23e7"),d=n("b727").find,i=n("44d2"),o=n("ae40"),a="find",u=!0,c=o(a);a in[]&&Array(1)[a]((function(){u=!1})),r({target:"Array",proto:!0,forced:u||!c},{find:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}}),i(a)},"7dd0":function(t,e,n){"use strict";var r=n("23e7"),d=n("9ed3"),i=n("e163"),o=n("d2bb"),a=n("d44e"),u=n("9112"),c=n("6eeb"),$=n("b622"),s=n("c430"),f=n("3f8c"),l=n("ae93"),p=l.IteratorPrototype,h=l.BUGGY_SAFARI_ITERATORS,v=$("iterator"),y="keys",b="values",g="entries",m=function(){return this};t.exports=function(t,e,n,$,l,O,C){d(n,e,$);var x,w,S,E=function(t){if(t===l&&T)return T;if(!h&&t in N)return N[t];switch(t){case y:return function(){return new n(this,t)};case b:return function(){return new n(this,t)};case g:return function(){return new n(this,t)}}return function(){return new n(this)}},P=e+" Iterator",I=!1,N=t.prototype,j=N[v]||N["@@iterator"]||l&&N[l],T=!h&&j||E(l),A="Array"==e&&N.entries||j;if(A&&(x=i(A.call(new t)),p!==Object.prototype&&x.next&&(s||i(x)===p||(o?o(x,p):"function"!=typeof x[v]&&u(x,v,m)),a(x,P,!0,!0),s&&(f[P]=m))),l==b&&j&&j.name!==b&&(I=!0,T=function(){return j.call(this)}),s&&!C||N[v]===T||u(N,v,T),f[e]=T,l)if(w={values:E(b),keys:O?T:E(y),entries:E(g)},C)for(S in w)(h||I||!(S in N))&&c(N,S,w[S]);else r({target:e,proto:!0,forced:h||I},w);return w}},"7f9a":function(t,e,n){var r=n("da84"),d=n("8925"),i=r.WeakMap;t.exports="function"===typeof i&&/native code/.test(d(i))},"821a":function(t,e,n){},"825a":function(t,e,n){var r=n("861d");t.exports=function(t){if(!r(t))throw TypeError(String(t)+" is not an object");return t}},"83ab":function(t,e,n){var r=n("d039");t.exports=!r((function(){return 7!=Object.defineProperty({},1,{get:function(){return 7}})[1]}))},8418:function(t,e,n){"use strict";var r=n("c04e"),d=n("9bf2"),i=n("5c6c");t.exports=function(t,e,n){var o=r(e);o in t?d.f(t,o,i(0,n)):t[o]=n}},"861d":function(t,e){t.exports=function(t){return"object"===typeof t?null!==t:"function"===typeof t}},8875:function(t,e,n){var r,d,i;(function(n,o){d=[],r=o,i="function"===typeof r?r.apply(e,d):r,void 0===i||(t.exports=i)})("undefined"!==typeof self&&self,(function(){function t(){var e=Object.getOwnPropertyDescriptor(document,"currentScript");if(!e&&"currentScript"in document&&document.currentScript)return document.currentScript;if(e&&e.get!==t&&document.currentScript)return document.currentScript;try{throw new Error}catch(l){var n,r,d,i=/.*at [^(]*\((.*):(.+):(.+)\)$/gi,o=/@([^@]*):(\d+):(\d+)\s*$/gi,a=i.exec(l.stack)||o.exec(l.stack),u=a&&a[1]||!1,c=a&&a[2]||!1,$=document.location.href.replace(document.location.hash,""),s=document.getElementsByTagName("script");u===$&&(n=document.documentElement.outerHTML,r=new RegExp("(?:[^\\n]+?\\n){0,"+(c-2)+"}[^<]*<script>([\\d\\D]*?)<\\/script>[\\d\\D]*","i"),d=n.replace(r,"$1").trim());for(var f=0;f<s.length;f++){if("interactive"===s[f].readyState)return s[f];if(s[f].src===u)return s[f];if(u===$&&s[f].innerHTML&&s[f].innerHTML.trim()===d)return s[f]}return null}}return t}))},8925:function(t,e,n){var r=n("c6cd"),d=Function.toString;"function"!=typeof r.inspectSource&&(r.inspectSource=function(t){return d.call(t)}),t.exports=r.inspectSource},"8aa5":function(t,e,n){"use strict";var r=n("6547").charAt;t.exports=function(t,e,n){return e+(n?r(t,e).length:1)}},"8bbf":function(e,n){e.exports=t},"90e3":function(t,e){var n=0,r=Math.random();t.exports=function(t){return"Symbol("+String(void 0===t?"":t)+")_"+(++n+r).toString(36)}},9112:function(t,e,n){var r=n("83ab"),d=n("9bf2"),i=n("5c6c");t.exports=r?function(t,e,n){return d.f(t,e,i(1,n))}:function(t,e,n){return t[e]=n,t}},9263:function(t,e,n){"use strict";var r=n("ad6d"),d=n("9f7f"),i=RegExp.prototype.exec,o=String.prototype.replace,a=i,u=function(){var t=/a/,e=/b*/g;return i.call(t,"a"),i.call(e,"a"),0!==t.lastIndex||0!==e.lastIndex}(),c=d.UNSUPPORTED_Y||d.BROKEN_CARET,$=void 0!==/()??/.exec("")[1],s=u||$||c;s&&(a=function(t){var e,n,d,a,s=this,f=c&&s.sticky,l=r.call(s),p=s.source,h=0,v=t;return f&&(l=l.replace("y",""),-1===l.indexOf("g")&&(l+="g"),v=String(t).slice(s.lastIndex),s.lastIndex>0&&(!s.multiline||s.multiline&&"\n"!==t[s.lastIndex-1])&&(p="(?: "+p+")",v=" "+v,h++),n=new RegExp("^(?:"+p+")",l)),$&&(n=new RegExp("^"+p+"$(?!\\s)",l)),u&&(e=s.lastIndex),d=i.call(f?n:s,v),f?d?(d.input=d.input.slice(h),d[0]=d[0].slice(h),d.index=s.lastIndex,s.lastIndex+=d[0].length):s.lastIndex=0:u&&d&&(s.lastIndex=s.global?d.index+d[0].length:e),$&&d&&d.length>1&&o.call(d[0],n,(function(){for(a=1;a<arguments.length-2;a++)void 0===arguments[a]&&(d[a]=void 0)})),d}),t.exports=a},"94ca":function(t,e,n){var r=n("d039"),d=/#|\.prototype\./,i=function(t,e){var n=a[o(t)];return n==c||n!=u&&("function"==typeof e?r(e):!!e)},o=i.normalize=function(t){return String(t).replace(d,".").toLowerCase()},a=i.data={},u=i.NATIVE="N",c=i.POLYFILL="P";t.exports=i},"99af":function(t,e,n){"use strict";var r=n("23e7"),d=n("d039"),i=n("e8b5"),o=n("861d"),a=n("7b0b"),u=n("50c4"),c=n("8418"),$=n("65f0"),s=n("1dde"),f=n("b622"),l=n("2d00"),p=f("isConcatSpreadable"),h=9007199254740991,v="Maximum allowed index exceeded",y=l>=51||!d((function(){var t=[];return t[p]=!1,t.concat()[0]!==t})),b=s("concat"),g=function(t){if(!o(t))return!1;var e=t[p];return void 0!==e?!!e:i(t)},m=!y||!b;r({target:"Array",proto:!0,forced:m},{concat:function(t){var e,n,r,d,i,o=a(this),s=$(o,0),f=0;for(e=-1,r=arguments.length;e<r;e++)if(i=-1===e?o:arguments[e],g(i)){if(d=u(i.length),f+d>h)throw TypeError(v);for(n=0;n<d;n++,f++)n in i&&c(s,f,i[n])}else{if(f>=h)throw TypeError(v);c(s,f++,i)}return s.length=f,s}})},"9bdd":function(t,e,n){var r=n("825a"),d=n("2a62");t.exports=function(t,e,n,i){try{return i?e(r(n)[0],n[1]):e(n)}catch(o){throw d(t),o}}},"9bf2":function(t,e,n){var r=n("83ab"),d=n("0cfb"),i=n("825a"),o=n("c04e"),a=Object.defineProperty;e.f=r?a:function(t,e,n){if(i(t),e=o(e,!0),i(n),d)try{return a(t,e,n)}catch(r){}if("get"in n||"set"in n)throw TypeError("Accessors not supported");return"value"in n&&(t[e]=n.value),t}},"9ed3":function(t,e,n){"use strict";var r=n("ae93").IteratorPrototype,d=n("7c73"),i=n("5c6c"),o=n("d44e"),a=n("3f8c"),u=function(){return this};t.exports=function(t,e,n){var c=e+" Iterator";return t.prototype=d(r,{next:i(1,n)}),o(t,c,!1,!0),a[c]=u,t}},"9f7f":function(t,e,n){"use strict";var r=n("d039");function d(t,e){return RegExp(t,e)}e.UNSUPPORTED_Y=r((function(){var t=d("a","y");return t.lastIndex=2,null!=t.exec("abcd")})),e.BROKEN_CARET=r((function(){var t=d("^r","gy");return t.lastIndex=2,null!=t.exec("str")}))},a15b:function(t,e,n){"use strict";var r=n("23e7"),d=n("44ad"),i=n("fc6a"),o=n("a640"),a=[].join,u=d!=Object,c=o("join",",");r({target:"Array",proto:!0,forced:u||!c},{join:function(t){return a.call(i(this),void 0===t?",":t)}})},a4d3:function(t,e,n){"use strict";var r=n("23e7"),d=n("da84"),i=n("d066"),o=n("c430"),a=n("83ab"),u=n("4930"),c=n("fdbf"),$=n("d039"),s=n("5135"),f=n("e8b5"),l=n("861d"),p=n("825a"),h=n("7b0b"),v=n("fc6a"),y=n("c04e"),b=n("5c6c"),g=n("7c73"),m=n("df75"),O=n("241c"),C=n("057f"),x=n("7418"),w=n("06cf"),S=n("9bf2"),E=n("d1e7"),P=n("9112"),I=n("6eeb"),N=n("5692"),j=n("f772"),T=n("d012"),A=n("90e3"),k=n("b622"),M=n("e538"),R=n("746f"),D=n("d44e"),L=n("69f3"),F=n("b727").forEach,B=j("hidden"),_="Symbol",G="prototype",V=k("toPrimitive"),U=L.set,K=L.getterFor(_),H=Object[G],W=d.Symbol,z=i("JSON","stringify"),Y=w.f,Z=S.f,q=C.f,J=E.f,X=N("symbols"),Q=N("op-symbols"),tt=N("string-to-symbol-registry"),et=N("symbol-to-string-registry"),nt=N("wks"),rt=d.QObject,dt=!rt||!rt[G]||!rt[G].findChild,it=a&&$((function(){return 7!=g(Z({},"a",{get:function(){return Z(this,"a",{value:7}).a}})).a}))?function(t,e,n){var r=Y(H,e);r&&delete H[e],Z(t,e,n),r&&t!==H&&Z(H,e,r)}:Z,ot=function(t,e){var n=X[t]=g(W[G]);return U(n,{type:_,tag:t,description:e}),a||(n.description=e),n},at=c?function(t){return"symbol"==typeof t}:function(t){return Object(t)instanceof W},ut=function(t,e,n){t===H&&ut(Q,e,n),p(t);var r=y(e,!0);return p(n),s(X,r)?(n.enumerable?(s(t,B)&&t[B][r]&&(t[B][r]=!1),n=g(n,{enumerable:b(0,!1)})):(s(t,B)||Z(t,B,b(1,{})),t[B][r]=!0),it(t,r,n)):Z(t,r,n)},ct=function(t,e){p(t);var n=v(e),r=m(n).concat(pt(n));return F(r,(function(e){a&&!st.call(n,e)||ut(t,e,n[e])})),t},$t=function(t,e){return void 0===e?g(t):ct(g(t),e)},st=function(t){var e=y(t,!0),n=J.call(this,e);return!(this===H&&s(X,e)&&!s(Q,e))&&(!(n||!s(this,e)||!s(X,e)||s(this,B)&&this[B][e])||n)},ft=function(t,e){var n=v(t),r=y(e,!0);if(n!==H||!s(X,r)||s(Q,r)){var d=Y(n,r);return!d||!s(X,r)||s(n,B)&&n[B][r]||(d.enumerable=!0),d}},lt=function(t){var e=q(v(t)),n=[];return F(e,(function(t){s(X,t)||s(T,t)||n.push(t)})),n},pt=function(t){var e=t===H,n=q(e?Q:v(t)),r=[];return F(n,(function(t){!s(X,t)||e&&!s(H,t)||r.push(X[t])})),r};if(u||(W=function(){if(this instanceof W)throw TypeError("Symbol is not a constructor");var t=arguments.length&&void 0!==arguments[0]?String(arguments[0]):void 0,e=A(t),n=function(t){this===H&&n.call(Q,t),s(this,B)&&s(this[B],e)&&(this[B][e]=!1),it(this,e,b(1,t))};return a&&dt&&it(H,e,{configurable:!0,set:n}),ot(e,t)},I(W[G],"toString",(function(){return K(this).tag})),I(W,"withoutSetter",(function(t){return ot(A(t),t)})),E.f=st,S.f=ut,w.f=ft,O.f=C.f=lt,x.f=pt,M.f=function(t){return ot(k(t),t)},a&&(Z(W[G],"description",{configurable:!0,get:function(){return K(this).description}}),o||I(H,"propertyIsEnumerable",st,{unsafe:!0}))),r({global:!0,wrap:!0,forced:!u,sham:!u},{Symbol:W}),F(m(nt),(function(t){R(t)})),r({target:_,stat:!0,forced:!u},{for:function(t){var e=String(t);if(s(tt,e))return tt[e];var n=W(e);return tt[e]=n,et[n]=e,n},keyFor:function(t){if(!at(t))throw TypeError(t+" is not a symbol");if(s(et,t))return et[t]},useSetter:function(){dt=!0},useSimple:function(){dt=!1}}),r({target:"Object",stat:!0,forced:!u,sham:!a},{create:$t,defineProperty:ut,defineProperties:ct,getOwnPropertyDescriptor:ft}),r({target:"Object",stat:!0,forced:!u},{getOwnPropertyNames:lt,getOwnPropertySymbols:pt}),r({target:"Object",stat:!0,forced:$((function(){x.f(1)}))},{getOwnPropertySymbols:function(t){return x.f(h(t))}}),z){var ht=!u||$((function(){var t=W();return"[null]"!=z([t])||"{}"!=z({a:t})||"{}"!=z(Object(t))}));r({target:"JSON",stat:!0,forced:ht},{stringify:function(t,e,n){var r,d=[t],i=1;while(arguments.length>i)d.push(arguments[i++]);if(r=e,(l(e)||void 0!==t)&&!at(t))return f(e)||(e=function(t,e){if("function"==typeof r&&(e=r.call(this,t,e)),!at(e))return e}),d[1]=e,z.apply(null,d)}})}W[G][V]||P(W[G],V,W[G].valueOf),D(W,_),T[B]=!0},a630:function(t,e,n){var r=n("23e7"),d=n("4df4"),i=n("1c7e"),o=!i((function(t){Array.from(t)}));r({target:"Array",stat:!0,forced:o},{from:d})},a640:function(t,e,n){"use strict";var r=n("d039");t.exports=function(t,e){var n=[][t];return!!n&&r((function(){n.call(null,e||function(){throw 1},1)}))}},a691:function(t,e){var n=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:n)(t)}},a9e3:function(t,e,n){"use strict";var r=n("83ab"),d=n("da84"),i=n("94ca"),o=n("6eeb"),a=n("5135"),u=n("c6b6"),c=n("7156"),$=n("c04e"),s=n("d039"),f=n("7c73"),l=n("241c").f,p=n("06cf").f,h=n("9bf2").f,v=n("58a8").trim,y="Number",b=d[y],g=b.prototype,m=u(f(g))==y,O=function(t){var e,n,r,d,i,o,a,u,c=$(t,!1);if("string"==typeof c&&c.length>2)if(c=v(c),e=c.charCodeAt(0),43===e||45===e){if(n=c.charCodeAt(2),88===n||120===n)return NaN}else if(48===e){switch(c.charCodeAt(1)){case 66:case 98:r=2,d=49;break;case 79:case 111:r=8,d=55;break;default:return+c}for(i=c.slice(2),o=i.length,a=0;a<o;a++)if(u=i.charCodeAt(a),u<48||u>d)return NaN;return parseInt(i,r)}return+c};if(i(y,!b(" 0o1")||!b("0b1")||b("+0x1"))){for(var C,x=function(t){var e=arguments.length<1?0:t,n=this;return n instanceof x&&(m?s((function(){g.valueOf.call(n)})):u(n)!=y)?c(new b(O(e)),n,x):O(e)},w=r?l(b):"MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger,fromString,range".split(","),S=0;w.length>S;S++)a(b,C=w[S])&&!a(x,C)&&h(x,C,p(b,C));x.prototype=g,g.constructor=x,o(d,y,x)}},ab13:function(t,e,n){var r=n("b622"),d=r("match");t.exports=function(t){var e=/./;try{"/./"[t](e)}catch(n){try{return e[d]=!1,"/./"[t](e)}catch(r){}}return!1}},ac1f:function(t,e,n){"use strict";var r=n("23e7"),d=n("9263");r({target:"RegExp",proto:!0,forced:/./.exec!==d},{exec:d})},ad6d:function(t,e,n){"use strict";var r=n("825a");t.exports=function(){var t=r(this),e="";return t.global&&(e+="g"),t.ignoreCase&&(e+="i"),t.multiline&&(e+="m"),t.dotAll&&(e+="s"),t.unicode&&(e+="u"),t.sticky&&(e+="y"),e}},ade3:function(t,e,n){"use strict";function r(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}n.d(e,"a",(function(){return r}))},ae40:function(t,e,n){var r=n("83ab"),d=n("d039"),i=n("5135"),o=Object.defineProperty,a={},u=function(t){throw t};t.exports=function(t,e){if(i(a,t))return a[t];e||(e={});var n=[][t],c=!!i(e,"ACCESSORS")&&e.ACCESSORS,$=i(e,0)?e[0]:u,s=i(e,1)?e[1]:void 0;return a[t]=!!n&&!d((function(){if(c&&!r)return!0;var t={length:-1};c?o(t,1,{enumerable:!0,get:u}):t[1]=1,n.call(t,$,s)}))}},ae93:function(t,e,n){"use strict";var r,d,i,o=n("e163"),a=n("9112"),u=n("5135"),c=n("b622"),$=n("c430"),s=c("iterator"),f=!1,l=function(){return this};[].keys&&(i=[].keys(),"next"in i?(d=o(o(i)),d!==Object.prototype&&(r=d)):f=!0),void 0==r&&(r={}),$||u(r,s)||a(r,s,l),t.exports={IteratorPrototype:r,BUGGY_SAFARI_ITERATORS:f}},b041:function(t,e,n){"use strict";var r=n("00ee"),d=n("f5df");t.exports=r?{}.toString:function(){return"[object "+d(this)+"]"}},b0c0:function(t,e,n){var r=n("83ab"),d=n("9bf2").f,i=Function.prototype,o=i.toString,a=/^\s*function ([^ (]*)/,u="name";r&&!(u in i)&&d(i,u,{configurable:!0,get:function(){try{return o.call(this).match(a)[1]}catch(t){return""}}})},b575:function(t,e,n){var r,d,i,o,a,u,c,$,s=n("da84"),f=n("06cf").f,l=n("2cf4").set,p=n("1cdc"),h=n("605d"),v=s.MutationObserver||s.WebKitMutationObserver,y=s.document,b=s.process,g=s.Promise,m=f(s,"queueMicrotask"),O=m&&m.value;O||(r=function(){var t,e;h&&(t=b.domain)&&t.exit();while(d){e=d.fn,d=d.next;try{e()}catch(n){throw d?o():i=void 0,n}}i=void 0,t&&t.enter()},!p&&!h&&v&&y?(a=!0,u=y.createTextNode(""),new v(r).observe(u,{characterData:!0}),o=function(){u.data=a=!a}):g&&g.resolve?(c=g.resolve(void 0),$=c.then,o=function(){$.call(c,r)}):o=h?function(){b.nextTick(r)}:function(){l.call(s,r)}),t.exports=O||function(t){var e={fn:t,next:void 0};i&&(i.next=e),d||(d=e,o()),i=e}},b622:function(t,e,n){var r=n("da84"),d=n("5692"),i=n("5135"),o=n("90e3"),a=n("4930"),u=n("fdbf"),c=d("wks"),$=r.Symbol,s=u?$:$&&$.withoutSetter||o;t.exports=function(t){return i(c,t)||(a&&i($,t)?c[t]=$[t]:c[t]=s("Symbol."+t)),c[t]}},b635:function(t,e,n){"use strict";(function(t){n.d(e,"c",(function(){return a}));var r=n("5530"),d=n("15fd"),i=n("025e"),o=n("e348");function a(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};if(!a.installed){a.installed=!0;var n=e.dropdownOptions,u=e.inputOptions,c=Object(d["a"])(e,["dropdownOptions","inputOptions"]),$=i["b"].dropdownOptions,s=i["b"].inputOptions,f=Object(d["a"])(i["b"],["dropdownOptions","inputOptions"]);i["a"].options=Object(r["a"])(Object(r["a"])({inputOptions:Object(r["a"])(Object(r["a"])({},s),u),dropdownOptions:Object(r["a"])(Object(r["a"])({},$),n)},f),c),t.component("vue-tel-input",o["a"])}}n.d(e,"a",(function(){return o["a"]}));var u={install:a},c=null;"undefined"!==typeof window?c=window.Vue:"undefined"!==typeof t&&(c=t.Vue),c&&c.use(u),e["b"]=u}).call(this,n("c8ba"))},b64b:function(t,e,n){var r=n("23e7"),d=n("7b0b"),i=n("df75"),o=n("d039"),a=o((function(){i(1)}));r({target:"Object",stat:!0,forced:a},{keys:function(t){return i(d(t))}})},b727:function(t,e,n){var r=n("0366"),d=n("44ad"),i=n("7b0b"),o=n("50c4"),a=n("65f0"),u=[].push,c=function(t){var e=1==t,n=2==t,c=3==t,$=4==t,s=6==t,f=7==t,l=5==t||s;return function(p,h,v,y){for(var b,g,m=i(p),O=d(m),C=r(h,v,3),x=o(O.length),w=0,S=y||a,E=e?S(p,x):n||f?S(p,0):void 0;x>w;w++)if((l||w in O)&&(b=O[w],g=C(b,w,m),t))if(e)E[w]=g;else if(g)switch(t){case 3:return!0;case 5:return b;case 6:return w;case 2:u.call(E,b)}else switch(t){case 4:return!1;case 7:u.call(E,b)}return s?-1:c||$?$:E}};t.exports={forEach:c(0),map:c(1),filter:c(2),some:c(3),every:c(4),find:c(5),findIndex:c(6),filterOut:c(7)}},bfe1:function(t,e,n){"use strict";n("821a")},c04e:function(t,e,n){var r=n("861d");t.exports=function(t,e){if(!r(t))return t;var n,d;if(e&&"function"==typeof(n=t.toString)&&!r(d=n.call(t)))return d;if("function"==typeof(n=t.valueOf)&&!r(d=n.call(t)))return d;if(!e&&"function"==typeof(n=t.toString)&&!r(d=n.call(t)))return d;throw TypeError("Can't convert object to primitive value")}},c430:function(t,e){t.exports=!1},c6b6:function(t,e){var n={}.toString;t.exports=function(t){return n.call(t).slice(8,-1)}},c6cd:function(t,e,n){var r=n("da84"),d=n("ce4e"),i="__core-js_shared__",o=r[i]||d(i,{});t.exports=o},c740:function(t,e,n){"use strict";var r=n("23e7"),d=n("b727").findIndex,i=n("44d2"),o=n("ae40"),a="findIndex",u=!0,c=o(a);a in[]&&Array(1)[a]((function(){u=!1})),r({target:"Array",proto:!0,forced:u||!c},{findIndex:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}}),i(a)},c8ba:function(t,e){var n;n=function(){return this}();try{n=n||new Function("return this")()}catch(r){"object"===typeof window&&(n=window)}t.exports=n},c8d2:function(t,e,n){var r=n("d039"),d=n("5899"),i="​᠎";t.exports=function(t){return r((function(){return!!d[t]()||i[t]()!=i||d[t].name!==t}))}},c975:function(t,e,n){"use strict";var r=n("23e7"),d=n("4d64").indexOf,i=n("a640"),o=n("ae40"),a=[].indexOf,u=!!a&&1/[1].indexOf(1,-0)<0,c=i("indexOf"),$=o("indexOf",{ACCESSORS:!0,1:0});r({target:"Array",proto:!0,forced:u||!c||!$},{indexOf:function(t){return u?a.apply(this,arguments)||0:d(this,t,arguments.length>1?arguments[1]:void 0)}})},ca84:function(t,e,n){var r=n("5135"),d=n("fc6a"),i=n("4d64").indexOf,o=n("d012");t.exports=function(t,e){var n,a=d(t),u=0,c=[];for(n in a)!r(o,n)&&r(a,n)&&c.push(n);while(e.length>u)r(a,n=e[u++])&&(~i(c,n)||c.push(n));return c}},caad:function(t,e,n){"use strict";var r=n("23e7"),d=n("4d64").includes,i=n("44d2"),o=n("ae40"),a=o("indexOf",{ACCESSORS:!0,1:0});r({target:"Array",proto:!0,forced:!a},{includes:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}}),i("includes")},cc12:function(t,e,n){var r=n("da84"),d=n("861d"),i=r.document,o=d(i)&&d(i.createElement);t.exports=function(t){return o?i.createElement(t):{}}},cca6:function(t,e,n){var r=n("23e7"),d=n("60da");r({target:"Object",stat:!0,forced:Object.assign!==d},{assign:d})},cdf9:function(t,e,n){var r=n("825a"),d=n("861d"),i=n("f069");t.exports=function(t,e){if(r(t),d(e)&&e.constructor===t)return e;var n=i.f(t),o=n.resolve;return o(e),n.promise}},ce4e:function(t,e,n){var r=n("da84"),d=n("9112");t.exports=function(t,e){try{d(r,t,e)}catch(n){r[t]=e}return e}},d012:function(t,e){t.exports={}},d039:function(t,e){t.exports=function(t){try{return!!t()}catch(e){return!0}}},d066:function(t,e,n){var r=n("428f"),d=n("da84"),i=function(t){return"function"==typeof t?t:void 0};t.exports=function(t,e){return arguments.length<2?i(r[t])||i(d[t]):r[t]&&r[t][e]||d[t]&&d[t][e]}},d1e7:function(t,e,n){"use strict";var r={}.propertyIsEnumerable,d=Object.getOwnPropertyDescriptor,i=d&&!r.call({1:2},1);e.f=i?function(t){var e=d(this,t);return!!e&&e.enumerable}:r},d28b:function(t,e,n){var r=n("746f");r("iterator")},d2bb:function(t,e,n){var r=n("825a"),d=n("3bbe");t.exports=Object.setPrototypeOf||("__proto__"in{}?function(){var t,e=!1,n={};try{t=Object.getOwnPropertyDescriptor(Object.prototype,"__proto__").set,t.call(n,[]),e=n instanceof Array}catch(i){}return function(n,i){return r(n),d(i),e?t.call(n,i):n.__proto__=i,n}}():void 0)},d3b7:function(t,e,n){var r=n("00ee"),d=n("6eeb"),i=n("b041");r||d(Object.prototype,"toString",i,{unsafe:!0})},d44e:function(t,e,n){var r=n("9bf2").f,d=n("5135"),i=n("b622"),o=i("toStringTag");t.exports=function(t,e,n){t&&!d(t=n?t:t.prototype,o)&&r(t,o,{configurable:!0,value:e})}},d58f:function(t,e,n){var r=n("1c0b"),d=n("7b0b"),i=n("44ad"),o=n("50c4"),a=function(t){return function(e,n,a,u){r(n);var c=d(e),$=i(c),s=o(c.length),f=t?s-1:0,l=t?-1:1;if(a<2)while(1){if(f in $){u=$[f],f+=l;break}if(f+=l,t?f<0:s<=f)throw TypeError("Reduce of empty array with no initial value")}for(;t?f>=0:s>f;f+=l)f in $&&(u=n(u,$[f],f,c));return u}};t.exports={left:a(!1),right:a(!0)}},d784:function(t,e,n){"use strict";n("ac1f");var r=n("6eeb"),d=n("d039"),i=n("b622"),o=n("9263"),a=n("9112"),u=i("species"),c=!d((function(){var t=/./;return t.exec=function(){var t=[];return t.groups={a:"7"},t},"7"!=="".replace(t,"$<a>")})),$=function(){return"$0"==="a".replace(/./,"$0")}(),s=i("replace"),f=function(){return!!/./[s]&&""===/./[s]("a","$0")}(),l=!d((function(){var t=/(?:)/,e=t.exec;t.exec=function(){return e.apply(this,arguments)};var n="ab".split(t);return 2!==n.length||"a"!==n[0]||"b"!==n[1]}));t.exports=function(t,e,n,s){var p=i(t),h=!d((function(){var e={};return e[p]=function(){return 7},7!=""[t](e)})),v=h&&!d((function(){var e=!1,n=/a/;return"split"===t&&(n={},n.constructor={},n.constructor[u]=function(){return n},n.flags="",n[p]=/./[p]),n.exec=function(){return e=!0,null},n[p](""),!e}));if(!h||!v||"replace"===t&&(!c||!$||f)||"split"===t&&!l){var y=/./[p],b=n(p,""[t],(function(t,e,n,r,d){return e.exec===o?h&&!d?{done:!0,value:y.call(e,n,r)}:{done:!0,value:t.call(n,e,r)}:{done:!1}}),{REPLACE_KEEPS_$0:$,REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE:f}),g=b[0],m=b[1];r(String.prototype,t,g),r(RegExp.prototype,p,2==e?function(t,e){return m.call(t,this,e)}:function(t){return m.call(t,this)})}s&&a(RegExp.prototype[p],"sham",!0)}},d81d:function(t,e,n){"use strict";var r=n("23e7"),d=n("b727").map,i=n("1dde"),o=n("ae40"),a=i("map"),u=o("map");r({target:"Array",proto:!0,forced:!a||!u},{map:function(t){return d(this,t,arguments.length>1?arguments[1]:void 0)}})},da84:function(t,e,n){(function(e){var n=function(t){return t&&t.Math==Math&&t};t.exports=n("object"==typeof globalThis&&globalThis)||n("object"==typeof window&&window)||n("object"==typeof self&&self)||n("object"==typeof e&&e)||function(){return this}()||Function("return this")()}).call(this,n("c8ba"))},dbb4:function(t,e,n){var r=n("23e7"),d=n("83ab"),i=n("56ef"),o=n("fc6a"),a=n("06cf"),u=n("8418");r({target:"Object",stat:!0,sham:!d},{getOwnPropertyDescriptors:function(t){var e,n,r=o(t),d=a.f,c=i(r),$={},s=0;while(c.length>s)n=d(r,e=c[s++]),void 0!==n&&u($,e,n);return $}})},ddb0:function(t,e,n){var r=n("da84"),d=n("fdbc"),i=n("e260"),o=n("9112"),a=n("b622"),u=a("iterator"),c=a("toStringTag"),$=i.values;for(var s in d){var f=r[s],l=f&&f.prototype;if(l){if(l[u]!==$)try{o(l,u,$)}catch(h){l[u]=$}if(l[c]||o(l,c,s),d[s])for(var p in i)if(l[p]!==i[p])try{o(l,p,i[p])}catch(h){l[p]=i[p]}}}},df75:function(t,e,n){var r=n("ca84"),d=n("7839");t.exports=Object.keys||function(t){return r(t,d)}},e01a:function(t,e,n){"use strict";var r=n("23e7"),d=n("83ab"),i=n("da84"),o=n("5135"),a=n("861d"),u=n("9bf2").f,c=n("e893"),$=i.Symbol;if(d&&"function"==typeof $&&(!("description"in $.prototype)||void 0!==$().description)){var s={},f=function(){var t=arguments.length<1||void 0===arguments[0]?void 0:String(arguments[0]),e=this instanceof f?new $(t):void 0===t?$():$(t);return""===t&&(s[e]=!0),e};c(f,$);var l=f.prototype=$.prototype;l.constructor=f;var p=l.toString,h="Symbol(test)"==String($("test")),v=/^Symbol\((.*)\)[^)]+$/;u(l,"description",{configurable:!0,get:function(){var t=a(this)?this.valueOf():this,e=p.call(t);if(o(s,t))return"";var n=h?e.slice(7,-1):e.replace(v,"$1");return""===n?void 0:n}}),r({global:!0,forced:!0},{Symbol:f})}},e103:function(t,e,n){"use strict";n("f3f2")},e163:function(t,e,n){var r=n("5135"),d=n("7b0b"),i=n("f772"),o=n("e177"),a=i("IE_PROTO"),u=Object.prototype;t.exports=o?Object.getPrototypeOf:function(t){return t=d(t),r(t,a)?t[a]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},e177:function(t,e,n){var r=n("d039");t.exports=!r((function(){function t(){}return t.prototype.constructor=null,Object.getPrototypeOf(new t)!==t.prototype}))},e260:function(t,e,n){"use strict";var r=n("fc6a"),d=n("44d2"),i=n("3f8c"),o=n("69f3"),a=n("7dd0"),u="Array Iterator",c=o.set,$=o.getterFor(u);t.exports=a(Array,"Array",(function(t,e){c(this,{type:u,target:r(t),index:0,kind:e})}),(function(){var t=$(this),e=t.target,n=t.kind,r=t.index++;return!e||r>=e.length?(t.target=void 0,{value:void 0,done:!0}):"keys"==n?{value:r,done:!1}:"values"==n?{value:e[r],done:!1}:{value:[r,e[r]],done:!1}}),"values"),i.Arguments=i.Array,d("keys"),d("values"),d("entries")},e2cc:function(t,e,n){var r=n("6eeb");t.exports=function(t,e,n){for(var d in e)r(t,d,e[d],n);return t}},e348:function(t,e,n){"use strict";n("b0c0");var r=n("8bbf"),d={class:"vti__selection"},i={key:1,class:"vti__country-code"},o={class:"vti__dropdown-arrow"},a={key:1};function u(t,e,n,u,c,$){var s=Object(r["resolveDirective"])("click-outside");return Object(r["openBlock"])(),Object(r["createBlock"])("div",{class:["vue-tel-input",n.styleClasses,{disabled:n.disabled}]},[Object(r["withDirectives"])(Object(r["createVNode"])("div",{class:["vti__dropdown",{open:c.open}],tabindex:n.dropdownOptions.tabindex,onKeydown:[e[1]||(e[1]=function(){return $.keyboardNav&&$.keyboardNav.apply($,arguments)}),e[3]||(e[3]=Object(r["withKeys"])((function(){return $.reset&&$.reset.apply($,arguments)}),["esc"]))],onClick:e[2]||(e[2]=function(){return $.toggleDropdown&&$.toggleDropdown.apply($,arguments)})},[Object(r["createVNode"])("span",d,[n.dropdownOptions.showFlags?(Object(r["openBlock"])(),Object(r["createBlock"])("div",{key:0,class:["vti__flag",c.activeCountryCode.toLowerCase()]},null,2)):Object(r["createCommentVNode"])("",!0),n.dropdownOptions.showDialCodeInSelection?(Object(r["openBlock"])(),Object(r["createBlock"])("span",i," +"+Object(r["toDisplayString"])($.activeCountry&&$.activeCountry.dialCode),1)):Object(r["createCommentVNode"])("",!0),Object(r["renderSlot"])(t.$slots,"arrow-icon",{open:c.open},(function(){return[Object(r["createVNode"])("span",o,Object(r["toDisplayString"])(c.open?"▲":"▼"),1)]}))]),Object(r["withDirectives"])(Object(r["createVNode"])("ul",{ref:"list",class:["vti__dropdown-list",c.dropdownOpenDirection]},[(Object(r["openBlock"])(!0),Object(r["createBlock"])(r["Fragment"],null,Object(r["renderList"])($.sortedCountries,(function(t,e){return Object(r["openBlock"])(),Object(r["createBlock"])("li",{class:["vti__dropdown-item",$.getItemClass(e,t.iso2)],key:t.iso2+(t.preferred?"-preferred":""),onClick:function(e){return $.choose(t)},onMousemove:function(t){return c.selectedIndex=e}},[n.dropdownOptions.showFlags?(Object(r["openBlock"])(),Object(r["createBlock"])("div",{key:0,class:["vti__flag",t.iso2.toLowerCase()]},null,2)):Object(r["createCommentVNode"])("",!0),Object(r["createVNode"])("strong",null,Object(r["toDisplayString"])(t.name),1),n.dropdownOptions.showDialCodeInList?(Object(r["openBlock"])(),Object(r["createBlock"])("span",a," +"+Object(r["toDisplayString"])(t.dialCode),1)):Object(r["createCommentVNode"])("",!0)],42,["onClick","onMousemove"])})),128))],2),[[r["vShow"],c.open]])],42,["tabindex"]),[[s,$.clickedOutside]]),Object(r["withDirectives"])(Object(r["createVNode"])("input",{"onUpdate:modelValue":e[4]||(e[4]=function(t){return c.phone=t}),ref:"input",type:n.inputOptions.type,autocomplete:n.inputOptions.autocomplete,autofocus:n.inputOptions.autofocus,class:["vti__input",n.inputOptions.styleClasses],disabled:n.disabled,id:n.inputOptions.id,maxlength:n.inputOptions.maxlength,name:n.inputOptions.name,placeholder:c.parsedPlaceholder,readonly:n.inputOptions.readonly,required:n.inputOptions.required,tabindex:n.inputOptions.tabindex,onBlur:e[5]||(e[5]=function(){return $.onBlur&&$.onBlur.apply($,arguments)}),onFocus:e[6]||(e[6]=function(){return $.onFocus&&$.onFocus.apply($,arguments)}),onInput:e[7]||(e[7]=function(){return $.onInput&&$.onInput.apply($,arguments)}),onKeyup:[e[8]||(e[8]=Object(r["withKeys"])((function(){return $.onEnter&&$.onEnter.apply($,arguments)}),["enter"])),e[9]||(e[9]=Object(r["withKeys"])((function(){return $.onSpace&&$.onSpace.apply($,arguments)}),["space"]))]},null,42,["type","autocomplete","autofocus","disabled","id","maxlength","name","placeholder","readonly","required","tabindex"]),[[r["vModelDynamic"],c.phone]])],2)}n("99af"),n("4de4"),n("7db0"),n("c740"),n("caad"),n("c975"),n("a15b"),n("d81d"),n("fb6a"),n("45fc"),n("cca6"),n("d3b7"),n("e6cf"),n("4d63"),n("ac1f"),n("25f0"),n("2532"),n("466d"),n("2ca0"),n("498a");var c=n("15fd"),$=n("6b75");function s(t){if(Array.isArray(t))return Object($["a"])(t)}n("a4d3"),n("e01a"),n("d28b"),n("a630"),n("e260"),n("3ca3"),n("ddb0");function f(t){if("undefined"!==typeof Symbol&&Symbol.iterator in Object(t))return Array.from(t)}var l=n("06c5");function p(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}function h(t){return s(t)||f(t)||Object(l["a"])(t)||p()}var v=n("5530"),y={version:4,country_calling_codes:{1:["US","AG","AI","AS","BB","BM","BS","CA","DM","DO","GD","GU","JM","KN","KY","LC","MP","MS","PR","SX","TC","TT","VC","VG","VI"],7:["RU","KZ"],20:["EG"],27:["ZA"],30:["GR"],31:["NL"],32:["BE"],33:["FR"],34:["ES"],36:["HU"],39:["IT","VA"],40:["RO"],41:["CH"],43:["AT"],44:["GB","GG","IM","JE"],45:["DK"],46:["SE"],47:["NO","SJ"],48:["PL"],49:["DE"],51:["PE"],52:["MX"],53:["CU"],54:["AR"],55:["BR"],56:["CL"],57:["CO"],58:["VE"],60:["MY"],61:["AU","CC","CX"],62:["ID"],63:["PH"],64:["NZ"],65:["SG"],66:["TH"],81:["JP"],82:["KR"],84:["VN"],86:["CN"],90:["TR"],91:["IN"],92:["PK"],93:["AF"],94:["LK"],95:["MM"],98:["IR"],211:["SS"],212:["MA","EH"],213:["DZ"],216:["TN"],218:["LY"],220:["GM"],221:["SN"],222:["MR"],223:["ML"],224:["GN"],225:["CI"],226:["BF"],227:["NE"],228:["TG"],229:["BJ"],230:["MU"],231:["LR"],232:["SL"],233:["GH"],234:["NG"],235:["TD"],236:["CF"],237:["CM"],238:["CV"],239:["ST"],240:["GQ"],241:["GA"],242:["CG"],243:["CD"],244:["AO"],245:["GW"],246:["IO"],247:["AC"],248:["SC"],249:["SD"],250:["RW"],251:["ET"],252:["SO"],253:["DJ"],254:["KE"],255:["TZ"],256:["UG"],257:["BI"],258:["MZ"],260:["ZM"],261:["MG"],262:["RE","YT"],263:["ZW"],264:["NA"],265:["MW"],266:["LS"],267:["BW"],268:["SZ"],269:["KM"],290:["SH","TA"],291:["ER"],297:["AW"],298:["FO"],299:["GL"],350:["GI"],351:["PT"],352:["LU"],353:["IE"],354:["IS"],355:["AL"],356:["MT"],357:["CY"],358:["FI","AX"],359:["BG"],370:["LT"],371:["LV"],372:["EE"],373:["MD"],374:["AM"],375:["BY"],376:["AD"],377:["MC"],378:["SM"],380:["UA"],381:["RS"],382:["ME"],383:["XK"],385:["HR"],386:["SI"],387:["BA"],389:["MK"],420:["CZ"],421:["SK"],423:["LI"],500:["FK"],501:["BZ"],502:["GT"],503:["SV"],504:["HN"],505:["NI"],506:["CR"],507:["PA"],508:["PM"],509:["HT"],590:["GP","BL","MF"],591:["BO"],592:["GY"],593:["EC"],594:["GF"],595:["PY"],596:["MQ"],597:["SR"],598:["UY"],599:["CW","BQ"],670:["TL"],672:["NF"],673:["BN"],674:["NR"],675:["PG"],676:["TO"],677:["SB"],678:["VU"],679:["FJ"],680:["PW"],681:["WF"],682:["CK"],683:["NU"],685:["WS"],686:["KI"],687:["NC"],688:["TV"],689:["PF"],690:["TK"],691:["FM"],692:["MH"],850:["KP"],852:["HK"],853:["MO"],855:["KH"],856:["LA"],880:["BD"],886:["TW"],960:["MV"],961:["LB"],962:["JO"],963:["SY"],964:["IQ"],965:["KW"],966:["SA"],967:["YE"],968:["OM"],970:["PS"],971:["AE"],972:["IL"],973:["BH"],974:["QA"],975:["BT"],976:["MN"],977:["NP"],992:["TJ"],993:["TM"],994:["AZ"],995:["GE"],996:["KG"],998:["UZ"]},countries:{AC:["247","00","(?:[01589]\\d|[46])\\d{4}",[5,6]],AD:["376","00","(?:1|6\\d)\\d{7}|[135-9]\\d{5}",[6,8,9],[["(\\d{3})(\\d{3})","$1 $2",["[135-9]"]],["(\\d{4})(\\d{4})","$1 $2",["1"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["6"]]]],AE:["971","00","(?:[4-7]\\d|9[0-689])\\d{7}|800\\d{2,9}|[2-4679]\\d{7}",[5,6,7,8,9,10,11,12],[["(\\d{3})(\\d{2,9})","$1 $2",["60|8"]],["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["[236]|[479][2-8]"],"0$1"],["(\\d{3})(\\d)(\\d{5})","$1 $2 $3",["[479]"]],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["5"],"0$1"]],"0"],AF:["93","00","[2-7]\\d{8}",[9],[["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[2-7]"],"0$1"]],"0"],AG:["1","011","(?:268|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([457]\\d{6})$","268$1",0,"268"],AI:["1","011","(?:264|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2457]\\d{6})$","264$1",0,"264"],AL:["355","00","(?:700\\d\\d|900)\\d{3}|8\\d{5,7}|(?:[2-5]|6\\d)\\d{7}",[6,7,8,9],[["(\\d{3})(\\d{3,4})","$1 $2",["80|9"],"0$1"],["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["4[2-6]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[2358][2-5]|4"],"0$1"],["(\\d{3})(\\d{5})","$1 $2",["[23578]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["6"],"0$1"]],"0"],AM:["374","00","(?:[1-489]\\d|55|60|77)\\d{6}",[8],[["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["[89]0"],"0 $1"],["(\\d{3})(\\d{5})","$1 $2",["2|3[12]"],"(0$1)"],["(\\d{2})(\\d{6})","$1 $2",["1|47"],"(0$1)"],["(\\d{2})(\\d{6})","$1 $2",["[3-9]"],"0$1"]],"0"],AO:["244","00","[29]\\d{8}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[29]"]]]],AR:["54","00","11\\d{8}|(?:[2368]|9\\d)\\d{9}",[10,11],[["(\\d{4})(\\d{2})(\\d{4})","$1 $2-$3",["2(?:2[024-9]|3[0-59]|47|6[245]|9[02-8])|3(?:3[28]|4[03-9]|5[2-46-8]|7[1-578]|8[2-9])","2(?:[23]02|6(?:[25]|4[6-8])|9(?:[02356]|4[02568]|72|8[23]))|3(?:3[28]|4(?:[04679]|3[5-8]|5[4-68]|8[2379])|5(?:[2467]|3[237]|8[2-5])|7[1-578]|8(?:[2469]|3[2578]|5[4-8]|7[36-8]|8[5-8]))|2(?:2[24-9]|3[1-59]|47)","2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3[78]|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8[23])|7[1-578]|8(?:[2469]|3[278]|5[56][46]|86[3-6]))|2(?:2[24-9]|3[1-59]|47)|38(?:[58][78]|7[378])|3(?:4[35][56]|58[45]|8(?:[38]5|54|76))[4-6]","2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3(?:5(?:4[0-25689]|[56])|[78])|58|8[2379])|5(?:[2467]|3[237]|8(?:[23]|4(?:[45]|60)|5(?:4[0-39]|5|64)))|7[1-578]|8(?:[2469]|3[278]|54(?:4|5[13-7]|6[89])|86[3-6]))|2(?:2[24-9]|3[1-59]|47)|38(?:[58][78]|7[378])|3(?:454|85[56])[46]|3(?:4(?:36|5[56])|8(?:[38]5|76))[4-6]"],"0$1",1],["(\\d{2})(\\d{4})(\\d{4})","$1 $2-$3",["1"],"0$1",1],["(\\d{3})(\\d{3})(\\d{4})","$1-$2-$3",["[68]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2-$3",["[23]"],"0$1",1],["(\\d)(\\d{4})(\\d{2})(\\d{4})","$2 15-$3-$4",["9(?:2[2-469]|3[3-578])","9(?:2(?:2[024-9]|3[0-59]|47|6[245]|9[02-8])|3(?:3[28]|4[03-9]|5[2-46-8]|7[1-578]|8[2-9]))","9(?:2(?:[23]02|6(?:[25]|4[6-8])|9(?:[02356]|4[02568]|72|8[23]))|3(?:3[28]|4(?:[04679]|3[5-8]|5[4-68]|8[2379])|5(?:[2467]|3[237]|8[2-5])|7[1-578]|8(?:[2469]|3[2578]|5[4-8]|7[36-8]|8[5-8])))|92(?:2[24-9]|3[1-59]|47)","9(?:2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3[78]|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8[23])|7[1-578]|8(?:[2469]|3[278]|5(?:[56][46]|[78])|7[378]|8(?:6[3-6]|[78]))))|92(?:2[24-9]|3[1-59]|47)|93(?:4[35][56]|58[45]|8(?:[38]5|54|76))[4-6]","9(?:2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3(?:5(?:4[0-25689]|[56])|[78])|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8(?:[23]|4(?:[45]|60)|5(?:4[0-39]|5|64)))|7[1-578]|8(?:[2469]|3[278]|5(?:4(?:4|5[13-7]|6[89])|[56][46]|[78])|7[378]|8(?:6[3-6]|[78]))))|92(?:2[24-9]|3[1-59]|47)|93(?:4(?:36|5[56])|8(?:[38]5|76))[4-6]"],"0$1",0,"$1 $2 $3-$4"],["(\\d)(\\d{2})(\\d{4})(\\d{4})","$2 15-$3-$4",["91"],"0$1",0,"$1 $2 $3-$4"],["(\\d)(\\d{3})(\\d{3})(\\d{4})","$2 15-$3-$4",["9"],"0$1",0,"$1 $2 $3-$4"]],"0",0,"0?(?:(11|2(?:2(?:02?|[13]|2[13-79]|4[1-6]|5[2457]|6[124-8]|7[1-4]|8[13-6]|9[1267])|3(?:02?|1[467]|2[03-6]|3[13-8]|[49][2-6]|5[2-8]|[67])|4(?:7[3-578]|9)|6(?:[0136]|2[24-6]|4[6-8]?|5[15-8])|80|9(?:0[1-3]|[19]|2\\d|3[1-6]|4[02568]?|5[2-4]|6[2-46]|72?|8[23]?))|3(?:3(?:2[79]|6|8[2578])|4(?:0[0-24-9]|[12]|3[5-8]?|4[24-7]|5[4-68]?|6[02-9]|7[126]|8[2379]?|9[1-36-8])|5(?:1|2[1245]|3[237]?|4[1-46-9]|6[2-4]|7[1-6]|8[2-5]?)|6[24]|7(?:[069]|1[1568]|2[15]|3[145]|4[13]|5[14-8]|7[2-57]|8[126])|8(?:[01]|2[15-7]|3[2578]?|4[13-6]|5[4-8]?|6[1-357-9]|7[36-8]?|8[5-8]?|9[124])))15)?","9$1"],AS:["1","011","(?:[58]\\d\\d|684|900)\\d{7}",[10],0,"1",0,"1|([267]\\d{6})$","684$1",0,"684"],AT:["43","00","1\\d{3,12}|2\\d{6,12}|43(?:(?:0\\d|5[02-9])\\d{3,9}|2\\d{4,5}|[3467]\\d{4}|8\\d{4,6}|9\\d{4,7})|5\\d{4,12}|8\\d{7,12}|9\\d{8,12}|(?:[367]\\d|4[0-24-9])\\d{4,11}",[4,5,6,7,8,9,10,11,12,13],[["(\\d)(\\d{3,12})","$1 $2",["1(?:11|[2-9])"],"0$1"],["(\\d{3})(\\d{2})","$1 $2",["517"],"0$1"],["(\\d{2})(\\d{3,5})","$1 $2",["5[079]"],"0$1"],["(\\d{3})(\\d{3,10})","$1 $2",["(?:31|4)6|51|6(?:5[0-3579]|[6-9])|7(?:20|32|8)|[89]"],"0$1"],["(\\d{4})(\\d{3,9})","$1 $2",["[2-467]|5[2-6]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["5"],"0$1"],["(\\d{2})(\\d{4})(\\d{4,7})","$1 $2 $3",["5"],"0$1"]],"0"],AU:["61","001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011","1(?:[0-79]\\d{7,8}|8[0-24-9]\\d{7})|[2-478]\\d{8}|1\\d{4,7}",[5,6,7,8,9,10],[["(\\d{2})(\\d{3,4})","$1 $2",["16"],"0$1"],["(\\d{2})(\\d{3})(\\d{2,4})","$1 $2 $3",["16"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["14|4"],"0$1"],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["[2378]"],"(0$1)"],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1(?:30|[89])"]]],"0",0,"0|(183[12])",0,0,0,[["8(?:51(?:0(?:0[03-9]|[12479]\\d|3[2-9]|5[0-8]|6[1-9]|8[0-7])|1(?:[0235689]\\d|1[0-69]|4[0-589]|7[0-47-9])|2(?:0[0-7]|3[2-4]|[4-6]\\d))|91(?:[0-57-9]\\d|6[0135-9])\\d)\\d{3}|(?:2(?:[0-26-9]\\d|3[0-8]|4[02-9]|5[0135-9])|3(?:[0-3589]\\d|4[0-578]|6[1-9]|7[0-35-9])|7(?:[013-57-9]\\d|2[0-8])|8(?:6[0-8]|[78]\\d|9[02-9]))\\d{6}",[9]],["4(?:83[0-38]|93[0-4])\\d{5}|4(?:[0-3]\\d|4[047-9]|5[0-25-9]|6[06-9]|7[02-9]|8[0-24-9]|9[0-27-9])\\d{6}",[9]],["180(?:0\\d{3}|2)\\d{3}",[7,10]],["190[0-26]\\d{6}",[10]],0,0,0,["163\\d{2,6}",[5,6,7,8,9]],["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}",[9]],["13(?:00\\d{3}|45[0-4])\\d{3}|13\\d{4}",[6,8,10]]],"0011"],AW:["297","00","(?:[25-79]\\d\\d|800)\\d{4}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[25-9]"]]]],AX:["358","00|99(?:[01469]|5(?:[14]1|3[23]|5[59]|77|88|9[09]))","2\\d{4,9}|35\\d{4,5}|(?:60\\d\\d|800)\\d{4,6}|7\\d{5,11}|(?:[14]\\d|3[0-46-9]|50)\\d{4,8}",[5,6,7,8,9,10,11,12],0,"0",0,0,0,0,"18",0,"00"],AZ:["994","00","365\\d{6}|(?:[124579]\\d|60|88)\\d{7}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["90"],"0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["1[28]|2|365|46","1[28]|2|365|46","1[28]|2|365(?:[0-46-9]|5[0-35-9])|46"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[13-9]"],"0$1"]],"0"],BA:["387","00","6\\d{8}|(?:[35689]\\d|49|70)\\d{6}",[8,9],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["6[1-3]|[7-9]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2-$3",["[3-5]|6[56]"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3 $4",["6"],"0$1"]],"0"],BB:["1","011","(?:246|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-9]\\d{6})$","246$1",0,"246"],BD:["880","00","1\\d{9}|2\\d{7,8}|88\\d{4,6}|(?:8[0-79]|9\\d)\\d{4,8}|(?:[346]\\d|[57])\\d{5,8}",[6,7,8,9,10],[["(\\d{2})(\\d{4,6})","$1-$2",["31[5-8]|[459]1"],"0$1"],["(\\d{3})(\\d{3,7})","$1-$2",["3(?:[67]|8[013-9])|4(?:6[168]|7|[89][18])|5(?:6[128]|9)|6(?:28|4[14]|5)|7[2-589]|8(?:0[014-9]|[12])|9[358]|(?:3[2-5]|4[235]|5[2-578]|6[0389]|76|8[3-7]|9[24])1|(?:44|66)[01346-9]"],"0$1"],["(\\d{4})(\\d{3,6})","$1-$2",["[13-9]"],"0$1"],["(\\d)(\\d{7,8})","$1-$2",["2"],"0$1"]],"0"],BE:["32","00","4\\d{8}|[1-9]\\d{7}",[8,9],[["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["(?:80|9)0"],"0$1"],["(\\d)(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[239]|4[23]"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[15-8]"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["4"],"0$1"]],"0"],BF:["226","00","[025-7]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[025-7]"]]]],BG:["359","00","[2-7]\\d{6,7}|[89]\\d{6,8}|2\\d{5}",[6,7,8,9],[["(\\d)(\\d)(\\d{2})(\\d{2})","$1 $2 $3 $4",["2"],"0$1"],["(\\d{3})(\\d{4})","$1 $2",["43[1-6]|70[1-9]"],"0$1"],["(\\d)(\\d{3})(\\d{3,4})","$1 $2 $3",["2"],"0$1"],["(\\d{2})(\\d{3})(\\d{2,3})","$1 $2 $3",["[356]|4[124-7]|7[1-9]|8[1-6]|9[1-7]"],"0$1"],["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["(?:70|8)0"],"0$1"],["(\\d{3})(\\d{3})(\\d{2})","$1 $2 $3",["43[1-7]|7"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[48]|9[08]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["9"],"0$1"]],"0"],BH:["973","00","[136-9]\\d{7}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[13679]|8[047]"]]]],BI:["257","00","(?:[267]\\d|31)\\d{6}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2367]"]]]],BJ:["229","00","(?:[2689]\\d|51)\\d{6}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[25689]"]]]],BL:["590","00","(?:590|69\\d|976)\\d{6}",[9],0,"0",0,0,0,0,0,[["590(?:2[7-9]|5[12]|87)\\d{4}"],["69(?:0\\d\\d|1(?:2[29]|3[0-5]))\\d{4}"],0,0,0,0,0,0,["976[01]\\d{5}"]]],BM:["1","011","(?:441|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-8]\\d{6})$","441$1",0,"441"],BN:["673","00","[2-578]\\d{6}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[2-578]"]]]],BO:["591","00(?:1\\d)?","(?:[2-467]\\d\\d|8001)\\d{5}",[8,9],[["(\\d)(\\d{7})","$1 $2",["[23]|4[46]"]],["(\\d{8})","$1",["[67]"]],["(\\d{3})(\\d{2})(\\d{4})","$1 $2 $3",["8"]]],"0",0,"0(1\\d)?"],BQ:["599","00","(?:[34]1|7\\d)\\d{5}",[7],0,0,0,0,0,0,"[347]"],BR:["55","00(?:1[245]|2[1-35]|31|4[13]|[56]5|99)","(?:[1-46-9]\\d\\d|5(?:[0-46-9]\\d|5[0-24679]))\\d{8}|[1-9]\\d{9}|[3589]\\d{8}|[34]\\d{7}",[8,9,10,11],[["(\\d{4})(\\d{4})","$1-$2",["300|4(?:0[02]|37)","4(?:02|37)0|[34]00"]],["(\\d{3})(\\d{2,3})(\\d{4})","$1 $2 $3",["(?:[358]|90)0"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1 $2-$3",["(?:[14689][1-9]|2[12478]|3[1-578]|5[13-5]|7[13-579])[2-57]"],"($1)"],["(\\d{2})(\\d{5})(\\d{4})","$1 $2-$3",["[16][1-9]|[2-57-9]"],"($1)"]],"0",0,"(?:0|90)(?:(1[245]|2[1-35]|31|4[13]|[56]5|99)(\\d{10,11}))?","$2"],BS:["1","011","(?:242|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([3-8]\\d{6})$","242$1",0,"242"],BT:["975","00","[17]\\d{7}|[2-8]\\d{6}",[7,8],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["[2-68]|7[246]"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["1[67]|7"]]]],BW:["267","00","90\\d{5}|(?:0800|[2-6]|7\\d)\\d{6}",[7,8,10],[["(\\d{2})(\\d{5})","$1 $2",["90"]],["(\\d{3})(\\d{4})","$1 $2",["[2-6]"]],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["7"]],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["0"]]]],BY:["375","810","(?:[12]\\d|33|44|902)\\d{7}|8(?:0[0-79]\\d{5,7}|[1-7]\\d{9})|8(?:1[0-489]|[5-79]\\d)\\d{7}|8[1-79]\\d{6,7}|8[0-79]\\d{5}|8\\d{5}",[6,7,8,9,10,11],[["(\\d{3})(\\d{3})","$1 $2",["800"],"8 $1"],["(\\d{3})(\\d{2})(\\d{2,4})","$1 $2 $3",["800"],"8 $1"],["(\\d{4})(\\d{2})(\\d{3})","$1 $2-$3",["1(?:5[169]|6[3-5]|7[179])|2(?:1[35]|2[34]|3[3-5])","1(?:5[169]|6(?:3[1-3]|4|5[125])|7(?:1[3-9]|7[0-24-6]|9[2-7]))|2(?:1[35]|2[34]|3[3-5])"],"8 0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2-$3-$4",["1(?:[56]|7[467])|2[1-3]"],"8 0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2-$3-$4",["[1-4]"],"8 0$1"],["(\\d{3})(\\d{3,4})(\\d{4})","$1 $2 $3",["[89]"],"8 $1"]],"8",0,"0|80?",0,0,0,0,"8~10"],BZ:["501","00","(?:0800\\d|[2-8])\\d{6}",[7,11],[["(\\d{3})(\\d{4})","$1-$2",["[2-8]"]],["(\\d)(\\d{3})(\\d{4})(\\d{3})","$1-$2-$3-$4",["0"]]]],CA:["1","011","(?:[2-8]\\d|90)\\d{8}",[10],0,"1",0,0,0,0,0,[["(?:2(?:04|[23]6|[48]9|50)|3(?:06|43|6[57])|4(?:03|1[68]|3[178]|50)|5(?:06|1[49]|48|79|8[17])|6(?:04|13|39|47|72)|7(?:0[59]|78|8[02])|8(?:[06]7|19|25|73)|90[25])[2-9]\\d{6}"],[""],["8(?:00|33|44|55|66|77|88)[2-9]\\d{6}"],["900[2-9]\\d{6}"],["52(?:3(?:[2-46-9][02-9]\\d|5(?:[02-46-9]\\d|5[0-46-9]))|4(?:[2-478][02-9]\\d|5(?:[034]\\d|2[024-9]|5[0-46-9])|6(?:0[1-9]|[2-9]\\d)|9(?:[05-9]\\d|2[0-5]|49)))\\d{4}|52[34][2-9]1[02-9]\\d{4}|(?:5(?:00|2[12]|33|44|66|77|88)|622)[2-9]\\d{6}"],0,0,0,["600[2-9]\\d{6}"]]],CC:["61","001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011","1(?:[0-79]\\d|8[0-24-9])\\d{7}|[148]\\d{8}|1\\d{5,7}",[6,7,8,9,10],0,"0",0,"0|([59]\\d{7})$","8$1",0,0,[["8(?:51(?:0(?:02|31|60|89)|118)|91(?:0(?:1[0-2]|29)|1(?:[28]2|50|79)|2(?:10|64)|3(?:[06]8|22)|4[29]8|62\\d|70[23]|959))\\d{3}",[9]],["4(?:83[0-38]|93[0-4])\\d{5}|4(?:[0-3]\\d|4[047-9]|5[0-25-9]|6[06-9]|7[02-9]|8[0-24-9]|9[0-27-9])\\d{6}",[9]],["180(?:0\\d{3}|2)\\d{3}",[7,10]],["190[0-26]\\d{6}",[10]],0,0,0,0,["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}",[9]],["13(?:00\\d{3}|45[0-4])\\d{3}|13\\d{4}",[6,8,10]]],"0011"],CD:["243","00","[189]\\d{8}|[1-68]\\d{6}",[7,9],[["(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3",["88"],"0$1"],["(\\d{2})(\\d{5})","$1 $2",["[1-6]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["1"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[89]"],"0$1"]],"0"],CF:["236","00","(?:[27]\\d{3}|8776)\\d{4}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[278]"]]]],CG:["242","00","222\\d{6}|(?:0\\d|80)\\d{7}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["801"]],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["8"]],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[02]"]]]],CH:["41","00","8\\d{11}|[2-9]\\d{8}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["8[047]|90"],"0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2-79]|81"],"0$1"],["(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4 $5",["8"],"0$1"]],"0"],CI:["225","00","[02-9]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[02-9]"]]]],CK:["682","00","[2-578]\\d{4}",[5],[["(\\d{2})(\\d{3})","$1 $2",["[2-578]"]]]],CL:["56","(?:0|1(?:1[0-69]|2[02-5]|5[13-58]|69|7[0167]|8[018]))0","12300\\d{6}|6\\d{9,10}|[2-9]\\d{8}",[9,10,11],[["(\\d{5})(\\d{4})","$1 $2",["219","2196"],"($1)"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["44"]],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["2[1-3]"],"($1)"],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["9[2-9]"]],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["3[2-5]|[47]|5[1-3578]|6[13-57]|8(?:0[1-9]|[1-9])"],"($1)"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["60|8"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["1"]],["(\\d{3})(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3 $4",["60"]]]],CM:["237","00","(?:[26]\\d\\d|88)\\d{6}",[8,9],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["88"]],["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4 $5",["[26]"]]]],CN:["86","00|1(?:[12]\\d|79)\\d\\d00","1[127]\\d{8,9}|2\\d{9}(?:\\d{2})?|[12]\\d{6,7}|86\\d{6}|(?:1[03-689]\\d|6)\\d{7,9}|(?:[3-579]\\d|8[0-57-9])\\d{6,9}",[7,8,9,10,11,12],[["(\\d{2})(\\d{5,6})","$1 $2",["(?:10|2[0-57-9])[19]","(?:10|2[0-57-9])(?:10|9[56])","(?:10|2[0-57-9])(?:100|9[56])"],"0$1"],["(\\d{3})(\\d{5,6})","$1 $2",["3(?:[157]|35|49|9[1-68])|4(?:[17]|2[179]|6[47-9]|8[23])|5(?:[1357]|2[37]|4[36]|6[1-46]|80)|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]|4[13]|5[1-5])|(?:4[35]|59|85)[1-9]","(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[1-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))[19]","85[23](?:10|95)|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:10|9[56])","85[23](?:100|95)|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:100|9[56])"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["(?:4|80)0"]],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["10|2(?:[02-57-9]|1[1-9])","10|2(?:[02-57-9]|1[1-9])","10[0-79]|2(?:[02-57-9]|1[1-79])|(?:10|21)8(?:0[1-9]|[1-9])"],"0$1",1],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["3(?:[3-59]|7[02-68])|4(?:[26-8]|3[3-9]|5[2-9])|5(?:3[03-9]|[468]|7[028]|9[2-46-9])|6|7(?:[0-247]|3[04-9]|5[0-4689]|6[2368])|8(?:[1-358]|9[1-7])|9(?:[013479]|5[1-5])|(?:[34]1|55|79|87)[02-9]"],"0$1",1],["(\\d{3})(\\d{7,8})","$1 $2",["9"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["80"],"0$1",1],["(\\d{3})(\\d{4})(\\d{4})","$1 $2 $3",["[3-578]"],"0$1",1],["(\\d{3})(\\d{4})(\\d{4})","$1 $2 $3",["1[3-9]"]],["(\\d{2})(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3 $4",["[12]"],"0$1",1]],"0",0,"0|(1(?:[12]\\d|79)\\d\\d)",0,0,0,0,"00"],CO:["57","00(?:4(?:[14]4|56)|[579])","(?:1\\d|3)\\d{9}|[124-8]\\d{7}",[8,10,11],[["(\\d)(\\d{7})","$1 $2",["[14][2-9]|[25-8]"],"($1)"],["(\\d{3})(\\d{7})","$1 $2",["3"]],["(\\d)(\\d{3})(\\d{7})","$1-$2-$3",["1"],"0$1",0,"$1 $2 $3"]],"0",0,"0([3579]|4(?:[14]4|56))?"],CR:["506","00","(?:8\\d|90)\\d{8}|(?:[24-8]\\d{3}|3005)\\d{4}",[8,10],[["(\\d{4})(\\d{4})","$1 $2",["[2-7]|8[3-9]"]],["(\\d{3})(\\d{3})(\\d{4})","$1-$2-$3",["[89]"]]],0,0,"(19(?:0[0-2468]|1[09]|20|66|77|99))"],CU:["53","119","[27]\\d{6,7}|[34]\\d{5,7}|(?:5|8\\d\\d)\\d{7}",[6,7,8,10],[["(\\d{2})(\\d{4,6})","$1 $2",["2[1-4]|[34]"],"(0$1)"],["(\\d)(\\d{6,7})","$1 $2",["7"],"(0$1)"],["(\\d)(\\d{7})","$1 $2",["5"],"0$1"],["(\\d{3})(\\d{7})","$1 $2",["8"],"0$1"]],"0"],CV:["238","0","(?:[2-59]\\d\\d|800)\\d{4}",[7],[["(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3",["[2-589]"]]]],CW:["599","00","(?:[34]1|60|(?:7|9\\d)\\d)\\d{5}",[7,8],[["(\\d{3})(\\d{4})","$1 $2",["[3467]"]],["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["9[4-8]"]]],0,0,0,0,0,"[69]"],CX:["61","001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011","1(?:[0-79]\\d|8[0-24-9])\\d{7}|[148]\\d{8}|1\\d{5,7}",[6,7,8,9,10],0,"0",0,"0|([59]\\d{7})$","8$1",0,0,[["8(?:51(?:0(?:01|30|59|88)|1(?:17|46|75)|235)|91(?:00[6-9]|1(?:[28]1|49|78)|2(?:09|63)|3(?:12|26|75)|4(?:56|97)|64\\d|7(?:0[01]|1[0-2])|958))\\d{3}",[9]],["4(?:83[0-38]|93[0-4])\\d{5}|4(?:[0-3]\\d|4[047-9]|5[0-25-9]|6[06-9]|7[02-9]|8[0-24-9]|9[0-27-9])\\d{6}",[9]],["180(?:0\\d{3}|2)\\d{3}",[7,10]],["190[0-26]\\d{6}",[10]],0,0,0,0,["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}",[9]],["13(?:00\\d{3}|45[0-4])\\d{3}|13\\d{4}",[6,8,10]]],"0011"],CY:["357","00","(?:[279]\\d|[58]0)\\d{6}",[8],[["(\\d{2})(\\d{6})","$1 $2",["[257-9]"]]]],CZ:["420","00","(?:[2-578]\\d|60)\\d{7}|9\\d{8,11}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[2-8]|9[015-7]"]],["(\\d{2})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["9"]],["(\\d{3})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["9"]]]],DE:["49","00","[2579]\\d{5,14}|49(?:[05]\\d{10}|[46][1-8]\\d{4,9})|49(?:[0-25]\\d|3[1-689]|7[1-7])\\d{4,8}|49(?:[0-2579]\\d|[34][1-9]|6[0-8])\\d{3}|49\\d{3,4}|(?:1|[368]\\d|4[0-8])\\d{3,13}",[4,5,6,7,8,9,10,11,12,13,14,15],[["(\\d{2})(\\d{3,13})","$1 $2",["3[02]|40|[68]9"],"0$1"],["(\\d{3})(\\d{3,12})","$1 $2",["2(?:0[1-389]|1[124]|2[18]|3[14])|3(?:[35-9][15]|4[015])|906|(?:2[4-9]|4[2-9]|[579][1-9]|[68][1-8])1","2(?:0[1-389]|12[0-8])|3(?:[35-9][15]|4[015])|906|2(?:[13][14]|2[18])|(?:2[4-9]|4[2-9]|[579][1-9]|[68][1-8])1"],"0$1"],["(\\d{4})(\\d{2,11})","$1 $2",["[24-6]|3(?:[3569][02-46-9]|4[2-4679]|7[2-467]|8[2-46-8])|70[2-8]|8(?:0[2-9]|[1-8])|90[7-9]|[79][1-9]","[24-6]|3(?:3(?:0[1-467]|2[127-9]|3[124578]|7[1257-9]|8[1256]|9[145])|4(?:2[135]|4[13578]|9[1346])|5(?:0[14]|2[1-3589]|6[1-4]|7[13468]|8[13568])|6(?:2[1-489]|3[124-6]|6[13]|7[12579]|8[1-356]|9[135])|7(?:2[1-7]|4[145]|6[1-5]|7[1-4])|8(?:21|3[1468]|6|7[1467]|8[136])|9(?:0[12479]|2[1358]|4[134679]|6[1-9]|7[136]|8[147]|9[1468]))|70[2-8]|8(?:0[2-9]|[1-8])|90[7-9]|[79][1-9]|3[68]4[1347]|3(?:47|60)[1356]|3(?:3[46]|46|5[49])[1246]|3[4579]3[1357]"],"0$1"],["(\\d{3})(\\d{4})","$1 $2",["138"],"0$1"],["(\\d{5})(\\d{2,10})","$1 $2",["3"],"0$1"],["(\\d{3})(\\d{5,11})","$1 $2",["181"],"0$1"],["(\\d{3})(\\d)(\\d{4,10})","$1 $2 $3",["1(?:3|80)|9"],"0$1"],["(\\d{3})(\\d{7,8})","$1 $2",["1[67]"],"0$1"],["(\\d{3})(\\d{7,12})","$1 $2",["8"],"0$1"],["(\\d{5})(\\d{6})","$1 $2",["185","1850","18500"],"0$1"],["(\\d{3})(\\d{4})(\\d{4})","$1 $2 $3",["7"],"0$1"],["(\\d{4})(\\d{7})","$1 $2",["18[68]"],"0$1"],["(\\d{5})(\\d{6})","$1 $2",["15[0568]"],"0$1"],["(\\d{4})(\\d{7})","$1 $2",["15[1279]"],"0$1"],["(\\d{3})(\\d{8})","$1 $2",["18"],"0$1"],["(\\d{3})(\\d{2})(\\d{7,8})","$1 $2 $3",["1(?:6[023]|7)"],"0$1"],["(\\d{4})(\\d{2})(\\d{7})","$1 $2 $3",["15[279]"],"0$1"],["(\\d{3})(\\d{2})(\\d{8})","$1 $2 $3",["15"],"0$1"]],"0"],DJ:["253","00","(?:2\\d|77)\\d{6}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[27]"]]]],DK:["45","00","[2-9]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2-9]"]]]],DM:["1","011","(?:[58]\\d\\d|767|900)\\d{7}",[10],0,"1",0,"1|([2-7]\\d{6})$","767$1",0,"767"],DO:["1","011","(?:[58]\\d\\d|900)\\d{7}",[10],0,"1",0,0,0,0,"8[024]9"],DZ:["213","00","(?:[1-4]|[5-79]\\d|80)\\d{7}",[8,9],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[1-4]"],"0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["9"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[5-8]"],"0$1"]],"0"],EC:["593","00","1\\d{9,10}|(?:[2-7]|9\\d)\\d{7}",[8,9,10,11],[["(\\d)(\\d{3})(\\d{4})","$1 $2-$3",["[2-7]"],"(0$1)",0,"$1-$2-$3"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["9"],"0$1"],["(\\d{4})(\\d{3})(\\d{3,4})","$1 $2 $3",["1"]]],"0"],EE:["372","00","8\\d{9}|[4578]\\d{7}|(?:[3-8]\\d|90)\\d{5}",[7,8,10],[["(\\d{3})(\\d{4})","$1 $2",["[369]|4[3-8]|5(?:[0-2]|5[0-478]|6[45])|7[1-9]|88","[369]|4[3-8]|5(?:[02]|1(?:[0-8]|95)|5[0-478]|6(?:4[0-4]|5[1-589]))|7[1-9]|88"]],["(\\d{4})(\\d{3,4})","$1 $2",["[45]|8(?:00|[1-49])","[45]|8(?:00[1-9]|[1-49])"]],["(\\d{2})(\\d{2})(\\d{4})","$1 $2 $3",["7"]],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["8"]]]],EG:["20","00","[189]\\d{8,9}|[24-6]\\d{8}|[135]\\d{7}",[8,9,10],[["(\\d)(\\d{7,8})","$1 $2",["[23]"],"0$1"],["(\\d{2})(\\d{6,7})","$1 $2",["1[35]|[4-6]|8[2468]|9[235-7]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[189]"],"0$1"]],"0"],EH:["212","00","[5-8]\\d{8}",[9],0,"0",0,0,0,0,"528[89]"],ER:["291","00","[178]\\d{6}",[7],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["[178]"],"0$1"]],"0"],ES:["34","00","[5-9]\\d{8}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[89]00"]],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[5-9]"]]]],ET:["251","00","(?:11|[2-59]\\d)\\d{7}",[9],[["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[1-59]"],"0$1"]],"0"],FI:["358","00|99(?:[01469]|5(?:[14]1|3[23]|5[59]|77|88|9[09]))","[1-35689]\\d{4}|7\\d{10,11}|(?:[124-7]\\d|3[0-46-9])\\d{8}|[1-9]\\d{5,8}",[5,6,7,8,9,10,11,12],[["(\\d)(\\d{4,9})","$1 $2",["[2568][1-8]|3(?:0[1-9]|[1-9])|9"],"0$1"],["(\\d{3})(\\d{3,7})","$1 $2",["[12]00|[368]|70[07-9]"],"0$1"],["(\\d{2})(\\d{4,8})","$1 $2",["[1245]|7[135]"],"0$1"],["(\\d{2})(\\d{6,10})","$1 $2",["7"],"0$1"]],"0",0,0,0,0,"1[03-79]|[2-9]",0,"00"],FJ:["679","0(?:0|52)","45\\d{5}|(?:0800\\d|[235-9])\\d{6}",[7,11],[["(\\d{3})(\\d{4})","$1 $2",["[235-9]|45"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["0"]]],0,0,0,0,0,0,0,"00"],FK:["500","00","[2-7]\\d{4}",[5]],FM:["691","00","(?:[39]\\d\\d|820)\\d{4}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[389]"]]]],FO:["298","00","[2-9]\\d{5}",[6],[["(\\d{6})","$1",["[2-9]"]]],0,0,"(10(?:01|[12]0|88))"],FR:["33","00","[1-9]\\d{8}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["8"],"0 $1"],["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4 $5",["[1-79]"],"0$1"]],"0"],GA:["241","00","(?:[067]\\d|11)\\d{6}|[2-7]\\d{6}",[7,8],[["(\\d)(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2-7]"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["11|[67]"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["0"]]],0,0,"0(11\\d{6}|6[256]\\d{6}|7[47]\\d{6})","$1"],GB:["44","00","[1-357-9]\\d{9}|[18]\\d{8}|8\\d{6}",[7,9,10],[["(\\d{3})(\\d{4})","$1 $2",["800","8001","80011","800111","8001111"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3",["845","8454","84546","845464"],"0$1"],["(\\d{3})(\\d{6})","$1 $2",["800"],"0$1"],["(\\d{5})(\\d{4,5})","$1 $2",["1(?:38|5[23]|69|76|94)","1(?:(?:38|69)7|5(?:24|39)|768|946)","1(?:3873|5(?:242|39[4-6])|(?:697|768)[347]|9467)"],"0$1"],["(\\d{4})(\\d{5,6})","$1 $2",["1(?:[2-69][02-9]|[78])"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["[25]|7(?:0|6[02-9])","[25]|7(?:0|6(?:[03-9]|2[356]))"],"0$1"],["(\\d{4})(\\d{6})","$1 $2",["7"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[1389]"],"0$1"]],"0",0,0,0,0,0,[["(?:1(?:1(?:3(?:[0-58]\\d\\d|73[03])|(?:4[0-5]|5[0-26-9]|6[0-4]|[78][0-49])\\d\\d)|(?:2(?:(?:0[024-9]|2[3-9]|3[3-79]|4[1-689]|[58][02-9]|6[0-47-9]|7[013-9]|9\\d)\\d|1(?:[0-7]\\d|8[02]))|(?:3(?:0\\d|1[0-8]|[25][02-9]|3[02-579]|[468][0-46-9]|7[1-35-79]|9[2-578])|4(?:0[03-9]|[137]\\d|[28][02-57-9]|4[02-69]|5[0-8]|[69][0-79])|5(?:0[1-35-9]|[16]\\d|2[024-9]|3[015689]|4[02-9]|5[03-9]|7[0-35-9]|8[0-468]|9[0-57-9])|6(?:0[034689]|1\\d|2[0-35689]|[38][013-9]|4[1-467]|5[0-69]|6[13-9]|7[0-8]|9[0-24578])|7(?:0[0246-9]|2\\d|3[0236-8]|4[03-9]|5[0-46-9]|6[013-9]|7[0-35-9]|8[024-9]|9[02-9])|8(?:0[35-9]|2[1-57-9]|3[02-578]|4[0-578]|5[124-9]|6[2-69]|7\\d|8[02-9]|9[02569])|9(?:0[02-589]|[18]\\d|2[02-689]|3[1-57-9]|4[2-9]|5[0-579]|6[2-47-9]|7[0-24578]|9[2-57]))\\d)\\d)|2(?:0[013478]|3[0189]|4[017]|8[0-46-9]|9[0-2])\\d{3})\\d{4}|1(?:2(?:0(?:46[1-4]|87[2-9])|545[1-79]|76(?:2\\d|3[1-8]|6[1-6])|9(?:7(?:2[0-4]|3[2-5])|8(?:2[2-8]|7[0-47-9]|8[3-5])))|3(?:6(?:38[2-5]|47[23])|8(?:47[04-9]|64[0157-9]))|4(?:044[1-7]|20(?:2[23]|8\\d)|6(?:0(?:30|5[2-57]|6[1-8]|7[2-8])|140)|8(?:052|87[1-3]))|5(?:2(?:4(?:3[2-79]|6\\d)|76\\d)|6(?:26[06-9]|686))|6(?:06(?:4\\d|7[4-79])|295[5-7]|35[34]\\d|47(?:24|61)|59(?:5[08]|6[67]|74)|9(?:55[0-4]|77[23]))|7(?:26(?:6[13-9]|7[0-7])|(?:442|688)\\d|50(?:2[0-3]|[3-68]2|76))|8(?:27[56]\\d|37(?:5[2-5]|8[239])|843[2-58])|9(?:0(?:0(?:6[1-8]|85)|52\\d)|3583|4(?:66[1-8]|9(?:2[01]|81))|63(?:23|3[1-4])|9561))\\d{3}",[9,10]],["7(?:457[0-57-9]|700[01]|911[028])\\d{5}|7(?:[1-3]\\d\\d|4(?:[0-46-9]\\d|5[0-689])|5(?:0[0-8]|[13-9]\\d|2[0-35-9])|7(?:0[1-9]|[1-7]\\d|8[02-9]|9[0-689])|8(?:[014-9]\\d|[23][0-8])|9(?:[024-9]\\d|1[02-9]|3[0-689]))\\d{6}",[10]],["80[08]\\d{7}|800\\d{6}|8001111"],["(?:8(?:4[2-5]|7[0-3])|9(?:[01]\\d|8[2-49]))\\d{7}|845464\\d",[7,10]],["70\\d{8}",[10]],0,["(?:3[0347]|55)\\d{8}",[10]],["76(?:464|652)\\d{5}|76(?:0[0-2]|2[356]|34|4[01347]|5[49]|6[0-369]|77|81|9[139])\\d{6}",[10]],["56\\d{8}",[10]]],0," x"],GD:["1","011","(?:473|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-9]\\d{6})$","473$1",0,"473"],GE:["995","00","(?:[3-57]\\d\\d|800)\\d{6}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["70"],"0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["32"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[57]"]],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[348]"],"0$1"]],"0"],GF:["594","00","(?:[56]94|976)\\d{6}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[569]"],"0$1"]],"0"],GG:["44","00","(?:1481|[357-9]\\d{3})\\d{6}|8\\d{6}(?:\\d{2})?",[7,9,10],0,"0",0,"0|([25-9]\\d{5})$","1481$1",0,0,[["1481[25-9]\\d{5}",[10]],["7(?:(?:781|839)\\d|911[17])\\d{5}",[10]],["80[08]\\d{7}|800\\d{6}|8001111"],["(?:8(?:4[2-5]|7[0-3])|9(?:[01]\\d|8[0-3]))\\d{7}|845464\\d",[7,10]],["70\\d{8}",[10]],0,["(?:3[0347]|55)\\d{8}",[10]],["76(?:464|652)\\d{5}|76(?:0[0-2]|2[356]|34|4[01347]|5[49]|6[0-369]|77|81|9[139])\\d{6}",[10]],["56\\d{8}",[10]]]],GH:["233","00","(?:[235]\\d{3}|800)\\d{5}",[8,9],[["(\\d{3})(\\d{5})","$1 $2",["8"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[235]"],"0$1"]],"0"],GI:["350","00","[256]\\d{7}",[8],[["(\\d{3})(\\d{5})","$1 $2",["2"]]]],GL:["299","00","(?:19|[2-689]\\d)\\d{4}",[6],[["(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3",["19|[2-689]"]]]],GM:["220","00","[2-9]\\d{6}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[2-9]"]]]],GN:["224","00","722\\d{6}|(?:3|6\\d)\\d{7}",[8,9],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["3"]],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[67]"]]]],GP:["590","00","(?:590|69\\d|976)\\d{6}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[569]"],"0$1"]],"0",0,0,0,0,0,[["590(?:0[1-68]|1[0-2]|2[0-68]|3[1289]|4[0-24-9]|5[3-579]|6[0189]|7[08]|8[0-689]|9\\d)\\d{4}"],["69(?:0\\d\\d|1(?:2[29]|3[0-5]))\\d{4}"],0,0,0,0,0,0,["976[01]\\d{5}"]]],GQ:["240","00","222\\d{6}|(?:3\\d|55|[89]0)\\d{7}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[235]"]],["(\\d{3})(\\d{6})","$1 $2",["[89]"]]]],GR:["30","00","5005000\\d{3}|(?:[2689]\\d|70)\\d{8}",[10],[["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["21|7"]],["(\\d{4})(\\d{6})","$1 $2",["2(?:2|3[2-57-9]|4[2-469]|5[2-59]|6[2-9]|7[2-69]|8[2-49])|5"]],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[2689]"]]]],GT:["502","00","(?:1\\d{3}|[2-7])\\d{7}",[8,11],[["(\\d{4})(\\d{4})","$1 $2",["[2-7]"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["1"]]]],GU:["1","011","(?:[58]\\d\\d|671|900)\\d{7}",[10],0,"1",0,"1|([3-9]\\d{6})$","671$1",0,"671"],GW:["245","00","[49]\\d{8}|4\\d{6}",[7,9],[["(\\d{3})(\\d{4})","$1 $2",["40"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[49]"]]]],GY:["592","001","(?:862\\d|9008)\\d{3}|(?:[2-46]\\d|77)\\d{5}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[2-46-9]"]]]],HK:["852","00(?:30|5[09]|[126-9]?)","8[0-46-9]\\d{6,7}|9\\d{4}(?:\\d(?:\\d(?:\\d{4})?)?)?|(?:[235-79]\\d|46)\\d{6}",[5,6,7,8,9,11],[["(\\d{3})(\\d{2,5})","$1 $2",["900","9003"]],["(\\d{4})(\\d{4})","$1 $2",["[2-7]|8[1-4]|9(?:0[1-9]|[1-8])"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["8"]],["(\\d{3})(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3 $4",["9"]]],0,0,0,0,0,0,0,"00"],HN:["504","00","8\\d{10}|[237-9]\\d{7}",[8,11],[["(\\d{4})(\\d{4})","$1-$2",["[237-9]"]]]],HR:["385","00","(?:[24-69]\\d|3[0-79])\\d{7}|80\\d{5,7}|[1-79]\\d{7}|6\\d{5,6}",[6,7,8,9],[["(\\d{2})(\\d{2})(\\d{2,3})","$1 $2 $3",["6[01]"],"0$1"],["(\\d{3})(\\d{2})(\\d{2,3})","$1 $2 $3",["8"],"0$1"],["(\\d)(\\d{4})(\\d{3})","$1 $2 $3",["1"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[67]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["9"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[2-5]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["8"],"0$1"]],"0"],HT:["509","00","[2-489]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{4})","$1 $2 $3",["[2-489]"]]]],HU:["36","00","[235-7]\\d{8}|[1-9]\\d{7}",[8,9],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["1"],"(06 $1)"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[27][2-9]|3[2-7]|4[24-9]|5[2-79]|6|8[2-57-9]|9[2-69]"],"(06 $1)"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[2-9]"],"06 $1"]],"06"],ID:["62","00[89]","(?:(?:00[1-9]|8\\d)\\d{4}|[1-36])\\d{6}|00\\d{10}|[1-9]\\d{8,10}|[2-9]\\d{7}",[7,8,9,10,11,12,13],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["15"]],["(\\d{2})(\\d{5,9})","$1 $2",["2[124]|[36]1"],"(0$1)"],["(\\d{3})(\\d{5,7})","$1 $2",["800"],"0$1"],["(\\d{3})(\\d{5,8})","$1 $2",["[2-79]"],"(0$1)"],["(\\d{3})(\\d{3,4})(\\d{3})","$1-$2-$3",["8[1-35-9]"],"0$1"],["(\\d{3})(\\d{6,8})","$1 $2",["1"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["804"],"0$1"],["(\\d{3})(\\d)(\\d{3})(\\d{3})","$1 $2 $3 $4",["80"],"0$1"],["(\\d{3})(\\d{4})(\\d{4,5})","$1-$2-$3",["8"],"0$1"]],"0"],IE:["353","00","(?:1\\d|[2569])\\d{6,8}|4\\d{6,9}|7\\d{8}|8\\d{8,9}",[7,8,9,10],[["(\\d{2})(\\d{5})","$1 $2",["2[24-9]|47|58|6[237-9]|9[35-9]"],"(0$1)"],["(\\d{3})(\\d{5})","$1 $2",["[45]0"],"(0$1)"],["(\\d)(\\d{3,4})(\\d{4})","$1 $2 $3",["1"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[2569]|4[1-69]|7[14]"],"(0$1)"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["70"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["81"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[78]"],"0$1"],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1"]],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["4"],"(0$1)"],["(\\d{2})(\\d)(\\d{3})(\\d{4})","$1 $2 $3 $4",["8"],"0$1"]],"0"],IL:["972","0(?:0|1[2-9])","1\\d{6}(?:\\d{3,5})?|[57]\\d{8}|[1-489]\\d{7}",[7,8,9,10,11,12],[["(\\d{4})(\\d{3})","$1-$2",["125"]],["(\\d{4})(\\d{2})(\\d{2})","$1-$2-$3",["121"]],["(\\d)(\\d{3})(\\d{4})","$1-$2-$3",["[2-489]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1-$2-$3",["[57]"],"0$1"],["(\\d{4})(\\d{3})(\\d{3})","$1-$2-$3",["12"]],["(\\d{4})(\\d{6})","$1-$2",["159"]],["(\\d)(\\d{3})(\\d{3})(\\d{3})","$1-$2-$3-$4",["1[7-9]"]],["(\\d{3})(\\d{1,2})(\\d{3})(\\d{4})","$1-$2 $3-$4",["15"]]],"0"],IM:["44","00","1624\\d{6}|(?:[3578]\\d|90)\\d{8}",[10],0,"0",0,"0|([5-8]\\d{5})$","1624$1",0,"74576|(?:16|7[56])24"],IN:["91","00","(?:000800|[2-9]\\d\\d)\\d{7}|1\\d{7,12}",[8,9,10,11,12,13],[["(\\d{8})","$1",["5(?:0|2[23]|3[03]|[67]1|88)","5(?:0|2(?:21|3)|3(?:0|3[23])|616|717|888)","5(?:0|2(?:21|3)|3(?:0|3[23])|616|717|8888)"],0,1],["(\\d{4})(\\d{4,5})","$1 $2",["180","1800"],0,1],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["140"],0,1],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["11|2[02]|33|4[04]|79[1-7]|80[2-46]","11|2[02]|33|4[04]|79(?:[1-6]|7[19])|80(?:[2-4]|6[0-589])","11|2[02]|33|4[04]|79(?:[124-6]|3(?:[02-9]|1[0-24-9])|7(?:1|9[1-6]))|80(?:[2-4]|6[0-589])"],"0$1",1],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["1(?:2[0-249]|3[0-25]|4[145]|[68]|7[1257])|2(?:1[257]|3[013]|4[01]|5[0137]|6[0158]|78|8[1568])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|5[12]|[78]1)|6(?:12|[2-4]1|5[17]|6[13]|80)|7(?:12|3[134]|4[47]|61|88)|8(?:16|2[014]|3[126]|6[136]|7[078]|8[34]|91)|(?:43|59|75)[15]|(?:1[59]|29|67|72)[14]","1(?:2[0-24]|3[0-25]|4[145]|[59][14]|6[1-9]|7[1257]|8[1-57-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[058]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|[578]1|9[15])|674|7(?:(?:2[14]|3[34]|5[15])[2-6]|61[346]|88[0-8])|8(?:70[2-6]|84[235-7]|91[3-7])|(?:1(?:29|60|8[06])|261|552|6(?:12|[2-47]1|5[17]|6[13]|80)|7(?:12|31|4[47])|8(?:16|2[014]|3[126]|6[136]|7[78]|83))[2-7]","1(?:2[0-24]|3[0-25]|4[145]|[59][14]|6[1-9]|7[1257]|8[1-57-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[058]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|[578]1|9[15])|6(?:12(?:[2-6]|7[0-8])|74[2-7])|7(?:(?:2[14]|5[15])[2-6]|3171|61[346]|88(?:[2-7]|82))|8(?:70[2-6]|84(?:[2356]|7[19])|91(?:[3-6]|7[19]))|73[134][2-6]|(?:74[47]|8(?:16|2[014]|3[126]|6[136]|7[78]|83))(?:[2-6]|7[19])|(?:1(?:29|60|8[06])|261|552|6(?:[2-4]1|5[17]|6[13]|7(?:1|4[0189])|80)|7(?:12|88[01]))[2-7]"],"0$1",1],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1(?:[2-479]|5[0235-9])|[2-5]|6(?:1[1358]|2[2457-9]|3[2-5]|4[235-7]|5[2-689]|6[24578]|7[235689]|8[1-6])|7(?:1[013-9]|28|3[129]|4[1-35689]|5[29]|6[02-5]|70)|807","1(?:[2-479]|5[0235-9])|[2-5]|6(?:1[1358]|2(?:[2457]|84|95)|3(?:[2-4]|55)|4[235-7]|5[2-689]|6[24578]|7[235689]|8[1-6])|7(?:1(?:[013-8]|9[6-9])|28[6-8]|3(?:17|2[0-49]|9[2-57])|4(?:1[2-4]|[29][0-7]|3[0-8]|[56]|8[0-24-7])|5(?:2[1-3]|9[0-6])|6(?:0[5689]|2[5-9]|3[02-8]|4|5[0-367])|70[13-7])|807[19]","1(?:[2-479]|5(?:[0236-9]|5[013-9]))|[2-5]|6(?:2(?:84|95)|355|83)|73179|807(?:1|9[1-3])|(?:1552|6(?:1[1358]|2[2457]|3[2-4]|4[235-7]|5[2-689]|6[24578]|7[235689]|8[124-6])\\d|7(?:1(?:[013-8]\\d|9[6-9])|28[6-8]|3(?:2[0-49]|9[2-57])|4(?:1[2-4]|[29][0-7]|3[0-8]|[56]\\d|8[0-24-7])|5(?:2[1-3]|9[0-6])|6(?:0[5689]|2[5-9]|3[02-8]|4\\d|5[0-367])|70[13-7]))[2-7]"],"0$1",1],["(\\d{5})(\\d{5})","$1 $2",["[6-9]"],"0$1",1],["(\\d{4})(\\d{2,4})(\\d{4})","$1 $2 $3",["1(?:6|8[06])","1(?:6|8[06]0)"],0,1],["(\\d{4})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["18"],0,1]],"0"],IO:["246","00","3\\d{6}",[7],[["(\\d{3})(\\d{4})","$1 $2",["3"]]]],IQ:["964","00","(?:1|7\\d\\d)\\d{7}|[2-6]\\d{7,8}",[8,9,10],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["1"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[2-6]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["7"],"0$1"]],"0"],IR:["98","00","[1-9]\\d{9}|(?:[1-8]\\d\\d|9)\\d{3,4}",[4,5,6,7,10],[["(\\d{4,5})","$1",["96"],"0$1"],["(\\d{2})(\\d{4,5})","$1 $2",["(?:1[137]|2[13-68]|3[1458]|4[145]|5[1468]|6[16]|7[1467]|8[13467])[12689]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["9"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["[1-8]"],"0$1"]],"0"],IS:["354","00|1(?:0(?:01|[12]0)|100)","(?:38\\d|[4-9])\\d{6}",[7,9],[["(\\d{3})(\\d{4})","$1 $2",["[4-9]"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["3"]]],0,0,0,0,0,0,0,"00"],IT:["39","00","0\\d{5,10}|3[0-8]\\d{7,10}|55\\d{8}|8\\d{5}(?:\\d{2,4})?|(?:1\\d|39)\\d{7,8}",[6,7,8,9,10,11],[["(\\d{2})(\\d{4,6})","$1 $2",["0[26]"]],["(\\d{3})(\\d{3,6})","$1 $2",["0[13-57-9][0159]|8(?:03|4[17]|9[245])","0[13-57-9][0159]|8(?:03|4[17]|9(?:2|[45][0-4]))"]],["(\\d{4})(\\d{2,6})","$1 $2",["0(?:[13-579][2-46-8]|8[236-8])"]],["(\\d{4})(\\d{4})","$1 $2",["894"]],["(\\d{2})(\\d{3,4})(\\d{4})","$1 $2 $3",["0[26]|5"]],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["1[4679]|[38]"]],["(\\d{3})(\\d{3,4})(\\d{4})","$1 $2 $3",["0[13-57-9][0159]"]],["(\\d{2})(\\d{4})(\\d{5})","$1 $2 $3",["0[26]"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["0"]],["(\\d{3})(\\d{4})(\\d{4,5})","$1 $2 $3",["3"]]],0,0,0,0,0,0,[["0669[0-79]\\d{1,6}|0(?:1(?:[0159]\\d|[27][1-5]|31|4[1-4]|6[1356]|8[2-57])|2\\d\\d|3(?:[0159]\\d|2[1-4]|3[12]|[48][1-6]|6[2-59]|7[1-7])|4(?:[0159]\\d|[23][1-9]|4[245]|6[1-5]|7[1-4]|81)|5(?:[0159]\\d|2[1-5]|3[2-6]|4[1-79]|6[4-6]|7[1-578]|8[3-8])|6(?:[0-57-9]\\d|6[0-8])|7(?:[0159]\\d|2[12]|3[1-7]|4[2-46]|6[13569]|7[13-6]|8[1-59])|8(?:[0159]\\d|2[3-578]|3[1-356]|[6-8][1-5])|9(?:[0159]\\d|[238][1-5]|4[12]|6[1-8]|7[1-6]))\\d{2,7}"],["3[1-9]\\d{8}|3[2-9]\\d{7}",[9,10]],["80(?:0\\d{3}|3)\\d{3}",[6,9]],["(?:0878\\d\\d|89(?:2|4[5-9]\\d))\\d{3}|89[45][0-4]\\d\\d|(?:1(?:44|6[346])|89(?:5[5-9]|9))\\d{6}",[6,8,9,10]],["1(?:78\\d|99)\\d{6}",[9,10]],0,0,0,["55\\d{8}",[10]],["84(?:[08]\\d{3}|[17])\\d{3}",[6,9]]]],JE:["44","00","1534\\d{6}|(?:[3578]\\d|90)\\d{8}",[10],0,"0",0,"0|([0-24-8]\\d{5})$","1534$1",0,0,[["1534[0-24-8]\\d{5}"],["7(?:(?:(?:50|82)9|937)\\d|7(?:00[378]|97[7-9]))\\d{5}"],["80(?:07(?:35|81)|8901)\\d{4}"],["(?:8(?:4(?:4(?:4(?:05|42|69)|703)|5(?:041|800))|7(?:0002|1206))|90(?:066[59]|1810|71(?:07|55)))\\d{4}"],["701511\\d{4}"],0,["(?:3(?:0(?:07(?:35|81)|8901)|3\\d{4}|4(?:4(?:4(?:05|42|69)|703)|5(?:041|800))|7(?:0002|1206))|55\\d{4})\\d{4}"],["76(?:464|652)\\d{5}|76(?:0[0-2]|2[356]|34|4[01347]|5[49]|6[0-369]|77|81|9[139])\\d{6}"],["56\\d{8}"]]],JM:["1","011","(?:[58]\\d\\d|658|900)\\d{7}",[10],0,"1",0,0,0,0,"658|876"],JO:["962","00","(?:(?:[2689]|7\\d)\\d|32|53)\\d{6}",[8,9],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["[2356]|87"],"(0$1)"],["(\\d{3})(\\d{5,6})","$1 $2",["[89]"],"0$1"],["(\\d{2})(\\d{7})","$1 $2",["70"],"0$1"],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["7"],"0$1"]],"0"],JP:["81","010","00[1-9]\\d{6,14}|[257-9]\\d{9}|(?:00|[1-9]\\d\\d)\\d{6}",[8,9,10,11,12,13,14,15,16,17],[["(\\d{3})(\\d{3})(\\d{3})","$1-$2-$3",["(?:12|57|99)0"],"0$1"],["(\\d{4})(\\d)(\\d{4})","$1-$2-$3",["1(?:26|3[79]|4[56]|5[4-68]|6[3-5])|499|5(?:76|97)|746|8(?:3[89]|47|51|63)|9(?:49|80|9[16])","1(?:267|3(?:7[247]|9[278])|466|5(?:47|58|64)|6(?:3[245]|48|5[4-68]))|499[2468]|5(?:76|97)9|7468|8(?:3(?:8[7-9]|96)|477|51[2-9]|636)|9(?:496|802|9(?:1[23]|69))|1(?:45|58)[67]","1(?:267|3(?:7[247]|9[278])|466|5(?:47|58|64)|6(?:3[245]|48|5[4-68]))|499[2468]|5(?:769|979[2-69])|7468|8(?:3(?:8[7-9]|96[2457-9])|477|51[2-9]|636[457-9])|9(?:496|802|9(?:1[23]|69))|1(?:45|58)[67]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1-$2-$3",["60"],"0$1"],["(\\d)(\\d{4})(\\d{4})","$1-$2-$3",["[36]|4(?:2[09]|7[01])","[36]|4(?:2(?:0|9[02-69])|7(?:0[019]|1))"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1-$2-$3",["1(?:1|5[45]|77|88|9[69])|2(?:2[1-37]|3[0-269]|4[59]|5|6[24]|7[1-358]|8[1369]|9[0-38])|4(?:[28][1-9]|3[0-57]|[45]|6[248]|7[2-579]|9[29])|5(?:2|3[045]|4[0-369]|5[29]|8[02389]|9[0-389])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9[2-6])|8(?:2[124589]|3[27-9]|49|51|6|7[0-468]|8[68]|9[019])|9(?:[23][1-9]|4[15]|5[138]|6[1-3]|7[156]|8[189]|9[1-489])","1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2(?:[127]|3[014-9])|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|9[19])|62|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|8[1-9])|5(?:2|3[045]|4[0-369]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9[0-2469])|49|51|6(?:[0-24]|36|5[0-3589]|72|9[01459])|7[0-468]|8[68])|9(?:[23][1-9]|4[15]|5[138]|6[1-3]|7[156]|8[189]|9(?:[1289]|3[34]|4[0178]))|(?:49|55|83)[29]|(?:264|837)[016-9]|2(?:57|93)[015-9]|(?:25[0468]|422|838)[01]|(?:47[59]|59[89]|8(?:6[68]|9))[019]","1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2[127]|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|9(?:17|99))|6(?:2|4[016-9])|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|9[29])|5(?:2|3[045]|4[0-369]|5[29]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9[0169])|3(?:[29]|7(?:[017-9]|6[6-8]))|49|51|6(?:[0-24]|36[23]|5(?:[0-389]|5[23])|6(?:[01]|9[178])|72|9[0145])|7[0-468]|8[68])|9(?:4[15]|5[138]|7[156]|8[189]|9(?:[1289]|3(?:31|4[357])|4[0178]))|(?:8294|96)[1-3]|2(?:57|93)[015-9]|(?:223|8699)[014-9]|(?:25[0468]|422|838)[01]|(?:48|8292|9[23])[1-9]|(?:47[59]|59[89]|8(?:68|9))[019]","1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2[127]|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|7[015-9]|9(?:17|99))|6(?:2|4[016-9])|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17|3[015-9]))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|9[29])|5(?:2|3[045]|4[0-369]|5[29]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9(?:[019]|4[1-3]|6(?:[0-47-9]|5[01346-9])))|3(?:[29]|7(?:[017-9]|6[6-8]))|49|51|6(?:[0-24]|36[23]|5(?:[0-389]|5[23])|6(?:[01]|9[178])|72|9[0145])|7[0-468]|8[68])|9(?:4[15]|5[138]|6[1-3]|7[156]|8[189]|9(?:[1289]|3(?:31|4[357])|4[0178]))|(?:223|8699)[014-9]|(?:25[0468]|422|838)[01]|(?:48|829(?:2|66)|9[23])[1-9]|(?:47[59]|59[89]|8(?:68|9))[019]"],"0$1"],["(\\d{3})(\\d{2})(\\d{4})","$1-$2-$3",["[14]|[289][2-9]|5[3-9]|7[2-4679]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1-$2-$3",["800"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1-$2-$3",["[257-9]"],"0$1"]],"0"],KE:["254","000","(?:[17]\\d\\d|900)\\d{6}|(?:2|80)0\\d{6,7}|[4-6]\\d{6,8}",[7,8,9,10],[["(\\d{2})(\\d{5,7})","$1 $2",["[24-6]"],"0$1"],["(\\d{3})(\\d{6})","$1 $2",["[17]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["[89]"],"0$1"]],"0"],KG:["996","00","8\\d{9}|(?:[235-8]\\d|99)\\d{7}",[9,10],[["(\\d{4})(\\d{5})","$1 $2",["3(?:1[346]|[24-79])"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[235-79]|88"],"0$1"],["(\\d{3})(\\d{3})(\\d)(\\d{2,3})","$1 $2 $3 $4",["8"],"0$1"]],"0"],KH:["855","00[14-9]","1\\d{9}|[1-9]\\d{7,8}",[8,9,10],[["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[1-9]"],"0$1"],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1"]]],"0"],KI:["686","00","(?:[37]\\d|6[0-79])\\d{6}|(?:[2-48]\\d|50)\\d{3}",[5,8],0,"0"],KM:["269","00","[3478]\\d{6}",[7],[["(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3",["[3478]"]]]],KN:["1","011","(?:[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-7]\\d{6})$","869$1",0,"869"],KP:["850","00|99","85\\d{6}|(?:19\\d|[2-7])\\d{7}",[8,10],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["8"],"0$1"],["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["[2-7]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["1"],"0$1"]],"0"],KR:["82","00(?:[125689]|3(?:[46]5|91)|7(?:00|27|3|55|6[126]))","00[1-9]\\d{8,11}|(?:[12]|5\\d{3})\\d{7}|[13-6]\\d{9}|(?:[1-6]\\d|80)\\d{7}|[3-6]\\d{4,5}|(?:00|7)0\\d{8}",[5,6,8,9,10,11,12,13,14],[["(\\d{2})(\\d{3,4})","$1-$2",["(?:3[1-3]|[46][1-4]|5[1-5])1"],"0$1"],["(\\d{4})(\\d{4})","$1-$2",["1"]],["(\\d)(\\d{3,4})(\\d{4})","$1-$2-$3",["2"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1-$2-$3",["60|8"],"0$1"],["(\\d{2})(\\d{3,4})(\\d{4})","$1-$2-$3",["[1346]|5[1-5]"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1-$2-$3",["[57]"],"0$1"],["(\\d{2})(\\d{5})(\\d{4})","$1-$2-$3",["5"],"0$1"]],"0",0,"0(8(?:[1-46-8]|5\\d\\d))?"],KW:["965","00","(?:18|[2569]\\d\\d)\\d{5}",[7,8],[["(\\d{4})(\\d{3,4})","$1 $2",["[169]|2(?:[235]|4[1-35-9])|52"]],["(\\d{3})(\\d{5})","$1 $2",["[25]"]]]],KY:["1","011","(?:345|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-9]\\d{6})$","345$1",0,"345"],KZ:["7","810","33622\\d{5}|(?:7\\d|80)\\d{8}",[10],0,"8",0,0,0,0,"33|7",0,"8~10"],LA:["856","00","[23]\\d{9}|3\\d{8}|(?:[235-8]\\d|41)\\d{6}",[8,9,10],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["2[13]|3[14]|[4-8]"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3 $4",["30[013-9]"],"0$1"],["(\\d{2})(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3 $4",["[23]"],"0$1"]],"0"],LB:["961","00","[7-9]\\d{7}|[13-9]\\d{6}",[7,8],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["[13-69]|7(?:[2-57]|62|8[0-7]|9[04-9])|8[02-9]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[7-9]"]]],"0"],LC:["1","011","(?:[58]\\d\\d|758|900)\\d{7}",[10],0,"1",0,"1|([2-8]\\d{6})$","758$1",0,"758"],LI:["423","00","90\\d{5}|(?:[2378]|6\\d\\d)\\d{6}",[7,9],[["(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3",["[237-9]"]],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["69"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["6"]]],"0",0,"0|(1001)"],LK:["94","00","[1-9]\\d{8}",[9],[["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["7"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[1-689]"],"0$1"]],"0"],LR:["231","00","(?:2|33|5\\d|77|88)\\d{7}|[4-6]\\d{6}",[7,8,9],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["[4-6]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["2"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[3578]"],"0$1"]],"0"],LS:["266","00","(?:[256]\\d\\d|800)\\d{5}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[2568]"]]]],LT:["370","00","(?:[3469]\\d|52|[78]0)\\d{6}",[8],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["52[0-7]"],"(8-$1)",1],["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["[7-9]"],"8 $1",1],["(\\d{2})(\\d{6})","$1 $2",["37|4(?:[15]|6[1-8])"],"(8-$1)",1],["(\\d{3})(\\d{5})","$1 $2",["[3-6]"],"(8-$1)",1]],"8",0,"[08]"],LU:["352","00","35[013-9]\\d{4,8}|6\\d{8}|35\\d{2,4}|(?:[2457-9]\\d|3[0-46-9])\\d{2,9}",[4,5,6,7,8,9,10,11],[["(\\d{2})(\\d{3})","$1 $2",["2(?:0[2-689]|[2-9])|[3-57]|8(?:0[2-9]|[13-9])|9(?:0[89]|[2-579])"]],["(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3",["2(?:0[2-689]|[2-9])|[3-57]|8(?:0[2-9]|[13-9])|9(?:0[89]|[2-579])"]],["(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3",["20[2-689]"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})","$1 $2 $3 $4",["2(?:[0367]|4[3-8])"]],["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["80[01]|90[015]"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3 $4",["20"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["6"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})","$1 $2 $3 $4 $5",["2(?:[0367]|4[3-8])"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{1,5})","$1 $2 $3 $4",["[3-57]|8[13-9]|9(?:0[89]|[2-579])|(?:2|80)[2-9]"]]],0,0,"(15(?:0[06]|1[12]|[35]5|4[04]|6[26]|77|88|99)\\d)"],LV:["371","00","(?:[268]\\d|90)\\d{6}",[8],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[269]|8[01]"]]]],LY:["218","00","[2-9]\\d{8}",[9],[["(\\d{2})(\\d{7})","$1-$2",["[2-9]"],"0$1"]],"0"],MA:["212","00","[5-8]\\d{8}",[9],[["(\\d{5})(\\d{4})","$1-$2",["5(?:29|38)","5(?:29|38)[89]","5(?:29|38)[89]0"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["5[45]"],"0$1"],["(\\d{4})(\\d{5})","$1-$2",["5(?:2[2-489]|3[5-9]|9)|892","5(?:2(?:[2-49]|8[235-9])|3[5-9]|9)|892"],"0$1"],["(\\d{2})(\\d{7})","$1-$2",["8"],"0$1"],["(\\d{3})(\\d{6})","$1-$2",["[5-7]"],"0$1"]],"0",0,0,0,0,0,[["5(?:29(?:[189][05]|2[29]|3[01])|38[89][05])\\d{4}|5(?:2(?:[015-7]\\d|2[02-9]|3[0-578]|4[02-46-8]|8[0235-7]|90)|3(?:[0-47]\\d|5[02-9]|6[02-8]|80|9[3-9])|(?:4[067]|5[03])\\d)\\d{5}"],["(?:6(?:[0-79]\\d|8[0-247-9])|7(?:0[0-8]|6[1267]|7[0-37]))\\d{6}"],["80\\d{7}"],["89\\d{7}"],0,0,0,0,["592(?:4[0-2]|93)\\d{4}"]]],MC:["377","00","870\\d{5}|(?:[349]|6\\d)\\d{7}",[8,9],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["4"],"0$1"],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[39]"]],["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4 $5",["6"],"0$1"]],"0"],MD:["373","00","(?:[235-7]\\d|[89]0)\\d{6}",[8],[["(\\d{3})(\\d{5})","$1 $2",["[89]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["22|3"],"0$1"],["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["[25-7]"],"0$1"]],"0"],ME:["382","00","(?:20|[3-79]\\d)\\d{6}|80\\d{6,7}",[8,9],[["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[2-9]"],"0$1"]],"0"],MF:["590","00","(?:590|69\\d|976)\\d{6}",[9],0,"0",0,0,0,0,0,[["590(?:0[079]|[14]3|[27][79]|30|5[0-268]|87)\\d{4}"],["69(?:0\\d\\d|1(?:2[29]|3[0-5]))\\d{4}"],0,0,0,0,0,0,["976[01]\\d{5}"]]],MG:["261","00","[23]\\d{8}",[9],[["(\\d{2})(\\d{2})(\\d{3})(\\d{2})","$1 $2 $3 $4",["[23]"],"0$1"]],"0",0,"0|([24-9]\\d{6})$","20$1"],MH:["692","011","329\\d{4}|(?:[256]\\d|45)\\d{5}",[7],[["(\\d{3})(\\d{4})","$1-$2",["[2-6]"]]],"1"],MK:["389","00","[2-578]\\d{7}",[8],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["2"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[347]"],"0$1"],["(\\d{3})(\\d)(\\d{2})(\\d{2})","$1 $2 $3 $4",["[58]"],"0$1"]],"0"],ML:["223","00","[24-9]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[24-9]"]]]],MM:["95","00","1\\d{5,7}|95\\d{6}|(?:[4-7]|9[0-46-9])\\d{6,8}|(?:2|8\\d)\\d{5,8}",[6,7,8,9,10],[["(\\d)(\\d{2})(\\d{3})","$1 $2 $3",["16|2"],"0$1"],["(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3",["[45]|6(?:0[23]|[1-689]|7[235-7])|7(?:[0-4]|5[2-7])|8[1-6]"],"0$1"],["(\\d)(\\d{3})(\\d{3,4})","$1 $2 $3",["[12]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[4-7]|8[1-35]"],"0$1"],["(\\d)(\\d{3})(\\d{4,6})","$1 $2 $3",["9(?:2[0-4]|[35-9]|4[137-9])"],"0$1"],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["2"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["8"],"0$1"],["(\\d)(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["92"],"0$1"],["(\\d)(\\d{5})(\\d{4})","$1 $2 $3",["9"],"0$1"]],"0"],MN:["976","001","[12]\\d{7,9}|[57-9]\\d{7}",[8,9,10],[["(\\d{2})(\\d{2})(\\d{4})","$1 $2 $3",["[12]1"],"0$1"],["(\\d{4})(\\d{4})","$1 $2",["[57-9]"]],["(\\d{3})(\\d{5,6})","$1 $2",["[12]2[1-3]"],"0$1"],["(\\d{4})(\\d{5,6})","$1 $2",["[12](?:27|3[2-8]|4[2-68]|5[1-4689])","[12](?:27|3[2-8]|4[2-68]|5[1-4689])[0-3]"],"0$1"],["(\\d{5})(\\d{4,5})","$1 $2",["[12]"],"0$1"]],"0"],MO:["853","00","(?:28|[68]\\d)\\d{6}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[268]"]]]],MP:["1","011","[58]\\d{9}|(?:67|90)0\\d{7}",[10],0,"1",0,"1|([2-9]\\d{6})$","670$1",0,"670"],MQ:["596","00","69\\d{7}|(?:59|97)6\\d{6}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[569]"],"0$1"]],"0"],MR:["222","00","(?:[2-4]\\d\\d|800)\\d{5}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2-48]"]]]],MS:["1","011","(?:[58]\\d\\d|664|900)\\d{7}",[10],0,"1",0,"1|([34]\\d{6})$","664$1",0,"664"],MT:["356","00","3550\\d{4}|(?:[2579]\\d\\d|800)\\d{5}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[2357-9]"]]]],MU:["230","0(?:0|[24-7]0|3[03])","(?:[2-468]|5\\d)\\d{6}",[7,8],[["(\\d{3})(\\d{4})","$1 $2",["[2-46]|8[013]"]],["(\\d{4})(\\d{4})","$1 $2",["5"]]],0,0,0,0,0,0,0,"020"],MV:["960","0(?:0|19)","(?:800|9[0-57-9]\\d)\\d{7}|[34679]\\d{6}",[7,10],[["(\\d{3})(\\d{4})","$1-$2",["[3467]|9[13-9]"]],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[89]"]]],0,0,0,0,0,0,0,"00"],MW:["265","00","1\\d{6}(?:\\d{2})?|(?:[23]1|77|88|99)\\d{7}",[7,9],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["1[2-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["2"],"0$1"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[137-9]"],"0$1"]],"0"],MX:["52","0[09]","(?:1(?:[01467]\\d|[2359][1-9]|8[1-79])|[2-9]\\d)\\d{8}",[10,11],[["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["33|5[56]|81"],0,1],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[2-9]"],0,1],["(\\d)(\\d{2})(\\d{4})(\\d{4})","$2 $3 $4",["1(?:33|5[56]|81)"],0,1],["(\\d)(\\d{3})(\\d{3})(\\d{4})","$2 $3 $4",["1"],0,1]],"01",0,"0(?:[12]|4[45])|1",0,0,0,0,"00"],MY:["60","00","1\\d{8,9}|(?:3\\d|[4-9])\\d{7}",[8,9,10],[["(\\d)(\\d{3})(\\d{4})","$1-$2 $3",["[4-79]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1-$2 $3",["1(?:[02469]|[378][1-9])|8"],"0$1"],["(\\d)(\\d{4})(\\d{4})","$1-$2 $3",["3"],"0$1"],["(\\d)(\\d{3})(\\d{2})(\\d{4})","$1-$2-$3-$4",["1[36-8]"]],["(\\d{3})(\\d{3})(\\d{4})","$1-$2 $3",["15"],"0$1"],["(\\d{2})(\\d{4})(\\d{4})","$1-$2 $3",["1"],"0$1"]],"0"],MZ:["258","00","(?:2|8\\d)\\d{7}",[8,9],[["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["2|8[2-79]"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["8"]]]],NA:["264","00","[68]\\d{7,8}",[8,9],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["88"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["6"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["87"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["8"],"0$1"]],"0"],NC:["687","00","[2-57-9]\\d{5}",[6],[["(\\d{2})(\\d{2})(\\d{2})","$1.$2.$3",["[2-57-9]"]]]],NE:["227","00","[027-9]\\d{7}",[8],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["08"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[089]|2[013]|7[04]"]]]],NF:["672","00","[13]\\d{5}",[6],[["(\\d{2})(\\d{4})","$1 $2",["1[0-3]"]],["(\\d)(\\d{5})","$1 $2",["[13]"]]],0,0,"([0-258]\\d{4})$","3$1"],NG:["234","009","(?:[124-7]|9\\d{3})\\d{6}|[1-9]\\d{7}|[78]\\d{9,13}",[7,8,10,11,12,13,14],[["(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3",["78"],"0$1"],["(\\d)(\\d{3})(\\d{3,4})","$1 $2 $3",["[12]|9(?:0[3-9]|[1-9])"],"0$1"],["(\\d{2})(\\d{3})(\\d{2,3})","$1 $2 $3",["[3-7]|8[2-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["[7-9]"],"0$1"],["(\\d{3})(\\d{4})(\\d{4,5})","$1 $2 $3",["[78]"],"0$1"],["(\\d{3})(\\d{5})(\\d{5,6})","$1 $2 $3",["[78]"],"0$1"]],"0"],NI:["505","00","(?:1800|[25-8]\\d{3})\\d{4}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[125-8]"]]]],NL:["31","00","(?:[124-7]\\d\\d|3(?:[02-9]\\d|1[0-8]))\\d{6}|[89]\\d{6,9}|1\\d{4,5}",[5,6,7,8,9,10],[["(\\d{3})(\\d{4,7})","$1 $2",["[89]0"],"0$1"],["(\\d{2})(\\d{7})","$1 $2",["66"],"0$1"],["(\\d)(\\d{8})","$1 $2",["6"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["1[16-8]|2[259]|3[124]|4[17-9]|5[124679]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[1-57-9]"],"0$1"]],"0"],NO:["47","00","(?:0|[2-9]\\d{3})\\d{4}",[5,8],[["(\\d{3})(\\d{2})(\\d{3})","$1 $2 $3",["[489]|5[89]"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[235-7]"]]],0,0,0,0,0,"[02-689]|7[0-8]"],NP:["977","00","(?:1\\d|9)\\d{9}|[1-9]\\d{7}",[8,10,11],[["(\\d)(\\d{7})","$1-$2",["1[2-6]"],"0$1"],["(\\d{2})(\\d{6})","$1-$2",["1[01]|[2-8]|9(?:[1-579]|6[2-6])"],"0$1"],["(\\d{3})(\\d{7})","$1-$2",["9"]]],"0"],NR:["674","00","(?:444|(?:55|8\\d)\\d|666)\\d{4}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[4-68]"]]]],NU:["683","00","(?:[47]|888\\d)\\d{3}",[4,7],[["(\\d{3})(\\d{4})","$1 $2",["8"]]]],NZ:["64","0(?:0|161)","[29]\\d{7,9}|50\\d{5}(?:\\d{2,3})?|6[0-35-9]\\d{6}|7\\d{7,8}|8\\d{4,9}|(?:11\\d|[34])\\d{7}",[5,6,7,8,9,10],[["(\\d{2})(\\d{3,8})","$1 $2",["8[1-579]"],"0$1"],["(\\d{3})(\\d{2})(\\d{2,3})","$1 $2 $3",["50[036-8]|[89]0","50(?:[0367]|88)|[89]0"],"0$1"],["(\\d)(\\d{3})(\\d{4})","$1-$2 $3",["24|[346]|7[2-57-9]|9[2-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["2(?:10|74)|[59]|80"],"0$1"],["(\\d{2})(\\d{3,4})(\\d{4})","$1 $2 $3",["1|2[028]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,5})","$1 $2 $3",["2(?:[169]|7[0-35-9])|7|86"],"0$1"]],"0",0,0,0,0,0,0,"00"],OM:["968","00","(?:1505|[279]\\d{3}|500)\\d{4}|8007\\d{4,5}",[7,8,9],[["(\\d{3})(\\d{4,6})","$1 $2",["[58]"]],["(\\d{2})(\\d{6})","$1 $2",["2"]],["(\\d{4})(\\d{4})","$1 $2",["[179]"]]]],PA:["507","00","8\\d{9}|[68]\\d{7}|[1-57-9]\\d{6}",[7,8,10],[["(\\d{3})(\\d{4})","$1-$2",["[1-57-9]"]],["(\\d{4})(\\d{4})","$1-$2",["[68]"]],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["8"]]]],PE:["51","19(?:1[124]|77|90)00","(?:[14-8]|9\\d)\\d{7}",[8,9],[["(\\d{3})(\\d{5})","$1 $2",["80"],"(0$1)"],["(\\d)(\\d{7})","$1 $2",["1"],"(0$1)"],["(\\d{2})(\\d{6})","$1 $2",["[4-8]"],"(0$1)"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["9"]]],"0",0,0,0,0,0,0,0," Anexo "],PF:["689","00","[48]\\d{7}|4\\d{5}",[6,8],[["(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3",["44"]],["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[48]"]]]],PG:["675","00|140[1-3]","(?:180|[78]\\d{3})\\d{4}|(?:[2-589]\\d|64)\\d{5}",[7,8],[["(\\d{3})(\\d{4})","$1 $2",["18|[2-69]|85"]],["(\\d{4})(\\d{4})","$1 $2",["[78]"]]],0,0,0,0,0,0,0,"00"],PH:["63","00","1800\\d{7,9}|(?:2|[89]\\d{4})\\d{5}|[2-8]\\d{8}|[28]\\d{7}",[6,8,9,10,11,12,13],[["(\\d)(\\d{5})","$1 $2",["2"],"(0$1)"],["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["2"],"(0$1)"],["(\\d{4})(\\d{4,6})","$1 $2",["3(?:23|39|46)|4(?:2[3-6]|[35]9|4[26]|76)|544|88[245]|(?:52|64|86)2","3(?:230|397|461)|4(?:2(?:35|[46]4|51)|396|4(?:22|63)|59[347]|76[15])|5(?:221|446)|642[23]|8(?:622|8(?:[24]2|5[13]))"],"(0$1)"],["(\\d{5})(\\d{4})","$1 $2",["346|4(?:27|9[35])|883","3469|4(?:279|9(?:30|56))|8834"],"(0$1)"],["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["2"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[3-7]|8[2-8]"],"(0$1)"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["[89]"],"0$1"],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["1"]],["(\\d{4})(\\d{1,2})(\\d{3})(\\d{4})","$1 $2 $3 $4",["1"]]],"0"],PK:["92","00","122\\d{6}|[24-8]\\d{10,11}|9(?:[013-9]\\d{8,10}|2(?:[01]\\d\\d|2(?:[06-8]\\d|1[01]))\\d{7})|(?:[2-8]\\d{3}|92(?:[0-7]\\d|8[1-9]))\\d{6}|[24-9]\\d{8}|[89]\\d{7}",[8,9,10,11,12],[["(\\d{3})(\\d{3})(\\d{2,7})","$1 $2 $3",["[89]0"],"0$1"],["(\\d{4})(\\d{5})","$1 $2",["1"]],["(\\d{3})(\\d{6,7})","$1 $2",["2(?:3[2358]|4[2-4]|9[2-8])|45[3479]|54[2-467]|60[468]|72[236]|8(?:2[2-689]|3[23578]|4[3478]|5[2356])|9(?:2[2-8]|3[27-9]|4[2-6]|6[3569]|9[25-8])","9(?:2[3-8]|98)|(?:2(?:3[2358]|4[2-4]|9[2-8])|45[3479]|54[2-467]|60[468]|72[236]|8(?:2[2-689]|3[23578]|4[3478]|5[2356])|9(?:22|3[27-9]|4[2-6]|6[3569]|9[25-7]))[2-9]"],"(0$1)"],["(\\d{2})(\\d{7,8})","$1 $2",["(?:2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91)[2-9]"],"(0$1)"],["(\\d{5})(\\d{5})","$1 $2",["58"],"(0$1)"],["(\\d{3})(\\d{7})","$1 $2",["3"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91"],"(0$1)"],["(\\d{3})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["[24-9]"],"(0$1)"]],"0"],PL:["48","00","6\\d{5}(?:\\d{2})?|8\\d{9}|[1-9]\\d{6}(?:\\d{2})?",[6,7,8,9,10],[["(\\d{5})","$1",["19"]],["(\\d{3})(\\d{3})","$1 $2",["11|64"]],["(\\d{2})(\\d{2})(\\d{3})","$1 $2 $3",["(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])1","(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])19"]],["(\\d{3})(\\d{2})(\\d{2,3})","$1 $2 $3",["64"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["39|45|5[0137]|6[0469]|7[02389]|8(?:0[14]|8)"]],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["1[2-8]|[2-7]|8[1-79]|9[145]"]],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["8"]]]],PM:["508","00","[45]\\d{5}",[6],[["(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3",["[45]"],"0$1"]],"0"],PR:["1","011","(?:[589]\\d\\d|787)\\d{7}",[10],0,"1",0,0,0,0,"787|939"],PS:["970","00","[2489]2\\d{6}|(?:1\\d|5)\\d{8}",[8,9,10],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["[2489]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["5"],"0$1"],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1"]]],"0"],PT:["351","00","(?:[26-9]\\d|30)\\d{7}",[9],[["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["2[12]"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[236-9]"]]]],PW:["680","01[12]","(?:[24-8]\\d\\d|345|900)\\d{4}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[2-9]"]]]],PY:["595","00","59\\d{4,6}|9\\d{5,10}|(?:[2-46-8]\\d|5[0-8])\\d{4,7}",[6,7,8,9,10,11],[["(\\d{3})(\\d{3,6})","$1 $2",["[2-9]0"],"0$1"],["(\\d{2})(\\d{5})","$1 $2",["[26]1|3[289]|4[1246-8]|7[1-3]|8[1-36]"],"(0$1)"],["(\\d{3})(\\d{4,5})","$1 $2",["2[279]|3[13-5]|4[359]|5|6(?:[34]|7[1-46-8])|7[46-8]|85"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["2[14-68]|3[26-9]|4[1246-8]|6(?:1|75)|7[1-35]|8[1-36]"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["87"]],["(\\d{3})(\\d{6})","$1 $2",["9(?:[5-79]|8[1-6])"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[2-8]"],"0$1"],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["9"]]],"0"],QA:["974","00","[2-7]\\d{7}|(?:2\\d\\d|800)\\d{4}",[7,8],[["(\\d{3})(\\d{4})","$1 $2",["2[126]|8"]],["(\\d{4})(\\d{4})","$1 $2",["[2-7]"]]]],RE:["262","00","9769\\d{5}|(?:26|[68]\\d)\\d{7}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2689]"],"0$1"]],"0",0,0,0,0,"26[23]|69|[89]"],RO:["40","00","(?:[237]\\d|[89]0)\\d{7}|[23]\\d{5}",[6,9],[["(\\d{3})(\\d{3})","$1 $2",["2[3-6]","2[3-6]\\d9"],"0$1"],["(\\d{2})(\\d{4})","$1 $2",["219|31"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[23]1"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[237-9]"],"0$1"]],"0",0,0,0,0,0,0,0," int "],RS:["381","00","38[02-9]\\d{6,9}|6\\d{7,9}|90\\d{4,8}|38\\d{5,6}|(?:7\\d\\d|800)\\d{3,9}|(?:[12]\\d|3[0-79])\\d{5,10}",[6,7,8,9,10,11,12],[["(\\d{3})(\\d{3,9})","$1 $2",["(?:2[389]|39)0|[7-9]"],"0$1"],["(\\d{2})(\\d{5,10})","$1 $2",["[1-36]"],"0$1"]],"0"],RU:["7","810","[347-9]\\d{9}",[10],[["(\\d{4})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["7(?:1[0-8]|2[1-9])","7(?:1(?:[0-6]2|7|8[27])|2(?:1[23]|[2-9]2))","7(?:1(?:[0-6]2|7|8[27])|2(?:13[03-69]|62[013-9]))|72[1-57-9]2"],"8 ($1)",1],["(\\d{5})(\\d)(\\d{2})(\\d{2})","$1 $2 $3 $4",["7(?:1[0-68]|2[1-9])","7(?:1(?:[06][3-6]|[18]|2[35]|[3-5][3-5])|2(?:[13][3-5]|[24-689]|7[457]))","7(?:1(?:0(?:[356]|4[023])|[18]|2(?:3[013-9]|5)|3[45]|43[013-79]|5(?:3[1-8]|4[1-7]|5)|6(?:3[0-35-9]|[4-6]))|2(?:1(?:3[178]|[45])|[24-689]|3[35]|7[457]))|7(?:14|23)4[0-8]|71(?:33|45)[1-79]"],"8 ($1)",1],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["7"],"8 ($1)",1],["(\\d{3})(\\d{3})(\\d{2})(\\d{2})","$1 $2-$3-$4",["[3489]"],"8 ($1)",1]],"8",0,0,0,0,"3[04-689]|[489]",0,"8~10"],RW:["250","00","(?:06|[27]\\d\\d|[89]00)\\d{6}",[8,9],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["0"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[7-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["2"]]],"0"],SA:["966","00","92\\d{7}|(?:[15]|8\\d)\\d{8}",[9,10],[["(\\d{4})(\\d{5})","$1 $2",["9"]],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["1"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["5"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["81"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["8"]]],"0"],SB:["677","0[01]","(?:[1-6]|[7-9]\\d\\d)\\d{4}",[5,7],[["(\\d{2})(\\d{5})","$1 $2",["7|8[4-9]|9(?:[1-8]|9[0-8])"]]]],SC:["248","010|0[0-2]","8000\\d{3}|(?:[249]\\d|64)\\d{5}",[7],[["(\\d)(\\d{3})(\\d{3})","$1 $2 $3",["[246]|9[57]"]]],0,0,0,0,0,0,0,"00"],SD:["249","00","[19]\\d{8}",[9],[["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[19]"],"0$1"]],"0"],SE:["46","00","(?:[26]\\d\\d|9)\\d{9}|[1-9]\\d{8}|[1-689]\\d{7}|[1-4689]\\d{6}|2\\d{5}",[6,7,8,9,10],[["(\\d{2})(\\d{2,3})(\\d{2})","$1-$2 $3",["20"],"0$1",0,"$1 $2 $3"],["(\\d{3})(\\d{4})","$1-$2",["9(?:00|39|44)"],"0$1",0,"$1 $2"],["(\\d{2})(\\d{3})(\\d{2})","$1-$2 $3",["[12][136]|3[356]|4[0246]|6[03]|90[1-9]"],"0$1",0,"$1 $2 $3"],["(\\d)(\\d{2,3})(\\d{2})(\\d{2})","$1-$2 $3 $4",["8"],"0$1",0,"$1 $2 $3 $4"],["(\\d{3})(\\d{2,3})(\\d{2})","$1-$2 $3",["1[2457]|2(?:[247-9]|5[0138])|3[0247-9]|4[1357-9]|5[0-35-9]|6(?:[125689]|4[02-57]|7[0-2])|9(?:[125-8]|3[02-5]|4[0-3])"],"0$1",0,"$1 $2 $3"],["(\\d{3})(\\d{2,3})(\\d{3})","$1-$2 $3",["9(?:00|39|44)"],"0$1",0,"$1 $2 $3"],["(\\d{2})(\\d{2,3})(\\d{2})(\\d{2})","$1-$2 $3 $4",["1[13689]|2[0136]|3[1356]|4[0246]|54|6[03]|90[1-9]"],"0$1",0,"$1 $2 $3 $4"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1-$2 $3 $4",["10|7"],"0$1",0,"$1 $2 $3 $4"],["(\\d)(\\d{3})(\\d{3})(\\d{2})","$1-$2 $3 $4",["8"],"0$1",0,"$1 $2 $3 $4"],["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1-$2 $3 $4",["[13-5]|2(?:[247-9]|5[0138])|6(?:[124-689]|7[0-2])|9(?:[125-8]|3[02-5]|4[0-3])"],"0$1",0,"$1 $2 $3 $4"],["(\\d{3})(\\d{2})(\\d{2})(\\d{3})","$1-$2 $3 $4",["9"],"0$1",0,"$1 $2 $3 $4"],["(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1-$2 $3 $4 $5",["[26]"],"0$1",0,"$1 $2 $3 $4 $5"]],"0"],SG:["65","0[0-3]\\d","(?:(?:1\\d|8)\\d\\d|7000)\\d{7}|[3689]\\d{7}",[8,10,11],[["(\\d{4})(\\d{4})","$1 $2",["[369]|8(?:0[1-3]|[1-9])"]],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["8"]],["(\\d{4})(\\d{4})(\\d{3})","$1 $2 $3",["7"]],["(\\d{4})(\\d{3})(\\d{4})","$1 $2 $3",["1"]]]],SH:["290","00","(?:[256]\\d|8)\\d{3}",[4,5],0,0,0,0,0,0,"[256]"],SI:["386","00|10(?:22|66|88|99)","[1-7]\\d{7}|8\\d{4,7}|90\\d{4,6}",[5,6,7,8],[["(\\d{2})(\\d{3,6})","$1 $2",["8[09]|9"],"0$1"],["(\\d{3})(\\d{5})","$1 $2",["59|8"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[37][01]|4[0139]|51|6"],"0$1"],["(\\d)(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[1-57]"],"(0$1)"]],"0",0,0,0,0,0,0,"00"],SJ:["47","00","0\\d{4}|(?:[4589]\\d|79)\\d{6}",[5,8],0,0,0,0,0,0,"79"],SK:["421","00","[2-689]\\d{8}|[2-59]\\d{6}|[2-5]\\d{5}",[6,7,9],[["(\\d)(\\d{2})(\\d{3,4})","$1 $2 $3",["21"],"0$1"],["(\\d{2})(\\d{2})(\\d{2,3})","$1 $2 $3",["[3-5][1-8]1","[3-5][1-8]1[67]"],"0$1"],["(\\d)(\\d{3})(\\d{3})(\\d{2})","$1/$2 $3 $4",["2"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[689]"],"0$1"],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1/$2 $3 $4",["[3-5]"],"0$1"]],"0"],SL:["232","00","(?:[2378]\\d|66|99)\\d{6}",[8],[["(\\d{2})(\\d{6})","$1 $2",["[236-9]"],"(0$1)"]],"0"],SM:["378","00","(?:0549|[5-7]\\d)\\d{6}",[8,10],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[5-7]"]],["(\\d{4})(\\d{6})","$1 $2",["0"]]],0,0,"([89]\\d{5})$","0549$1"],SN:["221","00","(?:[378]\\d{4}|93330)\\d{4}",[9],[["(\\d{3})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["8"]],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[379]"]]]],SO:["252","00","[346-9]\\d{8}|[12679]\\d{7}|[1-5]\\d{6}|[1348]\\d{5}",[6,7,8,9],[["(\\d{2})(\\d{4})","$1 $2",["8[125]"]],["(\\d{6})","$1",["[134]"]],["(\\d)(\\d{6})","$1 $2",["[15]|2[0-79]|3[0-46-8]|4[0-7]"]],["(\\d)(\\d{7})","$1 $2",["24|[67]"]],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[3478]|64|90"]],["(\\d{2})(\\d{5,7})","$1 $2",["1|28|6[1-35-9]|9[2-9]"]]],"0"],SR:["597","00","(?:[2-5]|68|[78]\\d)\\d{5}",[6,7],[["(\\d{2})(\\d{2})(\\d{2})","$1-$2-$3",["56"]],["(\\d{3})(\\d{3})","$1-$2",["[2-5]"]],["(\\d{3})(\\d{4})","$1-$2",["[6-8]"]]]],SS:["211","00","[19]\\d{8}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[19]"],"0$1"]],"0"],ST:["239","00","(?:22|9\\d)\\d{5}",[7],[["(\\d{3})(\\d{4})","$1 $2",["[29]"]]]],SV:["503","00","[267]\\d{7}|[89]00\\d{4}(?:\\d{4})?",[7,8,11],[["(\\d{3})(\\d{4})","$1 $2",["[89]"]],["(\\d{4})(\\d{4})","$1 $2",["[267]"]],["(\\d{3})(\\d{4})(\\d{4})","$1 $2 $3",["[89]"]]]],SX:["1","011","7215\\d{6}|(?:[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|(5\\d{6})$","721$1",0,"721"],SY:["963","00","[1-39]\\d{8}|[1-5]\\d{7}",[8,9],[["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[1-5]"],"0$1",1],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["9"],"0$1",1]],"0"],SZ:["268","00","0800\\d{4}|(?:[237]\\d|900)\\d{6}",[8,9],[["(\\d{4})(\\d{4})","$1 $2",["[0237]"]],["(\\d{5})(\\d{4})","$1 $2",["9"]]]],TA:["290","00","8\\d{3}",[4],0,0,0,0,0,0,"8"],TC:["1","011","(?:[58]\\d\\d|649|900)\\d{7}",[10],0,"1",0,"1|([2-479]\\d{6})$","649$1",0,"649"],TD:["235","00|16","(?:22|[69]\\d|77)\\d{6}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[2679]"]]],0,0,0,0,0,0,0,"00"],TG:["228","00","[279]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[279]"]]]],TH:["66","00[1-9]","1\\d{9}|[1689]\\d{8}|[1-57]\\d{7}",[8,9,10],[["(\\d)(\\d{3})(\\d{4})","$1 $2 $3",["2"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[13-9]"],"0$1"],["(\\d{4})(\\d{3})(\\d{3})","$1 $2 $3",["1"]]],"0"],TJ:["992","810","(?:[02]0|11|[3-57-9]\\d)\\d{7}",[9],[["(\\d{6})(\\d)(\\d{2})","$1 $2 $3",["331","3317"],0,1],["(\\d{3})(\\d{2})(\\d{4})","$1 $2 $3",["[34]7|91[78]"],0,1],["(\\d{4})(\\d)(\\d{4})","$1 $2 $3",["3"],0,1],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[02457-9]|11"],0,1]],"8",0,0,0,0,0,0,"8~10"],TK:["690","00","[2-47]\\d{3,6}",[4,5,6,7]],TL:["670","00","7\\d{7}|(?:[2-47]\\d|[89]0)\\d{5}",[7,8],[["(\\d{3})(\\d{4})","$1 $2",["[2-489]|70"]],["(\\d{4})(\\d{4})","$1 $2",["7"]]]],TM:["993","810","[1-6]\\d{7}",[8],[["(\\d{2})(\\d{2})(\\d{2})(\\d{2})","$1 $2-$3-$4",["12"],"(8 $1)"],["(\\d{3})(\\d)(\\d{2})(\\d{2})","$1 $2-$3-$4",["[1-5]"],"(8 $1)"],["(\\d{2})(\\d{6})","$1 $2",["6"],"8 $1"]],"8",0,0,0,0,0,0,"8~10"],TN:["216","00","[2-57-9]\\d{7}",[8],[["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[2-57-9]"]]]],TO:["676","00","(?:0800|[5-8]\\d{3})\\d{3}|[2-8]\\d{4}",[5,7],[["(\\d{2})(\\d{3})","$1-$2",["[2-4]|50|6[09]|7[0-24-69]|8[05]"]],["(\\d{4})(\\d{3})","$1 $2",["0"]],["(\\d{3})(\\d{4})","$1 $2",["[5-8]"]]]],TR:["90","00","4\\d{6}|8\\d{11,12}|(?:[2-58]\\d\\d|900)\\d{7}",[7,10,12,13],[["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["512|8[0589]|90"],"0$1",1],["(\\d{3})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["5(?:[0-59]|61)","5(?:[0-59]|616)","5(?:[0-59]|6161)"],"0$1",1],["(\\d{3})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[24][1-8]|3[1-9]"],"(0$1)",1],["(\\d{3})(\\d{3})(\\d{6,7})","$1 $2 $3",["80"],"0$1",1]],"0"],TT:["1","011","(?:[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-46-8]\\d{6})$","868$1",0,"868"],TV:["688","00","(?:2|7\\d\\d|90)\\d{4}",[5,6,7],[["(\\d{2})(\\d{3})","$1 $2",["2"]],["(\\d{2})(\\d{4})","$1 $2",["90"]],["(\\d{2})(\\d{5})","$1 $2",["7"]]]],TW:["886","0(?:0[25-79]|19)","[2-689]\\d{8}|7\\d{9,10}|[2-8]\\d{7}|2\\d{6}",[7,8,9,10,11],[["(\\d{2})(\\d)(\\d{4})","$1 $2 $3",["202"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["[258]0"],"0$1"],["(\\d)(\\d{3,4})(\\d{4})","$1 $2 $3",["[23568]|4(?:0[02-48]|[1-47-9])|7[1-9]","[23568]|4(?:0[2-48]|[1-47-9])|(?:400|7)[1-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[49]"],"0$1"],["(\\d{2})(\\d{4})(\\d{4,5})","$1 $2 $3",["7"],"0$1"]],"0",0,0,0,0,0,0,0,"#"],TZ:["255","00[056]","(?:[26-8]\\d|41|90)\\d{7}",[9],[["(\\d{3})(\\d{2})(\\d{4})","$1 $2 $3",["[89]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[24]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[67]"],"0$1"]],"0"],UA:["380","00","[89]\\d{9}|[3-9]\\d{8}",[9,10],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["6[12][29]|(?:3[1-8]|4[136-8]|5[12457]|6[49])2|(?:56|65)[24]","6[12][29]|(?:35|4[1378]|5[12457]|6[49])2|(?:56|65)[24]|(?:3[1-46-8]|46)2[013-9]"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["4[45][0-5]|5(?:0|6[37])|6(?:[12][018]|[36-8])|7|89|9[1-9]|(?:48|57)[0137-9]","4[45][0-5]|5(?:0|6(?:3[14-7]|7))|6(?:[12][018]|[36-8])|7|89|9[1-9]|(?:48|57)[0137-9]"],"0$1"],["(\\d{4})(\\d{5})","$1 $2",["[3-6]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["[89]"],"0$1"]],"0",0,0,0,0,0,0,"0~0"],UG:["256","00[057]","800\\d{6}|(?:[29]0|[347]\\d)\\d{7}",[9],[["(\\d{4})(\\d{5})","$1 $2",["202","2024"],"0$1"],["(\\d{3})(\\d{6})","$1 $2",["[27-9]|4(?:6[45]|[7-9])"],"0$1"],["(\\d{2})(\\d{7})","$1 $2",["[34]"],"0$1"]],"0"],US:["1","011","[2-9]\\d{9}",[10],[["(\\d{3})(\\d{3})(\\d{4})","($1) $2-$3",["[2-9]"],0,1,"$1-$2-$3"]],"1",0,0,0,0,0,[["(?:2(?:0[1-35-9]|1[02-9]|2[03-589]|3[149]|4[08]|5[1-46]|6[0279]|7[0269]|8[13])|3(?:0[1-57-9]|1[02-9]|2[01356]|3[0-24679]|4[167]|5[12]|6[014]|8[056])|4(?:0[124-9]|1[02-579]|2[3-5]|3[0245]|4[0235]|58|6[39]|7[0589]|8[04])|5(?:0[1-57-9]|1[0235-8]|20|3[0149]|4[01]|5[19]|6[1-47]|7[013-5]|8[056])|6(?:0[1-35-9]|1[024-9]|2[03689]|[34][016]|5[0179]|6[0-279]|78|8[0-29])|7(?:0[1-46-8]|1[2-9]|2[04-7]|3[1247]|4[037]|5[47]|6[02359]|7[02-59]|8[156])|8(?:0[1-68]|1[02-8]|2[08]|3[0-289]|4[3578]|5[046-9]|6[02-5]|7[028])|9(?:0[1346-9]|1[02-9]|2[0589]|3[0146-8]|4[0179]|5[12469]|7[0-389]|8[04-69]))[2-9]\\d{6}"],[""],["8(?:00|33|44|55|66|77|88)[2-9]\\d{6}"],["900[2-9]\\d{6}"],["52(?:3(?:[2-46-9][02-9]\\d|5(?:[02-46-9]\\d|5[0-46-9]))|4(?:[2-478][02-9]\\d|5(?:[034]\\d|2[024-9]|5[0-46-9])|6(?:0[1-9]|[2-9]\\d)|9(?:[05-9]\\d|2[0-5]|49)))\\d{4}|52[34][2-9]1[02-9]\\d{4}|5(?:00|2[12]|33|44|66|77|88)[2-9]\\d{6}"]]],UY:["598","0(?:0|1[3-9]\\d)","4\\d{9}|[249]\\d{7}|(?:[49]\\d|80)\\d{5}",[7,8,10],[["(\\d{3})(\\d{4})","$1 $2",["405|8|90"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["9"],"0$1"],["(\\d{4})(\\d{4})","$1 $2",["[24]"]],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["4"],"0$1"]],"0",0,0,0,0,0,0,"00"," int. "],UZ:["998","810","55501\\d{4}|(?:33|[679]\\d|88)\\d{7}",[9],[["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[35-9]"],"8 $1"]],"8",0,0,0,0,0,0,"8~10"],VA:["39","00","0\\d{5,10}|3[0-8]\\d{7,10}|55\\d{8}|8\\d{5}(?:\\d{2,4})?|(?:1\\d|39)\\d{7,8}",[6,7,8,9,10,11],0,0,0,0,0,0,"06698"],VC:["1","011","(?:[58]\\d\\d|784|900)\\d{7}",[10],0,"1",0,"1|([2-7]\\d{6})$","784$1",0,"784"],VE:["58","00","[68]00\\d{7}|(?:[24]\\d|[59]0)\\d{8}",[10],[["(\\d{3})(\\d{7})","$1-$2",["[24-689]"],"0$1"]],"0"],VG:["1","011","(?:284|[58]\\d\\d|900)\\d{7}",[10],0,"1",0,"1|([2-578]\\d{6})$","284$1",0,"284"],VI:["1","011","[58]\\d{9}|(?:34|90)0\\d{7}",[10],0,"1",0,"1|([2-9]\\d{6})$","340$1",0,"340"],VN:["84","00","[12]\\d{9}|[135-9]\\d{8}|[16]\\d{7}|[16-8]\\d{6}",[7,8,9,10],[["(\\d{2})(\\d{5})","$1 $2",["80"],"0$1",1],["(\\d{4})(\\d{4,6})","$1 $2",["1"],0,1],["(\\d{2})(\\d{3})(\\d{2})(\\d{2})","$1 $2 $3 $4",["[69]"],"0$1",1],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[3578]"],"0$1",1],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["2[48]"],"0$1",1],["(\\d{3})(\\d{4})(\\d{3})","$1 $2 $3",["2"],"0$1",1]],"0"],VU:["678","00","(?:[23]\\d|[48]8)\\d{3}|(?:[57]\\d|90)\\d{5}",[5,7],[["(\\d{3})(\\d{4})","$1 $2",["[579]"]]]],WF:["681","00","(?:[45]0|68|72|8\\d)\\d{4}",[6],[["(\\d{2})(\\d{2})(\\d{2})","$1 $2 $3",["[4-8]"]]]],WS:["685","0","(?:[2-6]|8\\d{5})\\d{4}|[78]\\d{6}|[68]\\d{5}",[5,6,7,10],[["(\\d{5})","$1",["[2-5]|6[1-9]"]],["(\\d{3})(\\d{3,7})","$1 $2",["[68]"]],["(\\d{2})(\\d{5})","$1 $2",["7"]]]],XK:["383","00","[23]\\d{7,8}|(?:4\\d\\d|[89]00)\\d{5}",[8,9],[["(\\d{3})(\\d{5})","$1 $2",["[89]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3})","$1 $2 $3",["[2-4]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[23]"],"0$1"]],"0"],YE:["967","00","(?:1|7\\d)\\d{7}|[1-7]\\d{6}",[7,8,9],[["(\\d)(\\d{3})(\\d{3,4})","$1 $2 $3",["[1-6]|7[24-68]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["7"],"0$1"]],"0"],YT:["262","00","80\\d{7}|(?:26|63)9\\d{6}",[9],0,"0",0,0,0,0,"269|63"],ZA:["27","00","[1-79]\\d{8}|8\\d{4,9}",[5,6,7,8,9,10],[["(\\d{2})(\\d{3,4})","$1 $2",["8[1-4]"],"0$1"],["(\\d{2})(\\d{3})(\\d{2,3})","$1 $2 $3",["8[1-4]"],"0$1"],["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["860"],"0$1"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["[1-9]"],"0$1"],["(\\d{3})(\\d{3})(\\d{4})","$1 $2 $3",["8"],"0$1"]],"0"],ZM:["260","00","(?:63|80)0\\d{6}|(?:21|[79]\\d)\\d{7}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[28]"],"0$1"],["(\\d{2})(\\d{7})","$1 $2",["[79]"],"0$1"]],"0"],ZW:["263","00","2(?:[0-57-9]\\d{6,8}|6[0-24-9]\\d{6,7})|[38]\\d{9}|[35-8]\\d{8}|[3-6]\\d{7}|[1-689]\\d{6}|[1-3569]\\d{5}|[1356]\\d{4}",[5,6,7,8,9,10],[["(\\d{3})(\\d{3,5})","$1 $2",["2(?:0[45]|2[278]|[49]8)|3(?:[09]8|17)|6(?:[29]8|37|75)|[23][78]|(?:33|5[15]|6[68])[78]"],"0$1"],["(\\d)(\\d{3})(\\d{2,4})","$1 $2 $3",["[49]"],"0$1"],["(\\d{3})(\\d{4})","$1 $2",["80"],"0$1"],["(\\d{2})(\\d{7})","$1 $2",["24|8[13-59]|(?:2[05-79]|39|5[45]|6[15-8])2","2(?:02[014]|4|[56]20|[79]2)|392|5(?:42|525)|6(?:[16-8]21|52[013])|8[13-59]"],"(0$1)"],["(\\d{2})(\\d{3})(\\d{4})","$1 $2 $3",["7"],"0$1"],["(\\d{3})(\\d{3})(\\d{3,4})","$1 $2 $3",["2(?:1[39]|2[0157]|[378]|[56][14])|3(?:12|29)","2(?:1[39]|2[0157]|[378]|[56][14])|3(?:123|29)"],"0$1"],["(\\d{4})(\\d{6})","$1 $2",["8"],"0$1"],["(\\d{2})(\\d{3,5})","$1 $2",["1|2(?:0[0-36-9]|12|29|[56])|3(?:1[0-689]|[24-6])|5(?:[0236-9]|1[2-4])|6(?:[013-59]|7[0-46-9])|(?:33|55|6[68])[0-69]|(?:29|3[09]|62)[0-79]"],"0$1"],["(\\d{2})(\\d{3})(\\d{3,4})","$1 $2 $3",["29[013-9]|39|54"],"0$1"],["(\\d{4})(\\d{3,5})","$1 $2",["(?:25|54)8","258|5483"],"0$1"]],"0"]},nonGeographic:{800:["800",0,"[1-9]\\d{7}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[1-9]"]]],0,0,0,0,0,0,[0,0,["[1-9]\\d{7}"]]],808:["808",0,"[1-9]\\d{7}",[8],[["(\\d{4})(\\d{4})","$1 $2",["[1-9]"]]],0,0,0,0,0,0,[0,0,0,0,0,0,0,0,0,["[1-9]\\d{7}"]]],870:["870",0,"[35-7]\\d{8}",[9],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["[35-7]"]]],0,0,0,0,0,0,[0,["(?:[356]\\d|7[6-8])\\d{7}"]]],878:["878",0,"10\\d{10}",[12],[["(\\d{2})(\\d{5})(\\d{5})","$1 $2 $3",["1"]]],0,0,0,0,0,0,[0,0,0,0,0,0,0,0,["10\\d{10}"]]],881:["881",0,"[0-36-9]\\d{8}",[9],[["(\\d)(\\d{3})(\\d{5})","$1 $2 $3",["[0-36-9]"]]],0,0,0,0,0,0,[0,["[0-36-9]\\d{8}"]]],882:["882",0,"[13]\\d{6}(?:\\d{2,5})?|285\\d{9}|[19]\\d{7}",[7,8,9,10,11,12],[["(\\d{2})(\\d{5})","$1 $2",["16|342"]],["(\\d{2})(\\d{2})(\\d{4})","$1 $2 $3",["[19]"]],["(\\d{2})(\\d{4})(\\d{3})","$1 $2 $3",["3[23]"]],["(\\d{2})(\\d{3,4})(\\d{4})","$1 $2 $3",["1"]],["(\\d{2})(\\d{4})(\\d{4})","$1 $2 $3",["34[57]"]],["(\\d{3})(\\d{4})(\\d{4})","$1 $2 $3",["34"]],["(\\d{2})(\\d{4,5})(\\d{5})","$1 $2 $3",["[1-3]"]]],0,0,0,0,0,0,[0,["3(?:37\\d\\d|42)\\d{4}|3(?:2|47|7\\d{3})\\d{7}",[7,9,10,12]],0,0,0,0,0,0,["1(?:3(?:0[0347]|[13][0139]|2[035]|4[013568]|6[0459]|7[06]|8[15-8]|9[0689])\\d{4}|6\\d{5,10})|(?:(?:285\\d\\d|3(?:45|[69]\\d{3}))\\d|9[89])\\d{6}"]]],883:["883",0,"51\\d{7}(?:\\d{3})?",[9,12],[["(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3",["510"]],["(\\d{3})(\\d{3})(\\d{3})(\\d{3})","$1 $2 $3 $4",["510"]],["(\\d{4})(\\d{4})(\\d{4})","$1 $2 $3",["5"]]],0,0,0,0,0,0,[0,0,0,0,0,0,0,0,["51[013]0\\d{8}|5100\\d{5}"]]],888:["888",0,"\\d{11}",[11],[["(\\d{3})(\\d{3})(\\d{5})","$1 $2 $3"]],0,0,0,0,0,0,[0,0,0,0,0,0,["\\d{11}"]]],979:["979",0,"[1359]\\d{8}",[9],[["(\\d)(\\d{4})(\\d{4})","$1 $2 $3",["[1359]"]]],0,0,0,0,0,0,[0,0,0,["[1359]\\d{8}"]]]}};function b(t,e){var n=Array.prototype.slice.call(e);return n.push(y),t.apply(this,n)}var g=2,m=17,O=3,C="0-9０-９٠-٩۰-۹",x="-‐-―−ー－",w="／/",S="．.",E="  ­​⁠　",P="()（）［］\\[\\]",I="~⁓∼～",N="".concat(x).concat(w).concat(S).concat(E).concat(P).concat(I),j="+＋";function T(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}var A=function t(e){T(this,t),this.name=this.constructor.name,this.message=e,this.stack=new Error(e).stack};A.prototype=Object.create(Error.prototype),A.prototype.constructor=A;var k=function(t,e){t=t.split("-"),e=e.split("-");for(var n=t[0].split("."),r=e[0].split("."),d=0;d<3;d++){var i=Number(n[d]),o=Number(r[d]);if(i>o)return 1;if(o>i)return-1;if(!isNaN(i)&&isNaN(o))return 1;if(isNaN(i)&&!isNaN(o))return-1}return t[1]&&e[1]?t[1]>e[1]?1:t[1]<e[1]?-1:0:!t[1]&&e[1]?1:t[1]&&!e[1]?-1:0};function M(t){return M="function"===typeof Symbol&&"symbol"===typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"===typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},M(t)}function R(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function D(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}function L(t,e,n){return e&&D(t.prototype,e),n&&D(t,n),t}var F="1.2.0",B="1.7.35",_=" ext. ",G=/^\d+$/,V=function(){function t(e){R(this,t),Y(e),this.metadata=e,Q.call(this,e)}return L(t,[{key:"getCountries",value:function(){return Object.keys(this.metadata.countries).filter((function(t){return"001"!==t}))}},{key:"getCountryMetadata",value:function(t){return this.metadata.countries[t]}},{key:"nonGeographic",value:function(){if(!(this.v1||this.v2||this.v3))return this.metadata.nonGeographic||this.metadata.nonGeographical}},{key:"hasCountry",value:function(t){return void 0!==this.getCountryMetadata(t)}},{key:"hasCallingCode",value:function(t){if(this.getCountryCodesForCallingCode(t))return!0;if(this.nonGeographic()){if(this.nonGeographic()[t])return!0}else{var e=this.countryCallingCodes()[t];if(e&&1===e.length&&"001"===e[0])return!0}}},{key:"isNonGeographicCallingCode",value:function(t){return this.nonGeographic()?!!this.nonGeographic()[t]:!this.getCountryCodesForCallingCode(t)}},{key:"country",value:function(t){return this.selectNumberingPlan(t)}},{key:"selectNumberingPlan",value:function(t,e){if(t&&G.test(t)&&(e=t,t=null),t&&"001"!==t){if(!this.hasCountry(t))throw new Error("Unknown country: ".concat(t));this.numberingPlan=new U(this.getCountryMetadata(t),this)}else if(e){if(!this.hasCallingCode(e))throw new Error("Unknown calling code: ".concat(e));this.numberingPlan=new U(this.getNumberingPlanMetadata(e),this)}else this.numberingPlan=void 0;return this}},{key:"getCountryCodesForCallingCode",value:function(t){var e=this.countryCallingCodes()[t];if(e){if(1===e.length&&3===e[0].length)return;return e}}},{key:"getCountryCodeForCallingCode",value:function(t){var e=this.getCountryCodesForCallingCode(t);if(e)return e[0]}},{key:"getNumberingPlanMetadata",value:function(t){var e=this.getCountryCodeForCallingCode(t);if(e)return this.getCountryMetadata(e);if(this.nonGeographic()){var n=this.nonGeographic()[t];if(n)return n}else{var r=this.countryCallingCodes()[t];if(r&&1===r.length&&"001"===r[0])return this.metadata.countries["001"]}}},{key:"countryCallingCode",value:function(){return this.numberingPlan.callingCode()}},{key:"IDDPrefix",value:function(){return this.numberingPlan.IDDPrefix()}},{key:"defaultIDDPrefix",value:function(){return this.numberingPlan.defaultIDDPrefix()}},{key:"nationalNumberPattern",value:function(){return this.numberingPlan.nationalNumberPattern()}},{key:"possibleLengths",value:function(){return this.numberingPlan.possibleLengths()}},{key:"formats",value:function(){return this.numberingPlan.formats()}},{key:"nationalPrefixForParsing",value:function(){return this.numberingPlan.nationalPrefixForParsing()}},{key:"nationalPrefixTransformRule",value:function(){return this.numberingPlan.nationalPrefixTransformRule()}},{key:"leadingDigits",value:function(){return this.numberingPlan.leadingDigits()}},{key:"hasTypes",value:function(){return this.numberingPlan.hasTypes()}},{key:"type",value:function(t){return this.numberingPlan.type(t)}},{key:"ext",value:function(){return this.numberingPlan.ext()}},{key:"countryCallingCodes",value:function(){return this.v1?this.metadata.country_phone_code_to_countries:this.metadata.country_calling_codes}},{key:"chooseCountryByCountryCallingCode",value:function(t){return this.selectNumberingPlan(t)}},{key:"hasSelectedNumberingPlan",value:function(){return void 0!==this.numberingPlan}}]),t}(),U=function(){function t(e,n){R(this,t),this.globalMetadataObject=n,this.metadata=e,Q.call(this,n.metadata)}return L(t,[{key:"callingCode",value:function(){return this.metadata[0]}},{key:"getDefaultCountryMetadataForRegion",value:function(){return this.globalMetadataObject.getNumberingPlanMetadata(this.callingCode())}},{key:"IDDPrefix",value:function(){if(!this.v1&&!this.v2)return this.metadata[1]}},{key:"defaultIDDPrefix",value:function(){if(!this.v1&&!this.v2)return this.metadata[12]}},{key:"nationalNumberPattern",value:function(){return this.v1||this.v2?this.metadata[1]:this.metadata[2]}},{key:"possibleLengths",value:function(){if(!this.v1)return this.metadata[this.v2?2:3]}},{key:"_getFormats",value:function(t){return t[this.v1?2:this.v2?3:4]}},{key:"formats",value:function(){var t=this,e=this._getFormats(this.metadata)||this._getFormats(this.getDefaultCountryMetadataForRegion())||[];return e.map((function(e){return new K(e,t)}))}},{key:"nationalPrefix",value:function(){return this.metadata[this.v1?3:this.v2?4:5]}},{key:"_getNationalPrefixFormattingRule",value:function(t){return t[this.v1?4:this.v2?5:6]}},{key:"nationalPrefixFormattingRule",value:function(){return this._getNationalPrefixFormattingRule(this.metadata)||this._getNationalPrefixFormattingRule(this.getDefaultCountryMetadataForRegion())}},{key:"_nationalPrefixForParsing",value:function(){return this.metadata[this.v1?5:this.v2?6:7]}},{key:"nationalPrefixForParsing",value:function(){return this._nationalPrefixForParsing()||this.nationalPrefix()}},{key:"nationalPrefixTransformRule",value:function(){return this.metadata[this.v1?6:this.v2?7:8]}},{key:"_getNationalPrefixIsOptionalWhenFormatting",value:function(){return!!this.metadata[this.v1?7:this.v2?8:9]}},{key:"nationalPrefixIsOptionalWhenFormattingInNationalFormat",value:function(){return this._getNationalPrefixIsOptionalWhenFormatting(this.metadata)||this._getNationalPrefixIsOptionalWhenFormatting(this.getDefaultCountryMetadataForRegion())}},{key:"leadingDigits",value:function(){return this.metadata[this.v1?8:this.v2?9:10]}},{key:"types",value:function(){return this.metadata[this.v1?9:this.v2?10:11]}},{key:"hasTypes",value:function(){return(!this.types()||0!==this.types().length)&&!!this.types()}},{key:"type",value:function(t){if(this.hasTypes()&&z(this.types(),t))return new W(z(this.types(),t),this)}},{key:"ext",value:function(){return this.v1||this.v2?_:this.metadata[13]||_}}]),t}(),K=function(){function t(e,n){R(this,t),this._format=e,this.metadata=n}return L(t,[{key:"pattern",value:function(){return this._format[0]}},{key:"format",value:function(){return this._format[1]}},{key:"leadingDigitsPatterns",value:function(){return this._format[2]||[]}},{key:"nationalPrefixFormattingRule",value:function(){return this._format[3]||this.metadata.nationalPrefixFormattingRule()}},{key:"nationalPrefixIsOptionalWhenFormattingInNationalFormat",value:function(){return!!this._format[4]||this.metadata.nationalPrefixIsOptionalWhenFormattingInNationalFormat()}},{key:"nationalPrefixIsMandatoryWhenFormattingInNationalFormat",value:function(){return this.usesNationalPrefix()&&!this.nationalPrefixIsOptionalWhenFormattingInNationalFormat()}},{key:"usesNationalPrefix",value:function(){return!(!this.nationalPrefixFormattingRule()||H.test(this.nationalPrefixFormattingRule()))}},{key:"internationalFormat",value:function(){return this._format[5]||this.format()}}]),t}(),H=/^\(?\$1\)?$/,W=function(){function t(e,n){R(this,t),this.type=e,this.metadata=n}return L(t,[{key:"pattern",value:function(){return this.metadata.v1?this.type:this.type[0]}},{key:"possibleLengths",value:function(){if(!this.metadata.v1)return this.type[1]||this.metadata.possibleLengths()}}]),t}();function z(t,e){switch(e){case"FIXED_LINE":return t[0];case"MOBILE":return t[1];case"TOLL_FREE":return t[2];case"PREMIUM_RATE":return t[3];case"PERSONAL_NUMBER":return t[4];case"VOICEMAIL":return t[5];case"UAN":return t[6];case"PAGER":return t[7];case"VOIP":return t[8];case"SHARED_COST":return t[9]}}function Y(t){if(!t)throw new Error("[libphonenumber-js] `metadata` argument not passed. Check your arguments.");if(!Z(t)||!Z(t.countries))throw new Error("[libphonenumber-js] `metadata` argument was passed but it's not a valid metadata. Must be an object having `.countries` child object property. Got ".concat(Z(t)?"an object of shape: { "+Object.keys(t).join(", ")+" }":"a "+q(t)+": "+t,"."))}var Z=function(t){return"object"===M(t)},q=function(t){return M(t)};function J(t,e){if(e=new V(e),e.hasCountry(t))return e.country(t).countryCallingCode();throw new Error("Unknown country: ".concat(t))}function X(t,e){return void 0!==e.countries[t]}function Q(t){var e=t.version;"number"===typeof e?(this.v1=1===e,this.v2=2===e,this.v3=3===e,this.v4=4===e):e?-1===k(e,F)?this.v2=!0:-1===k(e,B)?this.v3=!0:this.v4=!0:this.v1=!0}var tt=";ext=",et=function(t){return"([".concat(C,"]{1,").concat(t,"})")};function nt(t){var e="20",n="15",r="9",d="6",i="[  \\t,]*",o="[:\\.．]?[  \\t,-]*",a="#?",u="(?:e?xt(?:ensi(?:ó?|ó))?n?|ｅ?ｘｔｎ?|доб|anexo)",c="(?:[xｘ#＃~～]|int|ｉｎｔ)",$="[- ]+",s="[  \\t]*",f="(?:,{2}|;)",l=tt+et(e),p=i+u+o+et(e)+a,h=i+c+o+et(r)+a,v=$+et(d)+"#",y=s+f+o+et(n)+a,b=s+"(?:,)+"+o+et(r)+a;return l+"|"+p+"|"+h+"|"+v+"|"+y+"|"+b}var rt="["+C+"]{"+g+"}",dt="["+j+"]{0,1}(?:["+N+"]*["+C+"]){3,}["+N+C+"]*",it=dt+"(?:"+nt()+")?",ot=new RegExp("^"+rt+"$|^"+it+"$","i");function at(t){return t.length>=g&&ot.test(t)}var ut=new RegExp("(?:"+nt()+")$","i");function ct(t){var e=t.search(ut);if(e<0)return{};var n=t.slice(0,e),r=t.match(ut),d=1;while(d<r.length){if(r[d])return{number:n,ext:r[d]};d++}}var $t={0:"0",1:"1",2:"2",3:"3",4:"4",5:"5",6:"6",7:"7",8:"8",9:"9","０":"0","１":"1","２":"2","３":"3","４":"4","５":"5","６":"6","７":"7","８":"8","９":"9","٠":"0","١":"1","٢":"2","٣":"3","٤":"4","٥":"5","٦":"6","٧":"7","٨":"8","٩":"9","۰":"0","۱":"1","۲":"2","۳":"3","۴":"4","۵":"5","۶":"6","۷":"7","۸":"8","۹":"9"};function st(t){return $t[t]}function ft(t){var e="",n=t.split(""),r=Array.isArray(n),d=0;for(n=r?n:n[Symbol.iterator]();;){var i;if(r){if(d>=n.length)break;i=n[d++]}else{if(d=n.next(),d.done)break;i=d.value}var o=i;e+=lt(o,e)||""}return e}function lt(t,e){if("+"===t){if(e)return;return"+"}return st(t)}function pt(t,e){var n=t.slice(),r=e,d=Array.isArray(r),i=0;for(r=d?r:r[Symbol.iterator]();;){var o;if(d){if(i>=r.length)break;o=r[i++]}else{if(i=r.next(),i.done)break;o=i.value}var a=o;t.indexOf(a)<0&&n.push(a)}return n.sort((function(t,e){return t-e}))}function ht(t,e){return vt(t,void 0,e)}function vt(t,e,n){var r=n.type(e),d=r&&r.possibleLengths()||n.possibleLengths();if(!d)return"IS_POSSIBLE";if("FIXED_LINE_OR_MOBILE"===e){if(!n.type("FIXED_LINE"))return vt(t,"MOBILE",n);var i=n.type("MOBILE");i&&(d=pt(d,i.possibleLengths()))}else if(e&&!r)return"INVALID_LENGTH";var o=t.length,a=d[0];return a===o?"IS_POSSIBLE":a>o?"TOO_SHORT":d[d.length-1]<o?"TOO_LONG":d.indexOf(o,1)>=0?"IS_POSSIBLE":"INVALID_LENGTH"}function yt(t,e,n){if(void 0===e&&(e={}),n=new V(n),e.v2){if(!t.countryCallingCode)throw new Error("Invalid phone number object passed");n.selectNumberingPlan(t.countryCallingCode)}else{if(!t.phone)return!1;if(t.country){if(!n.hasCountry(t.country))throw new Error("Unknown country: ".concat(t.country));n.country(t.country)}else{if(!t.countryCallingCode)throw new Error("Invalid phone number object passed");n.selectNumberingPlan(t.countryCallingCode)}}if(n.possibleLengths())return bt(t.phone||t.nationalNumber,n);if(t.countryCallingCode&&n.isNonGeographicCallingCode(t.countryCallingCode))return!0;throw new Error('Missing "possibleLengths" in metadata. Perhaps the metadata has been generated before v1.0.18.')}function bt(t,e){switch(ht(t,e)){case"IS_POSSIBLE":return!0;default:return!1}}function gt(t,e){return Ct(t)||Ot(t,e)||mt()}function mt(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}function Ot(t,e){var n=[],r=!0,d=!1,i=void 0;try{for(var o,a=t[Symbol.iterator]();!(r=(o=a.next()).done);r=!0)if(n.push(o.value),e&&n.length===e)break}catch(u){d=!0,i=u}finally{try{r||null==a["return"]||a["return"]()}finally{if(d)throw i}}return n}function Ct(t){if(Array.isArray(t))return t}function xt(t){var e,n;t=t.replace(/^tel:/,"tel=");var r=t.split(";"),d=Array.isArray(r),i=0;for(r=d?r:r[Symbol.iterator]();;){var o;if(d){if(i>=r.length)break;o=r[i++]}else{if(i=r.next(),i.done)break;o=i.value}var a=o,u=a.split("="),c=gt(u,2),$=c[0],s=c[1];switch($){case"tel":e=s;break;case"ext":n=s;break;case"phone-context":"+"===s[0]&&(e=s+e);break}}if(!at(e))return{};var f={number:e};return n&&(f.ext=n),f}function wt(t){var e=t.number,n=t.ext;if(!e)return"";if("+"!==e[0])throw new Error('"formatRFC3966()" expects "number" to be in E.164 format.');return"tel:".concat(e).concat(n?";ext="+n:"")}function St(t,e){return t=t||"",new RegExp("^(?:"+e+")$").test(t)}var Et=["MOBILE","PREMIUM_RATE","TOLL_FREE","SHARED_COST","VOIP","PERSONAL_NUMBER","PAGER","UAN","VOICEMAIL"];function Pt(t,e,n){if(e=e||{},t.country){n=new V(n),n.selectNumberingPlan(t.country,t.countryCallingCode);var r=e.v2?t.nationalNumber:t.phone;if(St(r,n.nationalNumberPattern())){if(It(r,"FIXED_LINE",n))return n.type("MOBILE")&&""===n.type("MOBILE").pattern()?"FIXED_LINE_OR_MOBILE":n.type("MOBILE")?It(r,"MOBILE",n)?"FIXED_LINE_OR_MOBILE":"FIXED_LINE":"FIXED_LINE_OR_MOBILE";for(var d=0,i=Et;d<i.length;d++){var o=i[d];if(It(r,o,n))return o}}}}function It(t,e,n){return e=n.type(e),!(!e||!e.pattern())&&(!(e.possibleLengths()&&e.possibleLengths().indexOf(t.length)<0)&&St(t,e.pattern()))}function Nt(t,e,n){if(e=e||{},n=new V(n),!t.country)return!1;if(n.selectNumberingPlan(t.country,t.countryCallingCode),n.hasTypes())return void 0!==Pt(t,e,n.metadata);var r=e.v2?t.nationalNumber:t.phone;return St(r,n.nationalNumberPattern())}function jt(t){return t.replace(new RegExp("[".concat(N,"]+"),"g")," ").trim()}var Tt=/(\$\d)/;function At(t,e,n){var r=n.useInternationalFormat,d=n.withNationalPrefix,i=(n.carrierCode,n.metadata,t.replace(new RegExp(e.pattern()),r?e.internationalFormat():d&&e.nationalPrefixFormattingRule()?e.format().replace(Tt,e.nationalPrefixFormattingRule()):e.format()));return r?jt(i):i}var kt=/^[\d]+(?:[~\u2053\u223C\uFF5E][\d]+)?$/;function Mt(t,e,n){var r=new V(n);return r.selectNumberingPlan(t,e),kt.test(r.IDDPrefix())?r.IDDPrefix():r.defaultIDDPrefix()}function Rt(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},r=Object.keys(n);"function"===typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter((function(t){return Object.getOwnPropertyDescriptor(n,t).enumerable})))),r.forEach((function(e){Dt(t,e,n[e])}))}return t}function Dt(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}var Lt={formatExtension:function(t,e,n){return"".concat(t).concat(n.ext()).concat(e)}};function Ft(t,e,n,r){if(n=n?Rt({},Lt,n):Lt,r=new V(r),t.country&&"001"!==t.country){if(!r.hasCountry(t.country))throw new Error("Unknown country: ".concat(t.country));r.country(t.country)}else{if(!t.countryCallingCode)return t.phone||"";r.selectNumberingPlan(t.countryCallingCode)}var d,i=r.countryCallingCode(),o=n.v2?t.nationalNumber:t.phone;switch(e){case"NATIONAL":return o?(d=Bt(o,t.carrierCode,"NATIONAL",r,n),Gt(d,t.ext,r,n.formatExtension)):"";case"INTERNATIONAL":return o?(d=Bt(o,null,"INTERNATIONAL",r,n),d="+".concat(i," ").concat(d),Gt(d,t.ext,r,n.formatExtension)):"+".concat(i);case"E.164":return"+".concat(i).concat(o);case"RFC3966":return wt({number:"+".concat(i).concat(o),ext:t.ext});case"IDD":if(!n.fromCountry)return;var a=Vt(o,t.carrierCode,i,n.fromCountry,r);return Gt(a,t.ext,r,n.formatExtension);default:throw new Error('Unknown "format" argument passed to "formatNumber()": "'.concat(e,'"'))}}function Bt(t,e,n,r,d){var i=_t(r.formats(),t);return i?At(t,i,{useInternationalFormat:"INTERNATIONAL"===n,withNationalPrefix:!i.nationalPrefixIsOptionalWhenFormattingInNationalFormat()||!d||!1!==d.nationalPrefix,carrierCode:e,metadata:r}):t}function _t(t,e){var n=t,r=Array.isArray(n),d=0;for(n=r?n:n[Symbol.iterator]();;){var i;if(r){if(d>=n.length)break;i=n[d++]}else{if(d=n.next(),d.done)break;i=d.value}var o=i;if(o.leadingDigitsPatterns().length>0){var a=o.leadingDigitsPatterns()[o.leadingDigitsPatterns().length-1];if(0!==e.search(a))continue}if(St(e,o.pattern()))return o}}function Gt(t,e,n,r){return e?r(t,e,n):t}function Vt(t,e,n,r,d){var i=J(r,d.metadata);if(i===n){var o=Bt(t,e,"NATIONAL",d);return"1"===n?n+" "+o:o}var a=Mt(r,void 0,d.metadata);if(a)return"".concat(a," ").concat(n," ").concat(Bt(t,null,"INTERNATIONAL",d))}function Ut(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},r=Object.keys(n);"function"===typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter((function(t){return Object.getOwnPropertyDescriptor(n,t).enumerable})))),r.forEach((function(e){Kt(t,e,n[e])}))}return t}function Kt(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}function Ht(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function Wt(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}function zt(t,e,n){return e&&Wt(t.prototype,e),n&&Wt(t,n),t}var Yt=!1,Zt=function(){function t(e,n,r){if(Ht(this,t),!e)throw new TypeError("`country` or `countryCallingCode` not passed");if(!n)throw new TypeError("`nationalNumber` not passed");var d=new V(r);qt(e)?(this.country=e,d.country(e),e=d.countryCallingCode()):Yt&&d.isNonGeographicCallingCode(e)&&(this.country="001"),this.countryCallingCode=e,this.nationalNumber=n,this.number="+"+this.countryCallingCode+this.nationalNumber,this.metadata=r}return zt(t,[{key:"isPossible",value:function(){return yt(this,{v2:!0},this.metadata)}},{key:"isValid",value:function(){return Nt(this,{v2:!0},this.metadata)}},{key:"isNonGeographic",value:function(){var t=new V(this.metadata);return t.isNonGeographicCallingCode(this.countryCallingCode)}},{key:"isEqual",value:function(t){return this.number===t.number&&this.ext===t.ext}},{key:"getType",value:function(){return Pt(this,{v2:!0},this.metadata)}},{key:"format",value:function(t,e){return Ft(this,t,e?Ut({},e,{v2:!0}):{v2:!0},this.metadata)}},{key:"formatNational",value:function(t){return this.format("NATIONAL",t)}},{key:"formatInternational",value:function(t){return this.format("INTERNATIONAL",t)}},{key:"getURI",value:function(t){return this.format("RFC3966",t)}}]),t}(),qt=function(t){return/^[A-Z]{2}$/.test(t)},Jt=new RegExp("(["+C+"])");function Xt(t,e,n,r){if(e){var d=new V(r);d.selectNumberingPlan(e,n);var i=new RegExp(d.IDDPrefix());if(0===t.search(i)){t=t.slice(t.match(i)[0].length);var o=t.match(Jt);if(!(o&&null!=o[1]&&o[1].length>0&&"0"===o[1]))return t}}}function Qt(t,e){if(t&&e.numberingPlan.nationalPrefixForParsing()){var n=new RegExp("^(?:"+e.numberingPlan.nationalPrefixForParsing()+")"),r=n.exec(t);if(r){var d,i,o,a=r.length-1,u=a>0&&r[a];if(e.nationalPrefixTransformRule()&&u)d=t.replace(n,e.nationalPrefixTransformRule()),a>1&&(i=r[1]);else{var c=r[0];d=t.slice(c.length),u&&(i=r[1])}if(u){var $=t.indexOf(r[1]),s=t.slice(0,$);s===e.numberingPlan.nationalPrefix()&&(o=e.numberingPlan.nationalPrefix())}else o=r[0];return{nationalNumber:d,nationalPrefix:o,carrierCode:i}}}return{nationalNumber:t}}function te(t,e){var n=Qt(t,e),r=n.nationalNumber,d=n.carrierCode;if(!ee(t,r,e))return{nationalNumber:t};if(t.length!==r.length+(d?d.length:0)&&e.possibleLengths())switch(ht(r,e)){case"TOO_SHORT":case"INVALID_LENGTH":return{nationalNumber:t}}return{nationalNumber:r,carrierCode:d}}function ee(t,e,n){return!(St(t,n.nationalNumberPattern())&&!St(e,n.nationalNumberPattern()))}function ne(t,e,n,r){var d=e?J(e,r):n;if(0===t.indexOf(d)){r=new V(r),r.selectNumberingPlan(e,n);var i=t.slice(d.length),o=te(i,r),a=o.nationalNumber,u=te(t,r),c=u.nationalNumber;if(!St(c,r.nationalNumberPattern())&&St(a,r.nationalNumberPattern())||"TOO_LONG"===ht(c,r))return{countryCallingCode:d,number:i}}return{number:t}}function re(t,e,n,r){if(!t)return{};if("+"!==t[0]){var d=Xt(t,e,n,r);if(!d||d===t){if(e||n){var i=ne(t,e,n,r),o=i.countryCallingCode,a=i.number;if(o)return{countryCallingCode:o,number:a}}return{number:t}}t="+"+d}if("0"===t[1])return{};r=new V(r);var u=2;while(u-1<=O&&u<=t.length){var c=t.slice(1,u);if(r.hasCallingCode(c))return r.selectNumberingPlan(c),{countryCallingCode:c,number:t.slice(u)};u++}return{}}var de=!1;function ie(t,e,n){if(de&&n.isNonGeographicCallingCode(t))return"001";var r=n.getCountryCodesForCallingCode(t);return r?1===r.length?r[0]:oe(r,e,n.metadata):void 0}function oe(t,e,n){n=new V(n);var r=t,d=Array.isArray(r),i=0;for(r=d?r:r[Symbol.iterator]();;){var o;if(d){if(i>=r.length)break;o=r[i++]}else{if(i=r.next(),i.done)break;o=i.value}var a=o;if(n.country(a),n.leadingDigits()){if(e&&0===e.search(n.leadingDigits()))return a}else if(Pt({phone:e,country:a},void 0,n.metadata))return a}}var ae=250,ue=new RegExp("["+j+C+"]"),ce=new RegExp("[^"+C+"#]+$"),$e=!1;function se(t,e,n){if(e=e||{},n=new V(n),e.defaultCountry&&!n.hasCountry(e.defaultCountry)){if(e.v2)throw new A("INVALID_COUNTRY");throw new Error("Unknown country: ".concat(e.defaultCountry))}var r=le(t,e.v2),d=r.number,i=r.ext;if(!d){if(e.v2)throw new A("NOT_A_NUMBER");return{}}var o=he(d,e.defaultCountry,e.defaultCallingCode,n),a=o.country,u=o.nationalNumber,c=o.countryCallingCode,$=o.carrierCode;if(!n.hasSelectedNumberingPlan()){if(e.v2)throw new A("INVALID_COUNTRY");return{}}if(!u||u.length<g){if(e.v2)throw new A("TOO_SHORT");return{}}if(u.length>m){if(e.v2)throw new A("TOO_LONG");return{}}if(e.v2){var s=new Zt(c,u,n.metadata);return a&&(s.country=a),$&&(s.carrierCode=$),i&&(s.ext=i),s}var f=!!(e.extended?n.hasSelectedNumberingPlan():a)&&St(u,n.nationalNumberPattern());return e.extended?{country:a,countryCallingCode:c,carrierCode:$,valid:f,possible:!!f||!(!0!==e.extended||!n.possibleLengths()||!bt(u,n)),phone:u,ext:i}:f?pe(a,u,i):{}}function fe(t,e){if(t)if(t.length>ae){if(e)throw new A("TOO_LONG")}else{var n=t.search(ue);if(!(n<0))return t.slice(n).replace(ce,"")}}function le(t,e){if(t&&0===t.indexOf("tel:"))return xt(t);var n=fe(t,e);if(!n||!at(n))return{};var r=ct(n);return r.ext?r:{number:n}}function pe(t,e,n){var r={country:t,phone:e};return n&&(r.ext=n),r}function he(t,e,n,r){var d,i=re(ft(t),e,n,r.metadata),o=i.countryCallingCode,a=i.number;if(o)r.selectNumberingPlan(o);else{if(!a||!e&&!n)return{};r.selectNumberingPlan(e,n),e?d=e:$e&&r.isNonGeographicCallingCode(n)&&(d="001"),o=n||J(e,r.metadata)}if(!a)return{countryCallingCode:o};var u=te(ft(a),r),c=u.nationalNumber,$=u.carrierCode,s=ie(o,c,r);return s&&(d=s,"001"===s||r.country(d)),{country:d,countryCallingCode:o,nationalNumber:c,carrierCode:$}}function ve(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},r=Object.keys(n);"function"===typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter((function(t){return Object.getOwnPropertyDescriptor(n,t).enumerable})))),r.forEach((function(e){ye(t,e,n[e])}))}return t}function ye(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}function be(t,e,n){return se(t,ve({},e,{v2:!0}),n)}function ge(t){return ge="function"===typeof Symbol&&"symbol"===typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"===typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},ge(t)}function me(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},r=Object.keys(n);"function"===typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter((function(t){return Object.getOwnPropertyDescriptor(n,t).enumerable})))),r.forEach((function(e){Oe(t,e,n[e])}))}return t}function Oe(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}function Ce(t,e){return Se(t)||we(t,e)||xe()}function xe(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}function we(t,e){var n=[],r=!0,d=!1,i=void 0;try{for(var o,a=t[Symbol.iterator]();!(r=(o=a.next()).done);r=!0)if(n.push(o.value),e&&n.length===e)break}catch(u){d=!0,i=u}finally{try{r||null==a["return"]||a["return"]()}finally{if(d)throw i}}return n}function Se(t){if(Array.isArray(t))return t}function Ee(t){var e,n,r,d=Array.prototype.slice.call(t),i=Ce(d,4),o=i[0],a=i[1],u=i[2],c=i[3];if("string"!==typeof o)throw new TypeError("A text for parsing must be a string.");if(e=o,a&&"string"!==typeof a){if(!Pe(a))throw new Error("Invalid second argument: ".concat(a));u?(n=a,r=u):r=a}else c?(n=u,r=c):(n=void 0,r=u),a&&(n=me({defaultCountry:a},n));return{text:e,options:n,metadata:r}}var Pe=function(t){return"object"===ge(t)};function Ie(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},r=Object.keys(n);"function"===typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter((function(t){return Object.getOwnPropertyDescriptor(n,t).enumerable})))),r.forEach((function(e){Ne(t,e,n[e])}))}return t}function Ne(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}function je(t,e,n){e&&e.defaultCountry&&!X(e.defaultCountry,n)&&(e=Ie({},e,{defaultCountry:void 0}));try{return be(t,e,n)}catch(r){if(!(r instanceof A))throw r}}function Te(){var t=Ee(arguments),e=t.text,n=t.options,r=t.metadata;return je(e,n,r)}function Ae(){return b(Te,arguments)}var ke=n("025e"),Me={beforeMount:function(t,e,n){if("function"!==typeof e.value){var r=n.context.name,d="[Vue-click-outside:] provided expression ".concat(e.expression,"\n      is not a function, but has to be");r&&(d+="Found in component ".concat(r)),console.warn(d)}t.clickOutsideEvent=function(n){t===n.target||t.contains(n.target)||e.value(n,t)},document.body.addEventListener("click",t.clickOutsideEvent)},unmounted:function(t){document.body.removeEventListener("click",t.clickOutsideEvent)}};function Re(t){var e=ke["a"].options[t];return"undefined"===typeof e?ke["a"].options[t]:e}var De={name:"VueTelInput",directives:{clickOutside:Me},props:{value:{type:String,default:""},allCountries:{type:Array,default:function(){return Re("allCountries")}},autoFormat:{type:Boolean,default:function(){return Re("autoFormat")}},customValidate:{type:[Boolean,RegExp],default:function(){return Re("customValidate")}},defaultCountry:{type:String,default:function(){return Re("defaultCountry")}},disabled:{type:Boolean,default:function(){return Re("disabled")}},autoDefaultCountry:{type:Boolean,default:function(){return Re("autoDefaultCountry")}},dropdownOptions:{type:Object,default:function(){return Re("dropdownOptions")}},ignoredCountries:{type:Array,default:function(){return Re("ignoredCountries")}},inputOptions:{type:Object,default:function(){return Re("inputOptions")}},invalidMsg:{type:String,default:function(){return Re("invalidMsg")}},mode:{type:String,default:function(){return Re("mode")}},onlyCountries:{type:Array,default:function(){return Re("onlyCountries")}},preferredCountries:{type:Array,default:function(){return Re("preferredCountries")}},validCharactersOnly:{type:Boolean,default:function(){return Re("validCharactersOnly")}},styleClasses:{type:[String,Array,Object],default:function(){return Re("styleClasses")}}},data:function(){return{phone:"",activeCountryCode:"",open:!1,finishMounted:!1,selectedIndex:null,typeToFindInput:"",typeToFindTimer:null,dropdownOpenDirection:"below",parsedPlaceholder:this.inputOptions.placeholder}},computed:{activeCountry:function(){return this.findCountry(this.activeCountryCode)},parsedMode:function(){return"auto"===this.mode?this.phone&&"+"===this.phone[0]?"international":"national":["international","national"].includes(this.mode)?this.mode:(console.error('Invalid value of prop "mode"'),"international")},filteredCountries:function(){var t=this;return this.onlyCountries.length?this.allCountries.filter((function(e){var n=e.iso2;return t.onlyCountries.some((function(t){return t.toUpperCase()===n}))})):this.ignoredCountries.length?this.allCountries.filter((function(e){var n=e.iso2;return!t.ignoredCountries.includes(n.toUpperCase())&&!t.ignoredCountries.includes(n.toLowerCase())})):this.allCountries},sortedCountries:function(){var t=this.getCountries(this.preferredCountries).map((function(t){return Object(v["a"])(Object(v["a"])({},t),{},{preferred:!0})}));return[].concat(h(t),h(this.filteredCountries))},phoneObject:function(){var t,e,n,r;r="+"===(null===(t=this.phone)||void 0===t?void 0:t[0])?Ae(this.phone)||{}:Ae(this.phone,this.activeCountryCode)||{};var d,i,o=r,a=(o.metadata,Object(c["a"])(o,["metadata"])),u=null===(e=(n=r).isValid)||void 0===e?void 0:e.call(n),$=this.phone;u&&($=null===(d=(i=r).format)||void 0===d?void 0:d.call(i,this.parsedMode.toUpperCase()));return r.country&&(this.ignoredCountries.length||this.onlyCountries.length)&&(this.findCountry(r.country)||(u=!1,Object.assign(r,{country:null}))),Object.assign(a,{countryCode:r.country,valid:u,country:this.activeCountry,formatted:$}),a}},watch:{activeCountry:function(t,e){t||null===e||void 0===e||!e.iso2?null!==t&&void 0!==t&&t.iso2&&this.$emit("country-changed",t):this.activeCountryCode=e.iso2},"phoneObject.countryCode":function(t){this.activeCountryCode=t},"phoneObject.valid":function(){this.$emit("validate",this.phoneObject)},"phoneObject.formatted":function(t){var e=this;this.autoFormat&&!this.customValidate&&(this.emitInput(t),this.$nextTick((function(){t&&!e.value&&(e.phone=t)})))},"inputOptions.placeholder":function(){this.resetPlaceholder()},value:function(t,e){var n=this;this.testCharacters()?this.phone=t:this.$nextTick((function(){n.phone=e,n.onInput()}))},open:function(t){t?(this.setDropdownPosition(),this.$emit("open")):this.$emit("close")}},mounted:function(){var t=this;this.value&&(this.phone=this.value.trim()),this.cleanInvalidCharacters(),this.initializeCountry().then((function(){var e;!t.phone&&null!==(e=t.inputOptions)&&void 0!==e&&e.showDialCode&&t.activeCountryCode&&(t.phone="+".concat(t.activeCountryCode)),t.$emit("validate",t.phoneObject)})).catch(console.error).then((function(){t.finishMounted=!0}))},methods:{resetPlaceholder:function(){this.parsedPlaceholder=this.inputOptions.placeholder},initializeCountry:function(){var t=this;return new Promise((function(e){var n;if("+"!==(null===(n=t.phone)||void 0===n?void 0:n[0])){if(t.defaultCountry)return t.choose(t.defaultCountry),void e();var r=t.preferredCountries[0]||t.filteredCountries[0];t.autoDefaultCountry?Object(ke["c"])().then((function(e){t.choose(e||t.activeCountryCode)})).catch((function(e){console.warn(e),t.choose(r)})).then((function(){e()})):(t.choose(r),e())}else e()}))},getCountries:function(){var t=this,e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[];return e.map((function(e){return t.findCountry(e)})).filter(Boolean)},findCountry:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"";return this.filteredCountries.find((function(e){return e.iso2===t.toUpperCase()}))},getItemClass:function(t,e){var n=this.selectedIndex===t,r=t===this.preferredCountries.length-1,d=this.preferredCountries.some((function(t){return t.toUpperCase()===e}));return{highlighted:n,"last-preferred":r,preferred:d}},choose:function(t){var e,n,r=t;if("string"===typeof r&&(r=this.findCountry(r)),r)return"+"===(null===(e=this.phone)||void 0===e?void 0:e[0])&&r.iso2&&this.phoneObject.nationalNumber?(this.activeCountryCode=r.iso2,void(this.phone=Ae(this.phoneObject.nationalNumber,r.iso2).formatInternational())):void(null!==(n=this.inputOptions)&&void 0!==n&&n.showDialCode&&r?this.phone="+".concat(r.dialCode):(this.activeCountryCode=r.iso2,this.emitInput(this.phone)))},cleanInvalidCharacters:function(){var t=this.phone;if(this.validCharactersOnly){var e=this.phone.match(/[()\-+0-9\s]*/g);this.phone=e.join("")}if(this.customValidate&&this.customValidate instanceof RegExp){var n=this.phone.match(this.customValidate);this.phone=n.join("")}t!==this.phone&&this.emitInput(this.phone)},testCharacters:function(){if(this.validCharactersOnly){var t=/^[()\-+0-9\s]*$/.test(this.phone);if(!t)return!1}return!this.customValidate||this.testCustomValidate()},testCustomValidate:function(){return this.customValidate instanceof RegExp&&this.customValidate.test(this.phone)},onInput:function(){this.$refs.input.setCustomValidity(this.phoneObject.valid?"":this.invalidMsg),this.emitInput(this.phone)},emitInput:function(t){this.$emit("input",t,this.phoneObject,this.$refs.input)},onBlur:function(){this.$emit("blur")},onFocus:function(){Object(ke["d"])(this.$refs.input,this.phone.length),this.$emit("focus")},onEnter:function(){this.$emit("enter")},onSpace:function(){this.$emit("space")},focus:function(){this.$refs.input.focus()},toggleDropdown:function(){this.disabled||(this.open=!this.open)},clickedOutside:function(){this.open=!1},keyboardNav:function(t){var e=this;if(40===t.keyCode){t.preventDefault(),this.open=!0,null===this.selectedIndex?this.selectedIndex=0:this.selectedIndex=Math.min(this.sortedCountries.length-1,this.selectedIndex+1);var n=this.$refs.list.children[this.selectedIndex];n.offsetTop+n.clientHeight>this.$refs.list.scrollTop+this.$refs.list.clientHeight&&(this.$refs.list.scrollTop=n.offsetTop-this.$refs.list.clientHeight+n.clientHeight)}else if(38===t.keyCode){t.preventDefault(),this.open=!0,null===this.selectedIndex?this.selectedIndex=this.sortedCountries.length-1:this.selectedIndex=Math.max(0,this.selectedIndex-1);var r=this.$refs.list.children[this.selectedIndex];r.offsetTop<this.$refs.list.scrollTop&&(this.$refs.list.scrollTop=r.offsetTop)}else if(13===t.keyCode)null!==this.selectedIndex&&this.choose(this.sortedCountries[this.selectedIndex]),this.open=!this.open;else{this.typeToFindInput+=t.key,clearTimeout(this.typeToFindTimer),this.typeToFindTimer=setTimeout((function(){e.typeToFindInput=""}),700);var d=this.sortedCountries.slice(this.preferredCountries.length).findIndex((function(t){return t.name.toLowerCase().startsWith(e.typeToFindInput)}));if(d>=0){this.selectedIndex=this.preferredCountries.length+d;var i=this.$refs.list.children[this.selectedIndex],o=i.offsetTop<this.$refs.list.scrollTop,a=i.offsetTop+i.clientHeight>this.$refs.list.scrollTop+this.$refs.list.clientHeight;(o||a)&&(this.$refs.list.scrollTop=i.offsetTop-this.$refs.list.clientHeight/2)}}},reset:function(){this.selectedIndex=this.sortedCountries.map((function(t){return t.iso2})).indexOf(this.activeCountryCode),this.open=!1},setDropdownPosition:function(){var t=window.innerHeight-this.$el.getBoundingClientRect().bottom,e=t>200;this.dropdownOpenDirection=e?"below":"above"}}};n("bfe1"),n("e103");De.render=u;e["a"]=De},e439:function(t,e,n){var r=n("23e7"),d=n("d039"),i=n("fc6a"),o=n("06cf").f,a=n("83ab"),u=d((function(){o(1)})),c=!a||u;r({target:"Object",stat:!0,forced:c,sham:!a},{getOwnPropertyDescriptor:function(t,e){return o(i(t),e)}})},e538:function(t,e,n){var r=n("b622");e.f=r},e667:function(t,e){t.exports=function(t){try{return{error:!1,value:t()}}catch(e){return{error:!0,value:e}}}},e6cf:function(t,e,n){"use strict";var r,d,i,o,a=n("23e7"),u=n("c430"),c=n("da84"),$=n("d066"),s=n("fea9"),f=n("6eeb"),l=n("e2cc"),p=n("d44e"),h=n("2626"),v=n("861d"),y=n("1c0b"),b=n("19aa"),g=n("8925"),m=n("2266"),O=n("1c7e"),C=n("4840"),x=n("2cf4").set,w=n("b575"),S=n("cdf9"),E=n("44de"),P=n("f069"),I=n("e667"),N=n("69f3"),j=n("94ca"),T=n("b622"),A=n("605d"),k=n("2d00"),M=T("species"),R="Promise",D=N.get,L=N.set,F=N.getterFor(R),B=s,_=c.TypeError,G=c.document,V=c.process,U=$("fetch"),K=P.f,H=K,W=!!(G&&G.createEvent&&c.dispatchEvent),z="function"==typeof PromiseRejectionEvent,Y="unhandledrejection",Z="rejectionhandled",q=0,J=1,X=2,Q=1,tt=2,et=j(R,(function(){var t=g(B)!==String(B);if(!t){if(66===k)return!0;if(!A&&!z)return!0}if(u&&!B.prototype["finally"])return!0;if(k>=51&&/native code/.test(B))return!1;var e=B.resolve(1),n=function(t){t((function(){}),(function(){}))},r=e.constructor={};return r[M]=n,!(e.then((function(){}))instanceof n)})),nt=et||!O((function(t){B.all(t)["catch"]((function(){}))})),rt=function(t){var e;return!(!v(t)||"function"!=typeof(e=t.then))&&e},dt=function(t,e){if(!t.notified){t.notified=!0;var n=t.reactions;w((function(){var r=t.value,d=t.state==J,i=0;while(n.length>i){var o,a,u,c=n[i++],$=d?c.ok:c.fail,s=c.resolve,f=c.reject,l=c.domain;try{$?(d||(t.rejection===tt&&ut(t),t.rejection=Q),!0===$?o=r:(l&&l.enter(),o=$(r),l&&(l.exit(),u=!0)),o===c.promise?f(_("Promise-chain cycle")):(a=rt(o))?a.call(o,s,f):s(o)):f(r)}catch(p){l&&!u&&l.exit(),f(p)}}t.reactions=[],t.notified=!1,e&&!t.rejection&&ot(t)}))}},it=function(t,e,n){var r,d;W?(r=G.createEvent("Event"),r.promise=e,r.reason=n,r.initEvent(t,!1,!0),c.dispatchEvent(r)):r={promise:e,reason:n},!z&&(d=c["on"+t])?d(r):t===Y&&E("Unhandled promise rejection",n)},ot=function(t){x.call(c,(function(){var e,n=t.facade,r=t.value,d=at(t);if(d&&(e=I((function(){A?V.emit("unhandledRejection",r,n):it(Y,n,r)})),t.rejection=A||at(t)?tt:Q,e.error))throw e.value}))},at=function(t){return t.rejection!==Q&&!t.parent},ut=function(t){x.call(c,(function(){var e=t.facade;A?V.emit("rejectionHandled",e):it(Z,e,t.value)}))},ct=function(t,e,n){return function(r){t(e,r,n)}},$t=function(t,e,n){t.done||(t.done=!0,n&&(t=n),t.value=e,t.state=X,dt(t,!0))},st=function(t,e,n){if(!t.done){t.done=!0,n&&(t=n);try{if(t.facade===e)throw _("Promise can't be resolved itself");var r=rt(e);r?w((function(){var n={done:!1};try{r.call(e,ct(st,n,t),ct($t,n,t))}catch(d){$t(n,d,t)}})):(t.value=e,t.state=J,dt(t,!1))}catch(d){$t({done:!1},d,t)}}};et&&(B=function(t){b(this,B,R),y(t),r.call(this);var e=D(this);try{t(ct(st,e),ct($t,e))}catch(n){$t(e,n)}},r=function(t){L(this,{type:R,done:!1,notified:!1,parent:!1,reactions:[],rejection:!1,state:q,value:void 0})},r.prototype=l(B.prototype,{then:function(t,e){var n=F(this),r=K(C(this,B));return r.ok="function"!=typeof t||t,r.fail="function"==typeof e&&e,r.domain=A?V.domain:void 0,n.parent=!0,n.reactions.push(r),n.state!=q&&dt(n,!1),r.promise},catch:function(t){return this.then(void 0,t)}}),d=function(){var t=new r,e=D(t);this.promise=t,this.resolve=ct(st,e),this.reject=ct($t,e)},P.f=K=function(t){return t===B||t===i?new d(t):H(t)},u||"function"!=typeof s||(o=s.prototype.then,f(s.prototype,"then",(function(t,e){var n=this;return new B((function(t,e){o.call(n,t,e)})).then(t,e)}),{unsafe:!0}),"function"==typeof U&&a({global:!0,enumerable:!0,forced:!0},{fetch:function(t){return S(B,U.apply(c,arguments))}}))),a({global:!0,wrap:!0,forced:et},{Promise:B}),p(B,R,!1,!0),h(R),i=$(R),a({target:R,stat:!0,forced:et},{reject:function(t){var e=K(this);return e.reject.call(void 0,t),e.promise}}),a({target:R,stat:!0,forced:u||et},{resolve:function(t){return S(u&&this===i?B:this,t)}}),a({target:R,stat:!0,forced:nt},{all:function(t){var e=this,n=K(e),r=n.resolve,d=n.reject,i=I((function(){var n=y(e.resolve),i=[],o=0,a=1;m(t,(function(t){var u=o++,c=!1;i.push(void 0),a++,n.call(e,t).then((function(t){c||(c=!0,i[u]=t,--a||r(i))}),d)})),--a||r(i)}));return i.error&&d(i.value),n.promise},race:function(t){var e=this,n=K(e),r=n.reject,d=I((function(){var d=y(e.resolve);m(t,(function(t){d.call(e,t).then(n.resolve,r)}))}));return d.error&&r(d.value),n.promise}})},e893:function(t,e,n){var r=n("5135"),d=n("56ef"),i=n("06cf"),o=n("9bf2");t.exports=function(t,e){for(var n=d(e),a=o.f,u=i.f,c=0;c<n.length;c++){var $=n[c];r(t,$)||a(t,$,u(e,$))}}},e8b5:function(t,e,n){var r=n("c6b6");t.exports=Array.isArray||function(t){return"Array"==r(t)}},e95a:function(t,e,n){var r=n("b622"),d=n("3f8c"),i=r("iterator"),o=Array.prototype;t.exports=function(t){return void 0!==t&&(d.Array===t||o[i]===t)}},f069:function(t,e,n){"use strict";var r=n("1c0b"),d=function(t){var e,n;this.promise=new t((function(t,r){if(void 0!==e||void 0!==n)throw TypeError("Bad Promise constructor");e=t,n=r})),this.resolve=r(e),this.reject=r(n)};t.exports.f=function(t){return new d(t)}},f3f2:function(t,e,n){},f5df:function(t,e,n){var r=n("00ee"),d=n("c6b6"),i=n("b622"),o=i("toStringTag"),a="Arguments"==d(function(){return arguments}()),u=function(t,e){try{return t[e]}catch(n){}};t.exports=r?d:function(t){var e,n,r;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(n=u(e=Object(t),o))?n:a?d(e):"Object"==(r=d(e))&&"function"==typeof e.callee?"Arguments":r}},f772:function(t,e,n){var r=n("5692"),d=n("90e3"),i=r("keys");t.exports=function(t){return i[t]||(i[t]=d(t))}},fb15:function(t,e,n){"use strict";if(n.r(e),n.d(e,"install",(function(){return o["c"]})),n.d(e,"VueTelInput",(function(){return o["a"]})),"undefined"!==typeof window){var r=window.document.currentScript,d=n("8875");r=d(),"currentScript"in document||Object.defineProperty(document,"currentScript",{get:d});var i=r&&r.src.match(/(.+\/)[^/]+\.js(\?.*)?$/);i&&(n.p=i[1])}var o=n("b635");e["default"]=o["b"]},fb6a:function(t,e,n){"use strict";var r=n("23e7"),d=n("861d"),i=n("e8b5"),o=n("23cb"),a=n("50c4"),u=n("fc6a"),c=n("8418"),$=n("b622"),s=n("1dde"),f=n("ae40"),l=s("slice"),p=f("slice",{ACCESSORS:!0,0:0,1:2}),h=$("species"),v=[].slice,y=Math.max;r({target:"Array",proto:!0,forced:!l||!p},{slice:function(t,e){var n,r,$,s=u(this),f=a(s.length),l=o(t,f),p=o(void 0===e?f:e,f);if(i(s)&&(n=s.constructor,"function"!=typeof n||n!==Array&&!i(n.prototype)?d(n)&&(n=n[h],null===n&&(n=void 0)):n=void 0,n===Array||void 0===n))return v.call(s,l,p);for(r=new(void 0===n?Array:n)(y(p-l,0)),$=0;l<p;l++,$++)l in s&&c(r,$,s[l]);return r.length=$,r}})},fc6a:function(t,e,n){var r=n("44ad"),d=n("1d80");t.exports=function(t){return r(d(t))}},fdbc:function(t,e){t.exports={CSSRuleList:0,CSSStyleDeclaration:0,CSSValueList:0,ClientRectList:0,DOMRectList:0,DOMStringList:0,DOMTokenList:1,DataTransferItemList:0,FileList:0,HTMLAllCollection:0,HTMLCollection:0,HTMLFormElement:0,HTMLSelectElement:0,MediaList:0,MimeTypeArray:0,NamedNodeMap:0,NodeList:1,PaintRequestList:0,Plugin:0,PluginArray:0,SVGLengthList:0,SVGNumberList:0,SVGPathSegList:0,SVGPointList:0,SVGStringList:0,SVGTransformList:0,SourceBufferList:0,StyleSheetList:0,TextTrackCueList:0,TextTrackList:0,TouchList:0}},fdbf:function(t,e,n){var r=n("4930");t.exports=r&&!Symbol.sham&&"symbol"==typeof Symbol.iterator},fea9:function(t,e,n){var r=n("da84");t.exports=r.Promise}})}));
-//# sourceMappingURL=vue3-tel-input.umd.min.js.map
 
 /***/ }),
 
@@ -59601,7 +59785,7 @@ webpackContext.id = "./resources/js/Pages sync recursive ^\\.\\/.*$";
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"Promise based HTTP client for the browser and node.js","main":"index.js","scripts":{"test":"grunt test","start":"node ./sandbox/server.js","build":"NODE_ENV=production grunt build","preversion":"npm test","version":"npm run build && grunt version && git add -A dist && git add CHANGELOG.md bower.json package.json","postversion":"git push && git push --tags","examples":"node ./examples/server.js","coveralls":"cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js","fix":"eslint --fix lib/**/*.js"},"repository":{"type":"git","url":"https://github.com/axios/axios.git"},"keywords":["xhr","http","ajax","promise","node"],"author":"Matt Zabriskie","license":"MIT","bugs":{"url":"https://github.com/axios/axios/issues"},"homepage":"https://axios-http.com","devDependencies":{"coveralls":"^3.0.0","es6-promise":"^4.2.4","grunt":"^1.3.0","grunt-banner":"^0.6.0","grunt-cli":"^1.2.0","grunt-contrib-clean":"^1.1.0","grunt-contrib-watch":"^1.0.0","grunt-eslint":"^23.0.0","grunt-karma":"^4.0.0","grunt-mocha-test":"^0.13.3","grunt-ts":"^6.0.0-beta.19","grunt-webpack":"^4.0.2","istanbul-instrumenter-loader":"^1.0.0","jasmine-core":"^2.4.1","karma":"^6.3.2","karma-chrome-launcher":"^3.1.0","karma-firefox-launcher":"^2.1.0","karma-jasmine":"^1.1.1","karma-jasmine-ajax":"^0.1.13","karma-safari-launcher":"^1.0.0","karma-sauce-launcher":"^4.3.6","karma-sinon":"^1.0.5","karma-sourcemap-loader":"^0.3.8","karma-webpack":"^4.0.2","load-grunt-tasks":"^3.5.2","minimist":"^1.2.0","mocha":"^8.2.1","sinon":"^4.5.0","terser-webpack-plugin":"^4.2.3","typescript":"^4.0.5","url-search-params":"^0.10.0","webpack":"^4.44.2","webpack-dev-server":"^3.11.0"},"browser":{"./lib/adapters/http.js":"./lib/adapters/xhr.js"},"jsdelivr":"dist/axios.min.js","unpkg":"dist/axios.min.js","typings":"./index.d.ts","dependencies":{"follow-redirects":"^1.14.0"},"bundlesize":[{"path":"./dist/axios.min.js","threshold":"5kB"}]}');
+module.exports = JSON.parse('{"_from":"axios@^0.21","_id":"axios@0.21.4","_inBundle":false,"_integrity":"sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==","_location":"/axios","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"axios@^0.21","name":"axios","escapedName":"axios","rawSpec":"^0.21","saveSpec":null,"fetchSpec":"^0.21"},"_requiredBy":["#DEV:/","/@inertiajs/inertia"],"_resolved":"https://registry.npmjs.org/axios/-/axios-0.21.4.tgz","_shasum":"c67b90dc0568e5c1cf2b0b858c43ba28e2eda575","_spec":"axios@^0.21","_where":"C:\\\\Users\\\\Sam\\\\Desktop\\\\Projet-test","author":{"name":"Matt Zabriskie"},"browser":{"./lib/adapters/http.js":"./lib/adapters/xhr.js"},"bugs":{"url":"https://github.com/axios/axios/issues"},"bundleDependencies":false,"bundlesize":[{"path":"./dist/axios.min.js","threshold":"5kB"}],"dependencies":{"follow-redirects":"^1.14.0"},"deprecated":false,"description":"Promise based HTTP client for the browser and node.js","devDependencies":{"coveralls":"^3.0.0","es6-promise":"^4.2.4","grunt":"^1.3.0","grunt-banner":"^0.6.0","grunt-cli":"^1.2.0","grunt-contrib-clean":"^1.1.0","grunt-contrib-watch":"^1.0.0","grunt-eslint":"^23.0.0","grunt-karma":"^4.0.0","grunt-mocha-test":"^0.13.3","grunt-ts":"^6.0.0-beta.19","grunt-webpack":"^4.0.2","istanbul-instrumenter-loader":"^1.0.0","jasmine-core":"^2.4.1","karma":"^6.3.2","karma-chrome-launcher":"^3.1.0","karma-firefox-launcher":"^2.1.0","karma-jasmine":"^1.1.1","karma-jasmine-ajax":"^0.1.13","karma-safari-launcher":"^1.0.0","karma-sauce-launcher":"^4.3.6","karma-sinon":"^1.0.5","karma-sourcemap-loader":"^0.3.8","karma-webpack":"^4.0.2","load-grunt-tasks":"^3.5.2","minimist":"^1.2.0","mocha":"^8.2.1","sinon":"^4.5.0","terser-webpack-plugin":"^4.2.3","typescript":"^4.0.5","url-search-params":"^0.10.0","webpack":"^4.44.2","webpack-dev-server":"^3.11.0"},"homepage":"https://axios-http.com","jsdelivr":"dist/axios.min.js","keywords":["xhr","http","ajax","promise","node"],"license":"MIT","main":"index.js","name":"axios","repository":{"type":"git","url":"git+https://github.com/axios/axios.git"},"scripts":{"build":"NODE_ENV=production grunt build","coveralls":"cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js","examples":"node ./examples/server.js","fix":"eslint --fix lib/**/*.js","postversion":"git push && git push --tags","preversion":"npm test","start":"node ./sandbox/server.js","test":"grunt test","version":"npm run build && grunt version && git add -A dist && git add CHANGELOG.md bower.json package.json"},"typings":"./index.d.ts","unpkg":"dist/axios.min.js","version":"0.21.4"}');
 
 /***/ })
 
@@ -59775,7 +59959,7 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
 /******/ 					installedChunks[chunkId][0]();
 /******/ 				}
-/******/ 				installedChunks[chunkIds[i]] = 0;
+/******/ 				installedChunks[chunkId] = 0;
 /******/ 			}
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}
